@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { useRouter } from 'next/navigation';
 import ProgressBar from '@/components/ProgressBar';
 import Button from '@/components/Button';
 import KivilcimIcon from '@/components/KivilcimIcon';
+import ThemeToggle from '@/components/ThemeToggle';
 import { useElevenLabs } from '@/lib/elevenlabs';
 
+// --- DATA (Veri yapısı aynı kalıyor) ---
 interface SyllableExercise {
   id: number;
   letters: string[];
@@ -22,84 +24,153 @@ const exercises: SyllableExercise[] = [
   { id: 5, letters: ['i', 'l'], correctSyllable: 'il', audioText: 'Bu hece il... il!' }
 ];
 
+// --- useReducer ile State Yönetimi ---
+
+// 1. Bileşenin state'inin şekli
+type ExerciseState = {
+  currentExerciseIndex: number;
+  userSyllable: string;
+  isCorrect: boolean | null;
+  showFeedback: boolean;
+  draggedLetter: string | null;
+  isListening: boolean; // Ses tanıma için
+  isPlaying: boolean;   // Ses çalma için
+  isComplete: boolean;  // Tüm egzersizler bitti mi?
+};
+
+// 2. State'i değiştirebilecek tüm olası eylemler
+type Action =
+  | { type: 'DRAG_START'; payload: string }
+  | { type: 'DROP_LETTER'; payload: { position: 'first' | 'second' } }
+  | { type: 'SET_USER_SYLLABLE'; payload: string } // Sesli girdi için
+  | { type: 'EVALUATE_ANSWER'; payload: { isCorrect: boolean } }
+  | { type: 'TRY_AGAIN' }
+  | { type: 'NEXT_EXERCISE' }
+  | { type: 'COMPLETE_ALL_EXERCISES' }
+  | { type: 'SET_IS_PLAYING'; payload: boolean }
+  | { type: 'SET_IS_LISTENING'; payload: boolean };
+
+// 3. Bileşen yüklendiğindeki başlangıç state'i
+const initialState: ExerciseState = {
+  currentExerciseIndex: 0,
+  userSyllable: '',
+  isCorrect: null,
+  showFeedback: false,
+  draggedLetter: null,
+  isListening: false,
+  isPlaying: false,
+  isComplete: false,
+};
+
+// 4. Reducer fonksiyonu: mevcut state'i ve bir eylemi alır, yeni state'i döndürür.
+function exerciseReducer(state: ExerciseState, action: Action): ExerciseState {
+  switch (action.type) {
+    case 'DRAG_START':
+      return { ...state, draggedLetter: action.payload };
+    
+    case 'DROP_LETTER': {
+      if (!state.draggedLetter) return state;
+      const newSyllable = action.payload.position === 'first'
+        ? state.draggedLetter + (state.userSyllable[1] || '')
+        : (state.userSyllable[0] || '') + state.draggedLetter;
+      return { ...state, userSyllable: newSyllable, draggedLetter: null };
+    }
+
+    case 'SET_USER_SYLLABLE':
+      return { ...state, userSyllable: action.payload };
+
+    case 'EVALUATE_ANSWER':
+      return { ...state, isCorrect: action.payload.isCorrect, showFeedback: true };
+
+    case 'TRY_AGAIN':
+      return {
+        ...state,
+        userSyllable: '',
+        isCorrect: null,
+        showFeedback: false,
+      };
+
+    case 'NEXT_EXERCISE':
+      // Sonraki tura geçerken state'i sıfırla, ama index'i artır
+      return {
+        ...initialState,
+        currentExerciseIndex: state.currentExerciseIndex + 1,
+      };
+
+    case 'COMPLETE_ALL_EXERCISES':
+      return { ...state, isComplete: true };
+
+    case 'SET_IS_PLAYING':
+      return { ...state, isPlaying: action.payload };
+
+    case 'SET_IS_LISTENING':
+      return { ...state, isListening: action.payload };
+
+    default:
+      return state;
+  }
+}
+
 export default function LiteracyExercisePage() {
   const router = useRouter();
   const { speak } = useElevenLabs();
-  const [currentExercise, setCurrentExercise] = useState(0);
-  const [userSyllable, setUserSyllable] = useState('');
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [draggedLetter, setDraggedLetter] = useState<string | null>(null);
-  const [isListening, setIsListening] = useState(false);
+  const [state, dispatch] = useReducer(exerciseReducer, initialState);
   const [speechSupported, setSpeechSupported] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
 
-  const exercise = exercises[currentExercise];
-  const progress = currentExercise;
+  const {
+    currentExerciseIndex,
+    userSyllable,
+    isCorrect,
+    showFeedback,
+    isListening,
+    isPlaying,
+    isComplete,
+  } = state;
+
+  const exercise = exercises[currentExerciseIndex];
+  const progress = currentExerciseIndex;
   const total = exercises.length;
 
   useEffect(() => {
-    // Web Speech API desteğini kontrol et
     if (typeof window !== 'undefined') {
       setSpeechSupported('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
     }
   }, []);
 
-  const handleDragStart = (letter: string) => {
-    setDraggedLetter(letter);
-  };
-
-  const handleDrop = (position: 'first' | 'second') => {
-    if (!draggedLetter) return;
-    
-    const newSyllable = position === 'first' 
-      ? draggedLetter + (userSyllable[1] || '')
-      : (userSyllable[0] || '') + draggedLetter;
-    
-    setUserSyllable(newSyllable);
-    setDraggedLetter(null);
-    
-    // Eğer hece tamamlandıysa kontrol et
-    if (newSyllable.length === 2) {
-      checkAnswer(newSyllable);
+  // Hece tamamlandığında cevabı otomatik kontrol eden effect
+  useEffect(() => {
+    if (userSyllable.length === 2) {
+      checkAnswer(userSyllable);
     }
-  };
+  }, [userSyllable, currentExerciseIndex]); // Yeni egzersizde tekrar tetiklenmesi için index'e de bağlı
 
   const checkAnswer = async (syllable: string) => {
     const correct = syllable.toLowerCase() === exercise.correctSyllable.toLowerCase();
-    setIsCorrect(correct);
-    setShowFeedback(true);
+    dispatch({ type: 'EVALUATE_ANSWER', payload: { isCorrect: correct } });
     
     if (correct) {
-      // Kutlama sesini çal
       await playCelebration();
       
-      // Başarı animasyonu göster
       setTimeout(() => {
-        if (currentExercise < exercises.length - 1) {
-          setCurrentExercise(currentExercise + 1);
-          resetExercise();
+        if (currentExerciseIndex < exercises.length - 1) {
+          dispatch({ type: 'NEXT_EXERCISE' });
         } else {
-          // Tüm egzersizler tamamlandı
-          handleCompleteExercises();
+          dispatch({ type: 'COMPLETE_ALL_EXERCISES' });
         }
-      }, 3000); // Kutlama sesi için daha uzun süre
+      }, 3000); // Kutlama için bekle
     }
   };
 
-  const resetExercise = () => {
-    setUserSyllable('');
-    setIsCorrect(null);
-    setShowFeedback(false);
+  const handleDragStart = (letter: string) => {
+    dispatch({ type: 'DRAG_START', payload: letter });
   };
 
-  const handleCompleteExercises = () => {
-    // Tebrikler sayfasına yönlendir veya modül seçimine geri dön
-    router.push('/modules?completed=literacy');
+  const handleDrop = (position: 'first' | 'second') => {
+    dispatch({ type: 'DROP_LETTER', payload: { position } });
   };
 
   const handleTryAgain = () => {
-    resetExercise();
+    dispatch({ type: 'TRY_AGAIN' });
   };
 
   const handleVoiceInput = () => {
@@ -108,7 +179,7 @@ export default function LiteracyExercisePage() {
       return;
     }
 
-    setIsListening(true);
+    dispatch({ type: 'SET_IS_LISTENING', payload: true });
     
     const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
     const recognition = new SpeechRecognition();
@@ -119,43 +190,33 @@ export default function LiteracyExercisePage() {
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript.toLowerCase().trim();
-      setIsListening(false);
+      dispatch({ type: 'SET_IS_LISTENING', payload: false });
       
-      // Basit ses tanıma kontrolü
       if (transcript.includes(exercise.correctSyllable)) {
-        setIsCorrect(true);
-        setShowFeedback(true);
-        setTimeout(() => {
-          if (currentExercise < exercises.length - 1) {
-            setCurrentExercise(currentExercise + 1);
-            resetExercise();
-          } else {
-            handleCompleteExercises();
-          }
-        }, 2000);
+        // Heceyi ayarlayarak görsel güncellemeyi ve checkAnswer effect'ini tetikle
+        dispatch({ type: 'SET_USER_SYLLABLE', payload: exercise.correctSyllable });
       } else {
-        setIsCorrect(false);
-        setShowFeedback(true);
+        // Doğrudan başarısızlık geri bildirimini tetikle
+        dispatch({ type: 'EVALUATE_ANSWER', payload: { isCorrect: false } });
       }
     };
 
     recognition.onerror = () => {
-      setIsListening(false);
+      dispatch({ type: 'SET_IS_LISTENING', payload: false });
       alert('Ses tanıma sırasında hata oluştu. Lütfen tekrar deneyin.');
     };
 
     recognition.start();
   };
 
+  // --- Ses Fonksiyonları ---
   const playAudioFeedback = async () => {
     if (isPlaying) return;
-    
     try {
-      setIsPlaying(true);
+      dispatch({ type: 'SET_IS_PLAYING', payload: true });
       await speak(exercise.audioText, 'word');
     } catch (error) {
       console.error('Ses çalma hatası:', error);
-      // Fallback to Web Speech API
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(exercise.audioText);
         utterance.lang = 'tr-TR';
@@ -163,20 +224,19 @@ export default function LiteracyExercisePage() {
         speechSynthesis.speak(utterance);
       }
     } finally {
-      setIsPlaying(false);
+      dispatch({ type: 'SET_IS_PLAYING', payload: false });
     }
   };
 
   const playLetterSound = async (letter: string) => {
     if (isPlaying) return;
-    
     try {
-      setIsPlaying(true);
+      dispatch({ type: 'SET_IS_PLAYING', payload: true });
       await speak(letter, 'letter');
     } catch (error) {
       console.error('Harf ses hatası:', error);
     } finally {
-      setIsPlaying(false);
+      dispatch({ type: 'SET_IS_PLAYING', payload: false });
     }
   };
 
@@ -195,8 +255,39 @@ export default function LiteracyExercisePage() {
     }
   };
 
+  // --- RENDER --- 
+
+  // Tüm egzersizler tamamlandığında gösterilecek ekran
+  if (isComplete) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white dark:from-dark-bg dark:via-dark-surface dark:to-dark-border flex items-center justify-center p-4">
+        <div className="text-center bg-adaptive rounded-2xl shadow-lg p-8">
+          <KivilcimIcon size={120} animate={true} className="mx-auto mb-4" />
+          <h2 className="text-3xl font-bold text-adaptive mb-4">
+            🏆 Tebrikler!
+          </h2>
+          <p className="text-lg text-adaptive-secondary mb-6">
+            Tüm hece oluşturma egzersizlerini tamamladın! Harika bir iş çıkardın.
+          </p>
+          <Button
+            variant="primary"
+            size="large"
+            onClick={() => router.push('/modules')}
+          >
+            Modüllere Dön
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white dark:from-dark-bg dark:via-dark-surface dark:to-dark-border transition-colors duration-500">
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-4 right-4 z-10">
+        <ThemeToggle size="medium" showLabel={false} />
+      </div>
+      
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
@@ -222,14 +313,14 @@ export default function LiteracyExercisePage() {
 
         {/* Main Exercise Area */}
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+          <div className="bg-adaptive rounded-2xl shadow-lg dark:shadow-xl p-8 text-center">
             
             {/* Task Instructions */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-text-color mb-4">
+              <h2 className="text-2xl font-bold text-adaptive mb-4">
                 Harfleri Birleştirerek Hece Oluştur
               </h2>
-              <p className="text-gray-600">
+              <p className="text-adaptive-secondary">
                 Aşağıdaki harfleri sürükleyerek doğru hece'yi oluştur
               </p>
             </div>
@@ -244,7 +335,7 @@ export default function LiteracyExercisePage() {
                     draggable
                     onDragStart={() => handleDragStart(letter)}
                     onClick={() => playLetterSound(letter)}
-                    className="w-16 h-16 bg-encourage-orange rounded-xl flex items-center justify-center text-2xl font-bold text-text-color cursor-move shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group"
+                    className="w-16 h-16 bg-encourage-orange rounded-xl flex items-center justify-center text-2xl font-bold text-on-dark cursor-move shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group"
                     title={`${letter} harfini dinle`}
                   >
                     {letter}
@@ -260,14 +351,14 @@ export default function LiteracyExercisePage() {
                 <div
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => handleDrop('first')}
-                  className="w-16 h-16 border-4 border-dashed border-focus-blue rounded-xl flex items-center justify-center text-2xl font-bold bg-white shadow-inner"
+                  className="w-16 h-16 border-4 border-dashed border-focus-blue rounded-xl flex items-center justify-center text-2xl font-bold bg-adaptive shadow-inner text-adaptive"
                 >
                   {userSyllable[0] || '?'}
                 </div>
                 <div
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => handleDrop('second')}
-                  className="w-16 h-16 border-4 border-dashed border-focus-blue rounded-xl flex items-center justify-center text-2xl font-bold bg-white shadow-inner"
+                  className="w-16 h-16 border-4 border-dashed border-focus-blue rounded-xl flex items-center justify-center text-2xl font-bold bg-adaptive shadow-inner text-adaptive"
                 >
                   {userSyllable[1] || '?'}
                 </div>
@@ -316,10 +407,10 @@ export default function LiteracyExercisePage() {
               <div className="text-4xl mb-3">
                 {isCorrect ? '🎉' : '🤔'}
               </div>
-              <h3 className="text-xl font-bold text-text-color mb-3">
+              <h3 className="text-xl font-bold text-adaptive mb-3">
                 {isCorrect ? 'Harikasın!' : 'Haydi tekrar deneyelim!'}
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-adaptive-secondary mb-4">
                 {isCorrect 
                   ? `Doğru! Bu hece "${exercise.correctSyllable}" oluyor.`
                   : `Doğru hece "${exercise.correctSyllable}" olmalı. Tekrar deneyebilirsin!`
@@ -337,28 +428,8 @@ export default function LiteracyExercisePage() {
               )}
             </div>
           )}
-
-          {/* Completion Celebration */}
-          {currentExercise >= exercises.length && (
-            <div className="mt-6 p-8 bg-success-green bg-opacity-30 rounded-xl text-center">
-              <KivilcimIcon size={120} animate={true} className="mx-auto mb-4" />
-              <h2 className="text-3xl font-bold text-text-color mb-4">
-                🏆 Tebrikler!
-              </h2>
-              <p className="text-lg text-gray-600 mb-6">
-                Tüm hece oluşturma egzersizlerini tamamladın! Harika bir iş çıkardın.
-              </p>
-              <Button
-                variant="primary"
-                size="large"
-                onClick={() => router.push('/modules')}
-              >
-                Modüllere Dön
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
-} 
+}

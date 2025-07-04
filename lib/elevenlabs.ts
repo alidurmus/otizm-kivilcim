@@ -1,3 +1,17 @@
+class ElevenLabsAPIError extends Error {
+  constructor(message: string, public readonly status: number, public readonly responseText?: string) {
+    super(message);
+    this.name = 'ElevenLabsAPIError';
+  }
+}
+
+class ElevenLabsPlaybackError extends Error {
+  constructor(message: string, public readonly audioUrl?: string) {
+    super(message);
+    this.name = 'ElevenLabsPlaybackError';
+  }
+}
+
 // Browser-only ElevenLabs integration
 class ElevenLabsClient {
   private apiKey: string;
@@ -23,7 +37,7 @@ class ElevenLabsClient {
   ): Promise<string> {
     try {
       if (!this.apiKey) {
-        throw new Error('ElevenLabs API key not found');
+        throw new ElevenLabsAPIError('ElevenLabs API key not found', 401);
       }
 
       const voiceId = options?.voiceId || this.defaultVoiceId;
@@ -48,7 +62,8 @@ class ElevenLabsClient {
       });
 
       if (!response.ok) {
-        throw new Error(`ElevenLabs API error: ${response.status}`);
+        const errorText = await response.text();
+        throw new ElevenLabsAPIError(`ElevenLabs API error: ${response.status}`, response.status, errorText);
       }
 
       const audioBlob = await response.blob();
@@ -56,7 +71,10 @@ class ElevenLabsClient {
       
     } catch (error) {
       console.error('ElevenLabs TTS Error:', error);
-      throw new Error('Ses oluşturulamadı');
+      if (error instanceof ElevenLabsAPIError) {
+        throw error; // Re-throw custom API errors
+      }
+      throw new ElevenLabsAPIError('Ses oluşturulamadı', 500, (error as Error).message); // Generic error
     }
   }
 
@@ -126,6 +144,20 @@ class ElevenLabsClient {
 // Singleton instance
 export const elevenlabsClient = new ElevenLabsClient();
 
+// Web Speech API Fallback
+const webSpeechSpeak = (text: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (!('speechSynthesis' in window)) {
+      return reject(new Error('Web Speech API not supported'));
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'tr-TR'; // Türkçe dilini ayarla
+    utterance.onend = () => resolve();
+    utterance.onerror = (event) => reject(new Error(`Web Speech API error: ${event.error}`));
+    speechSynthesis.speak(utterance);
+  });
+};
+
 // Hook for React components
 export function useElevenLabs() {
   const speak = async (
@@ -133,9 +165,19 @@ export function useElevenLabs() {
     type: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence',
     voiceId?: string
   ) => {
+    // Check if sound effects are enabled from localStorage
+    if (typeof window !== 'undefined') {
+      const soundEnabled = localStorage.getItem('sound-effects');
+      if (soundEnabled === 'false') {
+        console.log('Ses efektleri kapalı, ses çalma atlandı.');
+        return; // Do not play sound if disabled
+      }
+    }
+
+    let audioUrl: string | undefined;
     try {
       const settings = elevenlabsClient.getExerciseVoiceSettings();
-      const audioUrl = await elevenlabsClient.textToSpeech(text, {
+      audioUrl = await elevenlabsClient.textToSpeech(text, {
         voiceId,
         ...settings[type]
       });
@@ -145,13 +187,22 @@ export function useElevenLabs() {
       
       // Cleanup
       audio.addEventListener('ended', () => {
-        URL.revokeObjectURL(audioUrl);
+        if (audioUrl) URL.revokeObjectURL(audioUrl);
       });
       
       return audio;
     } catch (error) {
-      console.error('Ses çalma hatası:', error);
-      throw error;
+      console.error('ElevenLabs ses çalma hatası, fallback deneniyor:', error);
+      // Fallback to Web Speech API
+      try {
+        await webSpeechSpeak(text);
+        console.log('Web Speech API ile ses başarıyla çalındı.');
+      } catch (fallbackError) {
+        console.error('Web Speech API fallback hatası:', fallbackError);
+        throw new ElevenLabsPlaybackError('Ses çalınamadı, tüm servisler başarısız oldu.', audioUrl);
+      }
+    } finally {
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
     }
   };
 
@@ -164,4 +215,4 @@ export function useElevenLabs() {
     getVoices,
     client: elevenlabsClient
   };
-} 
+}  

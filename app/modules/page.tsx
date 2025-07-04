@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import ModuleCard from '@/components/ModuleCard';
 import Button from '@/components/Button';
+import ThemeToggle from '@/components/ThemeToggle';
 
 interface Module {
   id: string;
@@ -28,21 +29,32 @@ const modules: Module[] = [
     title: 'Anlam ve Kelime Dağarcığı',
     description: 'Kelime hazinesi ve anlam bilgisi geliştirme',
     icon: '🎨',
-    isActive: false
+    isActive: true,
+    route: '/exercise/vocabulary'
   },
   {
     id: 'social',
     title: 'Sosyal İletişim',
     description: 'İletişim becerileri ve sosyal etkileşim',
     icon: '💬',
-    isActive: false
+    isActive: true,
+    route: '/exercise/social-communication'
   },
   {
     id: 'writing',
     title: 'Yazma ve İfade Etme',
     description: 'Yazma becerileri ve kendini ifade etme',
     icon: '✍️',
-    isActive: false
+    isActive: true,
+    route: '/exercise/writing-expression'
+  },
+  {
+    id: 'basic-concepts',
+    title: 'Temel Kavramlar',
+    description: 'Sayılar, renkler, şekiller gibi temel kavramları öğrenin',
+    icon: '💡',
+    isActive: true,
+    route: '/exercise/basic-concepts'
   }
 ];
 
@@ -64,7 +76,12 @@ export default function ModulesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white dark:from-dark-bg dark:via-dark-surface dark:to-dark-border transition-colors duration-500">
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-4 right-4 z-10">
+        <ThemeToggle size="medium" showLabel={false} />
+      </div>
+      
       {/* Header */}
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-8">
@@ -78,19 +95,19 @@ export default function ModulesPage() {
           
           <button
             onClick={handleParentPanelClick}
-            className="p-3 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            title="Ebeveyn Paneli"
+            className="p-3 rounded-full bg-adaptive shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            aria-label="Ebeveyn Paneli"
           >
-            <div className="text-2xl">⚙️</div>
+            <span role="img" aria-hidden="true" className="text-2xl">⚙️</span>
           </button>
         </div>
 
         {/* Main Content */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-text-color mb-4">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-adaptive mb-4">
             Gelişim Modülleri
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-adaptive-secondary max-w-2xl mx-auto">
             Hangi alanda gelişmek istiyorsun? Aktif modülü seçerek maceraya başla!
           </p>
         </div>
@@ -118,21 +135,21 @@ export default function ModulesPage() {
         </div>
 
         {/* Status Information */}
-        <div className="bg-white bg-opacity-80 rounded-xl p-6 max-w-2xl mx-auto text-center shadow-lg">
-          <h3 className="text-xl font-bold text-text-color mb-3">
+        <div className="bg-adaptive bg-opacity-90 rounded-xl p-6 max-w-2xl mx-auto text-center shadow-lg dark:shadow-xl">
+          <h3 className="text-xl font-bold text-adaptive mb-3">
             🎯 Gelişim Durumun
           </h3>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="bg-success-green bg-opacity-50 rounded-lg p-3">
-              <div className="text-2xl font-bold text-text-color">1</div>
-              <div className="text-sm text-gray-600">Aktif Modül</div>
+              <div className="text-2xl font-bold text-adaptive">1</div>
+              <div className="text-sm text-adaptive-secondary">Aktif Modül</div>
             </div>
             <div className="bg-neutral-gray rounded-lg p-3">
-              <div className="text-2xl font-bold text-gray-500">3</div>
-              <div className="text-sm text-gray-500">Yakında Gelecek</div>
+              <div className="text-2xl font-bold text-adaptive-secondary">3</div>
+              <div className="text-sm text-adaptive-secondary">Yakında Gelecek</div>
             </div>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-adaptive-secondary">
             Okuryazarlık modülünü tamamladıktan sonra yeni maceralara erişim kazanacaksın! 🌟
           </p>
         </div>
@@ -141,7 +158,7 @@ export default function ModulesPage() {
         <div className="mt-8 text-center">
           <div className="inline-flex items-center bg-encourage-orange bg-opacity-30 rounded-full px-6 py-3">
             <div className="text-2xl mr-3">🎙️</div>
-            <p className="text-sm font-medium text-text-color">
+            <p className="text-sm font-medium text-adaptive">
               <strong>İpucu:</strong> Kıvılcım sana yol gösterecek ve her adımda yanında olacak!
             </p>
           </div>

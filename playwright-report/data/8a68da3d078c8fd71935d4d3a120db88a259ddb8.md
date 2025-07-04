@@ -1,0 +1,41 @@
+# Page snapshot
+
+```yaml
+- button "← Ana Sayfa"
+- button "Ebeveyn Paneli"
+- heading "Gelişim Modülleri" [level=1]
+- paragraph: Hangi alanda gelişmek istiyorsun? Aktif modülü seçerek maceraya başla!
+- button "📖 Okuryazarlık Becerileri Harf tanıma, hece oluşturma ve okuma becerilerini geliştirin BAŞLA":
+  - text: 📖
+  - heading "Okuryazarlık Becerileri" [level=3]
+  - paragraph: Harf tanıma, hece oluşturma ve okuma becerilerini geliştirin
+  - button "BAŞLA"
+- button "🎨 Anlam ve Kelime Dağarcığı Kelime hazinesi ve anlam bilgisi geliştirme BAŞLA":
+  - text: 🎨
+  - heading "Anlam ve Kelime Dağarcığı" [level=3]
+  - paragraph: Kelime hazinesi ve anlam bilgisi geliştirme
+  - button "BAŞLA"
+- button "💬 Sosyal İletişim İletişim becerileri ve sosyal etkileşim BAŞLA":
+  - text: 💬
+  - heading "Sosyal İletişim" [level=3]
+  - paragraph: İletişim becerileri ve sosyal etkileşim
+  - button "BAŞLA"
+- button "✍️ Yazma ve İfade Etme Yazma becerileri ve kendini ifade etme BAŞLA":
+  - text: ✍️
+  - heading "Yazma ve İfade Etme" [level=3]
+  - paragraph: Yazma becerileri ve kendini ifade etme
+  - button "BAŞLA"
+- button "💡 Temel Kavramlar Sayılar, renkler, şekiller gibi temel kavramları öğrenin BAŞLA":
+  - text: 💡
+  - heading "Temel Kavramlar" [level=3]
+  - paragraph: Sayılar, renkler, şekiller gibi temel kavramları öğrenin
+  - button "BAŞLA"
+- heading "🎯 Gelişim Durumun" [level=3]
+- text: 1 Aktif Modül 3 Yakında Gelecek
+- paragraph: Okuryazarlık modülünü tamamladıktan sonra yeni maceralara erişim kazanacaksın! 🌟
+- text: 🎙️
+- paragraph:
+  - strong: "İpucu:"
+  - text: Kıvılcım sana yol gösterecek ve her adımda yanında olacak!
+- alert
+```

@@ -8,6 +8,7 @@ interface ButtonProps {
   disabled?: boolean;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
+  ariaLabel?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({ 
@@ -17,7 +18,8 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'medium',
   disabled = false,
   className = '',
-  type = 'button'
+  type = 'button',
+  ariaLabel
 }) => {
   const baseClasses = "font-bold rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none";
   
@@ -40,8 +42,8 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       // Accessibility improvements
-      role="button"
       tabIndex={disabled ? -1 : 0}
+      aria-label={ariaLabel}
     >
       {children}
     </button>

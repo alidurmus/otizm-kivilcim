@@ -14,12 +14,36 @@ interface SensorySettings {
 export default function SensorySettingsPage() {
   const router = useRouter();
   
-  const [settings, setSettings] = useState<SensorySettings>({
-    theme: 'calm',
-    soundEnabled: true,
-    animationEnabled: true,
-    fontFamily: 'nunito'
+  const [settings, setSettings] = useState<SensorySettings>(() => {
+    // Initialize state from localStorage or with default values
+    if (typeof window !== 'undefined') {
+      const savedSoundEnabled = localStorage.getItem('sound-effects');
+      const savedAnimationEnabled = localStorage.getItem('animation-effects');
+      const savedTheme = localStorage.getItem('theme');
+      const savedFontFamily = localStorage.getItem('font-family');
+
+      return {
+        theme: (savedTheme as 'calm' | 'focus' | 'high-contrast') || 'calm',
+        soundEnabled: savedSoundEnabled ? JSON.parse(savedSoundEnabled) : true,
+        animationEnabled: savedAnimationEnabled ? JSON.parse(savedAnimationEnabled) : true,
+        fontFamily: (savedFontFamily as 'nunito' | 'opendyslexic') || 'nunito',
+      };
+    }
+    return {
+      theme: 'calm',
+      soundEnabled: true,
+      animationEnabled: true,
+      fontFamily: 'nunito',
+    };
   });
+
+  // Save settings to localStorage whenever they change
+  React.useEffect(() => {
+    localStorage.setItem('sound-effects', JSON.stringify(settings.soundEnabled));
+    localStorage.setItem('animation-effects', JSON.stringify(settings.animationEnabled));
+    localStorage.setItem('theme', settings.theme);
+    localStorage.setItem('font-family', settings.fontFamily);
+  }, [settings]);
 
   const ToggleSwitch = ({ 
     enabled, 

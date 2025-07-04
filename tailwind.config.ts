@@ -6,6 +6,7 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -16,6 +17,20 @@ const config: Config = {
         'encourage-orange': '#FDBA74',
         'neutral-gray': '#E5E7EB',
         'text-color': '#1F2937',
+        
+        // Dark theme colors
+        'dark-bg': '#0F172A',
+        'dark-surface': '#1E293B',
+        'dark-border': '#475569',
+        'dark-text': '#F8FAFC',
+        'dark-text-secondary': '#CBD5E1',
+        
+        // Theme adaptive colors (CSS variables)
+        'bg-adaptive': 'var(--card-bg)',
+        'bg-adaptive-secondary': 'var(--card-bg-secondary)',
+        'text-adaptive': 'var(--text-primary)',
+        'text-adaptive-secondary': 'var(--text-secondary)',
+        'border-adaptive': 'var(--border-color)',
         
         // CSS değişkenleri için renk tanımları
         background: "hsl(var(--background))",

@@ -187,4 +187,40 @@ test.describe('ElevenLabs Ses Entegrasyonu', () => {
     // Mock olduğu için gerçek request gitmez ama functionality test edilir
     await expect(page.getByRole('button', { name: /🔊 Heceyi Dinle/ })).toBeVisible();
   });
+
+  test('ElevenLabs API çağrısı doğru ses ayarlarını içermeli', async ({ page }) => {
+    let interceptedRequest: any;
+    await page.route('**/v1/text-to-speech/**', async route => {
+      interceptedRequest = route.request();
+      await route.fulfill({
+        status: 200,
+        contentType: 'audio/mpeg',
+        body: Buffer.from('fake-audio-data')
+      });
+    });
+
+    await page.goto('/exercise/literacy');
+    
+    // 'e' harfine tıklayarak ses çalmayı tetikle
+    await page.getByText('e').first().click();
+    
+    // İstek yakalanana kadar bekle
+    await page.waitForFunction(() => window.interceptedRequest !== undefined);
+
+    const requestPayload = interceptedRequest.postDataJSON();
+    
+    // Varsayılan Adam sesi ID'si
+    const expectedVoiceId = 'pNInz6obpgDQGcFmaJgB'; 
+    // lib/elevenlabs.ts dosyasındaki 'letter' tipi için beklenen ayarlar
+    const expectedVoiceSettings = {
+      stability: 0.7,
+      similarity_boost: 0.9,
+      style: 0.3,
+      use_speaker_boost: true
+    };
+
+    expect(interceptedRequest.url()).toContain(expectedVoiceId);
+    expect(requestPayload.voice_settings).toEqual(expectedVoiceSettings);
+    expect(requestPayload.text).toBe('e');
+  });
 }); 

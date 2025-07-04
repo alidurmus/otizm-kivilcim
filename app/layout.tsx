@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 const nunito = Nunito({
   subsets: ["latin", "latin-ext"],
@@ -23,8 +24,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className={nunito.variable}>
-      <body className={`${nunito.className} antialiased bg-calm-blue min-h-screen font-sans text-text-color`}>
-        {children}
+      <body className={`${nunito.className} antialiased min-h-screen font-sans`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

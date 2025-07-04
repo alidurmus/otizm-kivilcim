@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import KivilcimIcon from '@/components/KivilcimIcon';
 import Button from '@/components/Button';
+import ThemeToggle from '@/components/ThemeToggle';
 import { useElevenLabs } from '@/lib/elevenlabs';
 
 export default function HomePage() {
@@ -57,7 +58,12 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white dark:from-dark-bg dark:via-dark-surface dark:to-dark-border transition-colors duration-500">
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-4 right-4 z-10">
+        <ThemeToggle size="medium" showLabel={false} />
+      </div>
+      
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col items-center justify-center min-h-screen text-center space-y-8">
@@ -65,10 +71,10 @@ export default function HomePage() {
           {/* Logo and Title */}
           <div className={`transform transition-all duration-1000 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <KivilcimIcon size={200} animate={false} className="mx-auto mb-6" />
-            <h1 className="text-5xl md:text-6xl font-extrabold text-text-color mb-4">
+            <h1 className="text-5xl md:text-6xl font-extrabold text-adaptive mb-4">
               Kıvılcım
             </h1>
-            <p className="text-xl md:text-2xl font-semibold text-gray-700 mb-2">
+            <p className="text-xl md:text-2xl font-semibold text-adaptive-secondary mb-2">
               Otizm Dostu Öğrenme Platformu
             </p>
           </div>
@@ -103,6 +109,18 @@ export default function HomePage() {
               className="min-w-[200px]"
             >
               👨‍👩‍👧‍👦 Ebeveyn Paneli
+            </Button>
+          </div>
+
+          {/* Admin Panel Link - Only shown in development or for authorized users */}
+          <div className={`transform transition-all duration-1000 delay-600 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <Button 
+              variant="secondary" 
+              size="small"
+              onClick={() => router.push('/admin')}
+              className="text-sm opacity-70 hover:opacity-100"
+            >
+              🛠️ Admin Paneli
             </Button>
           </div>
 
