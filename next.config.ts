@@ -1,6 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Development overlay'lerini test ortamında gizle
+  devIndicators: {
+    appIsrStatus: false,
+    buildActivity: false,
+    buildActivityPosition: 'bottom-right',
+  },
+  
+  // Test ortamında error overlay'leri gizle
+  experimental: {
+    esmExternals: true,
+    // Test ortamında dev overlay'lerini tamamen kapat
+    ...(process.env.NODE_ENV === 'test' && {
+      appDir: true,
+    }),
+  },
+
   // CSP ve güvenlik headers
   async headers() {
     return [
@@ -128,9 +144,6 @@ const nextConfig: NextConfig = {
     return config;
   },
 
-  // SWC minification ve compression
-  swcMinify: true,
-
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -140,9 +153,6 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-
-  // Font optimization
-  optimizeFonts: true,
 
   // Güvenlik için
   poweredByHeader: false,

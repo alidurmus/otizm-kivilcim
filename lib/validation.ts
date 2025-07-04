@@ -7,6 +7,10 @@ export const speechRequestSchema = z.object({
     .max(5000, 'Text must be less than 5000 characters')
     .regex(/^[\w\s\u00C0-\u017F\u0100-\u017F.,!?;:'"()-]+$/, 'Text contains invalid characters'),
   
+  type: z.enum(['letter', 'word', 'sentence', 'celebration'])
+    .default('sentence')
+    .describe('Type of speech for different voice settings'),
+  
   voiceId: z.string()
     .optional()
     .refine((id) => !id || /^[a-zA-Z0-9]+$/.test(id), 'Invalid voice ID format'),

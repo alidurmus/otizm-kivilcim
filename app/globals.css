@@ -29,6 +29,35 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Test ortamında Next.js development overlay'lerini gizle */
+[data-test-env="true"] #__next-build-watcher,
+[data-test-env="true"] #__next-devtools,
+[data-test-env="true"] nextjs-portal,
+[data-test-env="true"] [data-nextjs-errors-overlay],
+[data-test-env="true"] [data-nextjs-build-error],
+[data-test-env="true"] [data-nextjs-compilation-error],
+[data-test-env="true"] [data-nextjs-compile-error],
+[data-test-env="true"] [data-nextjs-dev-tools] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Next.js issue overlay'lerini gizle */
+[data-test-env="true"] button[title*="Open issues overlay"],
+[data-test-env="true"] button[title*="issues"],
+[data-test-env="true"] button[title*="Issue"],
+[data-test-env="true"] button[aria-label*="issue"],
+[data-test-env="true"] *[class*="__nextjs"],
+[data-test-env="true"] *[id*="__nextjs"],
+[data-test-env="true"] button:has(img[alt*="Next.js"]) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* Dark Theme Classes */
 .dark {
   --background: #0F172A;
@@ -51,8 +80,6 @@
   /* Border colors for dark mode */
   --border-color: #475569;
 }
-
-
 
 body {
   background: var(--background);

@@ -61,10 +61,57 @@ const modules: Module[] = [
 export default function ModulesPage() {
   const router = useRouter();
 
-  const handleModuleClick = (module: Module) => {
+  // Calculate module counts
+  const activeModules = modules.filter(module => module.isActive);
+  const upcomingModules = modules.filter(module => !module.isActive);
+
+  const handleModuleClick = async (module: Module) => {
+    console.log('=== MODULE CLICK DEBUG ===');
+    console.log('Module clicked:', module);
+    console.log('Module title:', module.title);
+    console.log('Module route:', module.route);
+    console.log('Module isActive:', module.isActive);
+    console.log('Router object:', router);
+    console.log('Current pathname:', window.location.pathname);
+    
     if (module.isActive && module.route) {
-      router.push(module.route);
+      console.log('✅ Conditions met, attempting navigation...');
+      console.log('Navigating to:', module.route);
+      
+      try {
+        console.log('⏱️ Calling router.push...');
+        const startTime = Date.now();
+        
+        await router.push(module.route);
+        
+        const endTime = Date.now();
+        console.log(`✅ router.push completed in ${endTime - startTime}ms`);
+        
+        // Check if navigation actually happened
+        setTimeout(() => {
+          console.log('🔍 Post-navigation check:');
+          console.log('  Current pathname:', window.location.pathname);
+          console.log('  Expected route:', module.route);
+          const navSuccess = window.location.pathname === module.route;
+          console.log('  Navigation successful:', navSuccess);
+          
+          if (!navSuccess) {
+            console.log('🔄 Router failed, trying hard navigation...');
+            window.location.href = module.route!;
+          }
+        }, 100);
+        
+      } catch (error) {
+        console.error('❌ Router.push failed:', error);
+        console.log('🔄 Trying window.location.href instead...');
+        window.location.href = module.route!;
+      }
+    } else {
+      console.log('❌ Conditions not met:');
+      console.log('  - isActive:', module.isActive);
+      console.log('  - route exists:', !!module.route);
     }
+    console.log('=== END MODULE CLICK DEBUG ===');
   };
 
   const handleParentPanelClick = () => {
@@ -141,16 +188,19 @@ export default function ModulesPage() {
           </h3>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="bg-success-green bg-opacity-50 rounded-lg p-3">
-              <div className="text-2xl font-bold text-adaptive">1</div>
+              <div className="text-2xl font-bold text-adaptive">{activeModules.length}</div>
               <div className="text-sm text-adaptive-secondary">Aktif Modül</div>
             </div>
             <div className="bg-neutral-gray rounded-lg p-3">
-              <div className="text-2xl font-bold text-adaptive-secondary">3</div>
+              <div className="text-2xl font-bold text-adaptive-secondary">{upcomingModules.length}</div>
               <div className="text-sm text-adaptive-secondary">Yakında Gelecek</div>
             </div>
           </div>
           <p className="text-sm text-adaptive-secondary">
-            Okuryazarlık modülünü tamamladıktan sonra yeni maceralara erişim kazanacaksın! 🌟
+            {activeModules.length > 0 
+              ? `${activeModules.length} modül aktif! Herhangi birini seçerek öğrenmeye başlayabilirsin! 🌟`
+              : 'Modülleri tamamladıktan sonra yeni maceralara erişim kazanacaksın! 🌟'
+            }
           </p>
         </div>
 

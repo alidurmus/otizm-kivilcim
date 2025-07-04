@@ -34,7 +34,7 @@ class ElevenLabsClient {
     try {
       const voiceId = options?.voiceId || this.defaultVoiceId;
       
-      // Server-side API route'unu kullan
+      // Server-side API route'unu kullan - type-based approach
       const response = await fetch('/api/speech', {
         method: 'POST',
         headers: {
@@ -42,12 +42,8 @@ class ElevenLabsClient {
         },
         body: JSON.stringify({
           text: text,
+          type: 'sentence', // Default to sentence for backwards compatibility
           voiceId: voiceId,
-          model: options?.model || 'eleven_multilingual_v2',
-          stability: options?.stability || 0.5,
-          similarityBoost: options?.similarityBoost || 0.8,
-          style: options?.style || 0.5,
-          useSpeakerBoost: options?.useSpeakerBoost || true,
         }),
       });
 
@@ -141,6 +137,122 @@ class ElevenLabsClient {
       }
     };
   }
+
+  /**
+   * Admin test sayfası için gelişmiş ses testi
+   */
+  async testVoice(
+    text: string,
+    voiceId: string,
+    type: 'letter' | 'word' | 'sentence' | 'celebration',
+    customSettings?: {
+      stability?: number;
+      similarityBoost?: number;
+      style?: number;
+      useSpeakerBoost?: boolean;
+    }
+  ): Promise<VoiceTestResult> {
+    const startTime = Date.now();
+    const voices = await this.getChildFriendlyVoices();
+    const voice = voices.find(v => v.id === voiceId);
+    
+    const testResult: VoiceTestResult = {
+      id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: new Date(),
+      voiceId,
+      voiceName: voice?.name || 'Unknown',
+      text,
+      type,
+      success: false,
+      settings: {
+        stability: customSettings?.stability ?? this.getExerciseVoiceSettings()[type].stability,
+        similarityBoost: customSettings?.similarityBoost ?? this.getExerciseVoiceSettings()[type].similarityBoost,
+        style: customSettings?.style ?? this.getExerciseVoiceSettings()[type].style,
+        useSpeakerBoost: customSettings?.useSpeakerBoost ?? this.getExerciseVoiceSettings()[type].useSpeakerBoost,
+      }
+    };
+
+    try {
+      const audioUrl = await this.textToSpeech(text, {
+        voiceId,
+        ...testResult.settings
+      });
+      
+      // Test audio playback
+      const audio = new Audio(audioUrl);
+      await audio.play();
+      
+      const endTime = Date.now();
+      testResult.success = true;
+      testResult.duration = endTime - startTime;
+      
+      // Cleanup
+      audio.addEventListener('ended', () => {
+        URL.revokeObjectURL(audioUrl);
+      });
+      
+    } catch (error) {
+      testResult.success = false;
+      testResult.error = error instanceof Error ? error.message : 'Unknown error';
+      testResult.duration = Date.now() - startTime;
+    }
+
+    return testResult;
+  }
+
+  /**
+   * API durumu kontrolü
+   */
+  async getApiStatus(): Promise<ElevenLabsStatus> {
+    const status: ElevenLabsStatus = {
+      apiKeyConfigured: false,
+    };
+
+    try {
+      // Basit bir API çağrısı yaparak durumu kontrol et
+      const response = await fetch('/api/speech');
+      status.apiKeyConfigured = response.ok;
+      status.lastTestTime = new Date();
+      status.lastTestSuccess = response.ok;
+      
+      // Rate limit bilgisi varsa header'dan al
+      const rateLimitHeader = response.headers.get('x-ratelimit-remaining');
+      if (rateLimitHeader) {
+        status.rateLimitRemaining = parseInt(rateLimitHeader);
+      }
+      
+    } catch (error) {
+      status.apiKeyConfigured = false;
+      status.lastTestTime = new Date();
+      status.lastTestSuccess = false;
+    }
+
+    return status;
+  }
+
+  /**
+   * Test için önceden tanımlanmış metinler
+   */
+  getTestTexts() {
+    return {
+      letter: ['a', 'e', 'i', 'o', 'u', 'b', 'c', 'd', 'f', 'g'],
+      word: ['el', 'at', 'ev', 'ok', 'su', 'bal', 'kar', 'güneş', 'çiçek', 'kitap'],
+      sentence: [
+        'Bu hece "el" oluyor.',
+        'Harfleri birleştirerek kelime oluşturuyoruz.',
+        'Çok güzel okuyorsun!',
+        'Şimdi bir sonraki harfe geçelim.',
+        'Bu egzersizi başarıyla tamamladın.'
+      ],
+      celebration: [
+        'Harikasın! Çok güzel yaptın!',
+        'Bravo! Mükemmel bir iş çıkardın!',
+        'Süpersin! Devam et böyle!',
+        'Tebrikler! Bu çok başarılıydı!',
+        'Muhteşem! Sen gerçek bir şampiyon!'
+      ]
+    };
+  }
 }
 
 // Singleton instance
@@ -159,6 +271,39 @@ const webSpeechSpeak = (text: string): Promise<void> => {
     speechSynthesis.speak(utterance);
   });
 };
+
+// Admin test sayfası için ek türler
+export interface VoiceTestResult {
+  id: string;
+  timestamp: Date;
+  voiceId: string;
+  voiceName: string;
+  text: string;
+  type: 'letter' | 'word' | 'sentence' | 'celebration';
+  success: boolean;
+  error?: string;
+  duration?: number;
+  settings: {
+    stability: number;
+    similarityBoost: number;
+    style: number;
+    useSpeakerBoost: boolean;
+  };
+}
+
+export interface VoiceInfo {
+  id: string;
+  name: string;
+  description: string;
+  language: string;
+}
+
+export interface ElevenLabsStatus {
+  apiKeyConfigured: boolean;
+  lastTestTime?: Date;
+  lastTestSuccess?: boolean;
+  rateLimitRemaining?: number;
+}
 
 // Hook for React components
 export function useElevenLabs() {
@@ -212,9 +357,34 @@ export function useElevenLabs() {
     return await elevenlabsClient.getChildFriendlyVoices();
   };
 
+  const testVoice = async (
+    text: string,
+    voiceId: string,
+    type: 'letter' | 'word' | 'sentence' | 'celebration',
+    customSettings?: {
+      stability?: number;
+      similarityBoost?: number;
+      style?: number;
+      useSpeakerBoost?: boolean;
+    }
+  ) => {
+    return await elevenlabsClient.testVoice(text, voiceId, type, customSettings);
+  };
+
+  const getApiStatus = async () => {
+    return await elevenlabsClient.getApiStatus();
+  };
+
+  const getTestTexts = () => {
+    return elevenlabsClient.getTestTexts();
+  };
+
   return {
     speak,
     getVoices,
+    testVoice,
+    getApiStatus,
+    getTestTexts,
     client: elevenlabsClient
   };
 }  

@@ -32,6 +32,7 @@
 - **🎨 Duyusal Kontrol Paneli:** Her çocuğun duyusal profiline göre tamamen kişiselleştirilebilir arayüz (tema, ses, animasyon, dokunsal geri bildirim).
 - **📊 Ebeveyn Paneli:** Çocuğun gelişimini takip etmek için anlaşılır grafikler, özet kartlar ve motive edici geri bildirimler.
 - **🎮 Oyunlaştırma ve Pekiştirme:** Öğrenme sürecini eğlenceli kılan, [Uygulamalı Davranış Analizi (ABA)](https://tohumotizm.org.tr/tedavi-yontemleri/uygulamali-davranis-analizi/) prensiplerine dayalı anlık ödül sistemi.
+- **🔒 Güvenlik ve Gizlilik:** Kapsamlı Firestore güvenlik kuralları, server-side API proxy, ve KVKK uyumlu veri koruma.
 - **♿ Erişilebilirlik:** WCAG 2.1 AA standartlarına uygun, erişilebilir bir tasarım.
 
 ## 🚀 Başlarken (Geliştiriciler İçin)
@@ -57,21 +58,46 @@ pnpm install
 
 ### 3. Ortam Değişkenlerini Ayarlayın
 
-Projenin kök dizininde `.env.local` adında bir dosya oluşturun. Bu dosyaya, ses hizmetleri için gerekli olan API anahtarınızı ekleyin.
+Projenin kök dizininde `.env.local` adında bir dosya oluşturun:
 
 ```env
 # .env.local
 
-# ElevenLabs API anahtarınız
-NEXT_PUBLIC_ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
+# ElevenLabs API - Server-side only (NEXT_PUBLIC_ prefix yok!)
+ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
+
+# Development ayarları
+NODE_ENV=development
+
+# API Rate Limiting (isteğe bağlı, varsayılan değerler var)
+API_RATE_LIMIT_MAX=60
+API_RATE_LIMIT_WINDOW=60000
 
 # Firebase projenizin yapılandırma bilgileri (gerekirse)
 # NEXT_PUBLIC_FIREBASE_...
 ```
 
-> **🔒 Güvenlik Notu:** `NEXT_PUBLIC_` öneki, API anahtarını istemci tarafında (tarayıcıda) görünür kılar. Bu, geliştirme için uygundur ancak üretim ortamı için güvenli değildir. Üretim ortamında anahtarların bir sunucu tarafı proxy üzerinden yönetilmesi hedeflenmektedir.
+> **🔒 Güvenlik Notu:** API anahtarı artık server-side'da güvenli bir şekilde saklanıyor. `NEXT_PUBLIC_` öneki kullanılmıyor, bu da anahtarın tarayıcıda görünmesini engelliyor. Ses istekleri `/api/speech` endpoint'i üzerinden proxy edilir.
 
-### 4. Geliştirme Sunucusunu Başlatın
+### 4. Firebase Projesini Kurun
+
+Firebase konsolunda yeni bir proje oluşturun ve Firestore ile Authentication'ı etkinleştirin:
+
+```bash
+# Firebase CLI'yi yükleyin (global)
+npm install -g firebase-tools
+
+# Firebase'e giriş yapın
+firebase login
+
+# Projenizi Firebase projesiyle bağlayın
+firebase use <your-project-id>
+
+# Firestore güvenlik kurallarını deploy edin
+node scripts/deploy-firestore.js
+```
+
+### 5. Geliştirme Sunucusunu Başlatın
 
 ```bash
 npm run dev
@@ -82,6 +108,27 @@ pnpm dev
 ```
 
 Tarayıcınızda [http://localhost:3000](http://localhost:3000) adresini açarak uygulamayı görüntüleyebilirsiniz.
+
+## 🔐 Güvenlik Özellikleri
+
+Kıvılcım, çocuk verilerinin korunması için kapsamlı güvenlik önlemleri içerir:
+
+### Firestore Güvenlik Kuralları
+- **Kullanıcı İzolasyonu:** Her kullanıcı yalnızca kendi verilerine erişebilir
+- **Kimlik Doğrulama:** Tüm işlemler için Firebase Authentication gerekli
+- **Veri Doğrulama:** Tüm yazma işlemlerinde otomatik veri doğrulama
+- **İzin Kontrolü:** Granüler izin sistemi ile detaylı erişim kontrolü
+
+### API Güvenliği
+- **Server-Side Proxy:** API anahtarları sunucu tarafında güvenli tutulur
+- **Rate Limiting:** IP başına dakikada 60 istek sınırı
+- **Input Validation:** Zod schema ile tüm girdi doğrulaması
+- **CORS Koruması:** Uygun CORS politikaları
+
+### CSP ve Headers
+- **Content Security Policy:** XSS saldırılarına karşı koruma
+- **Security Headers:** X-Frame-Options, X-Content-Type-Options vb.
+- **HTTPS Zorunluluğu:** Tüm iletişim şifreli kanallar üzerinden
 
 ## 🛠️ Teknolojiler
 

@@ -20,7 +20,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       {label && (
         <div className="flex justify-between text-sm font-semibold text-text-color mb-2">
           <span>{label}</span>
-          <span>{current}/{total}</span>
+          <span data-testid="progress-text">{current}/{total}</span>
         </div>
       )}
       

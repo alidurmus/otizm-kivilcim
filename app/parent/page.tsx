@@ -30,15 +30,21 @@ const mockProgressData: ProgressData[] = [
 const mockAchievements: Achievement[] = [
   {
     title: 'İlk Hece',
-    description: 'İlk hecesini başarıyla oluşturdu!',
+    description: 'İlk hece oluşturuldu!',
     icon: '🎯',
-    date: 'Bugün'
+    date: '2 saat önce'
   },
   {
     title: 'Süreklilik',
-    description: '3 gün üst üste egzersiz yaptı',
+    description: '5 doğru cevap üst üste',
     icon: '⭐',
     date: 'Dün'
+  },
+  {
+    title: 'Odaklanma',
+    description: '10 dakika odaklanma',
+    icon: '🎯',
+    date: '3 gün önce'
   }
 ];
 
@@ -53,33 +59,42 @@ export default function ParentPanelPage() {
   const renderOverview = () => (
     <div className="space-y-6">
       {/* Quick Stats */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl p-6 text-center shadow-lg">
-          <div className="text-3xl font-bold text-focus-blue mb-2">3/5</div>
-          <div className="text-sm text-gray-600">Tamamlanan Egzersiz</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <div 
+          data-testid="stat-exercises"
+          className="bg-white rounded-xl p-4 md:p-6 text-center shadow-lg border border-gray-100"
+        >
+          <div className="text-2xl md:text-3xl font-bold text-focus-blue mb-2">3/5</div>
+          <div className="text-xs md:text-sm text-gray-600">Tamamlanan Egzersizler</div>
         </div>
         
-        <div className="bg-white rounded-xl p-6 text-center shadow-lg">
-          <div className="text-3xl font-bold text-success-green mb-2">7</div>
-          <div className="text-sm text-gray-600">Toplam Çalışma Günü</div>
+        <div 
+          data-testid="stat-success"
+          className="bg-white rounded-xl p-4 md:p-6 text-center shadow-lg border border-gray-100"
+        >
+          <div className="text-2xl md:text-3xl font-bold text-success-green mb-2">85%</div>
+          <div className="text-xs md:text-sm text-gray-600">Başarı Oranı</div>
         </div>
         
-        <div className="bg-white rounded-xl p-6 text-center shadow-lg">
-          <div className="text-3xl font-bold text-encourage-orange mb-2">85%</div>
-          <div className="text-sm text-gray-600">Başarı Oranı</div>
+        <div 
+          data-testid="stat-activity"
+          className="bg-white rounded-xl p-4 md:p-6 text-center shadow-lg border border-gray-100"
+        >
+          <div className="text-2xl md:text-3xl font-bold text-encourage-orange mb-2">4 gün</div>
+          <div className="text-xs md:text-sm text-gray-600">Haftalık Aktivite</div>
         </div>
       </div>
 
       {/* Recent Achievements */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-4">🏆 Son Başarılar</h3>
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-lg">
+        <h3 className="text-lg md:text-xl font-bold text-text-color mb-4">🏆 Son Başarılar</h3>
         <div className="space-y-3">
           {mockAchievements.map((achievement, index) => (
             <div key={index} className="flex items-center space-x-4 p-3 bg-success-green bg-opacity-10 rounded-lg">
-              <div className="text-2xl">{achievement.icon}</div>
+              <div className="text-xl md:text-2xl">{achievement.icon}</div>
               <div className="flex-1">
-                <div className="font-semibold text-text-color">{achievement.title}</div>
-                <div className="text-sm text-gray-600">{achievement.description}</div>
+                <div className="text-sm md:text-base font-semibold text-text-color">{achievement.title}</div>
+                <div className="text-xs md:text-sm text-gray-600">{achievement.description}</div>
               </div>
               <div className="text-xs text-gray-500">{achievement.date}</div>
             </div>
@@ -88,12 +103,12 @@ export default function ParentPanelPage() {
       </div>
 
       {/* New Adventures */}
-      <div className="bg-gradient-to-r from-encourage-orange to-yellow-300 bg-opacity-30 rounded-xl p-6">
-        <h3 className="text-xl font-bold text-text-color mb-4">🚀 Yeni Maceralar</h3>
-        <p className="text-gray-700 mb-4">
+      <div className="bg-gradient-to-r from-encourage-orange to-yellow-300 bg-opacity-30 rounded-xl p-4 md:p-6">
+        <h3 className="text-lg md:text-xl font-bold text-text-color mb-4">🚀 Yeni Maceralar</h3>
+        <p className="text-sm md:text-base text-gray-700 mb-4">
           Çocuğunuz okuryazarlık modülünde harika ilerliyor! Yakında yeni modüller açılacak.
         </p>
-        <div className="flex space-x-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="bg-white bg-opacity-50 rounded-lg p-3 text-center flex-1">
             <div className="text-lg font-bold">📚</div>
             <div className="text-xs">Kelime Dağarcığı</div>
@@ -114,6 +129,7 @@ export default function ParentPanelPage() {
       {/* Weekly Activity Chart */}
       <div className="bg-white rounded-xl p-6 shadow-lg">
         <h3 className="text-xl font-bold text-text-color mb-6">📊 Haftalık Aktivite</h3>
+        <p className="text-gray-600 mb-4">Son 7 günün aktivite grafiği</p>
         <div className="flex justify-between items-end h-32 space-x-2">
           {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((day, index) => {
             const heights = [60, 80, 45, 90, 70, 30, 55];
@@ -132,12 +148,12 @@ export default function ParentPanelPage() {
 
       {/* Module Progress */}
       <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-4">📈 Modül İlerlemesi</h3>
+        <h3 className="text-xl font-bold text-text-color mb-4">📚 Modül İlerlemesi</h3>
         {mockProgressData.map((data, index) => (
           <div key={index} className="mb-4">
             <div className="flex justify-between mb-2">
               <span className="font-semibold">{data.module}</span>
-              <span className="text-sm text-gray-600">{data.completed}/{data.total}</span>
+              <span className="text-sm text-gray-600">Tamamlandı: {data.completed}/{data.total}</span>
             </div>
             <div className="w-full bg-neutral-gray rounded-full h-3">
               <div 
@@ -156,7 +172,7 @@ export default function ParentPanelPage() {
     <div className="space-y-6">
       {/* Sensory Control */}
       <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-4">🔧 Duyusal Kontrol Paneli</h3>
+        <h3 className="text-xl font-bold text-text-color mb-4">🎛️ Duyusal Kontroller</h3>
         <p className="text-gray-600 mb-4">
           Çocuğunuzun duyusal ihtiyaçlarına göre uygulamayı kişiselleştirin.
         </p>
@@ -175,19 +191,21 @@ export default function ParentPanelPage() {
         <div className="space-y-4">
           <div className="flex justify-between items-center py-3 border-b border-gray-100">
             <span>Bildirimler</span>
-            <button className="w-12 h-6 bg-focus-blue rounded-full relative">
+            <button 
+              role="switch" 
+              aria-checked="true"
+              className="w-12 h-6 bg-focus-blue rounded-full relative"
+            >
               <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
             </button>
           </div>
           <div className="flex justify-between items-center py-3 border-b border-gray-100">
-            <span>Günlük Rapor</span>
-            <button className="w-12 h-6 bg-focus-blue rounded-full relative">
-              <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
-            </button>
-          </div>
-          <div className="flex justify-between items-center py-3">
-            <span>Veri Paylaşımı</span>
-            <button className="w-12 h-6 bg-gray-300 rounded-full relative">
+            <span>Gizlilik Modu</span>
+            <button 
+              role="switch" 
+              aria-checked="false"
+              className="w-12 h-6 bg-gray-300 rounded-full relative"
+            >
               <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
             </button>
           </div>

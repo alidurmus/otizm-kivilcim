@@ -25,6 +25,11 @@ export default defineConfig({
     
     /* Take screenshot on failure */
     screenshot: 'only-on-failure',
+    
+    /* Add CSS to hide Next.js dev overlays */
+    extraHTTPHeaders: {
+      'X-Test-Environment': 'true',
+    },
   },
 
   /* Configure projects for major browsers */
@@ -57,8 +62,9 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
+    command: 'npm run dev:test',
     url: 'http://localhost:3003',
     reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
   },
 }); 

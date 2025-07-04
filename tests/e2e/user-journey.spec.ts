@@ -38,12 +38,12 @@ test.describe('Kıvılcım Tam Kullanıcı Yolculuğu', () => {
     await expect(page).toHaveURL('/parent');
     await expect(page.getByRole('heading', { name: '👨‍👩‍👧‍👦 Ebeveyn Paneli' })).toBeVisible();
     
-    // 7. İlerleme sekmesini kontrol et
-    await page.getByRole('button', { name: '📈 İlerleme' }).click();
+    // 7. İlerleme sekmesini kontrol et - responsive tasarım için güncellendi
+    await page.locator('button').filter({ hasText: /📈/ }).click();
     await expect(page.getByRole('heading', { name: '📊 Haftalık Aktivite' })).toBeVisible();
     
-    // 8. Duyusal ayarları aç
-    await page.getByRole('button', { name: '⚙️ Ayarlar' }).click();
+    // 8. Duyusal ayarları aç - responsive tasarım için güncellendi
+    await page.locator('button').filter({ hasText: /⚙️/ }).click();
     await page.getByRole('button', { name: 'Duyusal Ayarları Aç' }).click();
     await expect(page).toHaveURL('/sensory-settings');
     
@@ -65,11 +65,11 @@ test.describe('Kıvılcım Tam Kullanıcı Yolculuğu', () => {
     await page.getByRole('button', { name: '👨‍👩‍👧‍👦 Ebeveyn Paneli' }).click();
     await expect(page).toHaveURL('/parent');
     
-    // Tüm tab'ları dolaş
-    await page.getByRole('button', { name: '📈 İlerleme' }).click();
+    // Tüm tab'ları dolaş - responsive tasarım için güncellendi
+    await page.locator('button').filter({ hasText: /📈/ }).click();
     await expect(page.getByRole('heading', { name: '📊 Haftalık Aktivite' })).toBeVisible();
     
-    await page.getByRole('button', { name: '⚙️ Ayarlar' }).click();
+    await page.locator('button').filter({ hasText: /⚙️/ }).click();
     await expect(page.getByRole('heading', { name: '🎛️ Duyusal Kontroller' })).toBeVisible();
     
     // Toggle ayarlarını değiştir

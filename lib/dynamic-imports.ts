@@ -1,123 +1,205 @@
-import dynamic from 'next/dynamic'
-import { ComponentType } from 'react'
+import dynamic from 'next/dynamic';
+import { ComponentType } from 'react';
+import LazyLoadWrapper, { ComponentSkeleton } from '@/components/LazyLoadWrapper';
 
-// Loading component for better UX during dynamic imports
-export const LoadingSpinner = () => (
-  <div className="flex items-center justify-center p-8">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-focus-blue"></div>
-    <span className="ml-2 text-text-color">Yükleniyor...</span>
-  </div>
-)
-
-// Error boundary for dynamic imports
-export const DynamicError = ({ error, retry }: { error?: Error; retry?: () => void }) => (
-  <div className="flex flex-col items-center justify-center p-8 text-center">
-    <div className="text-error-red mb-4">
-      <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    </div>
-    <h3 className="text-lg font-semibold text-text-color mb-2">Yükleme Hatası</h3>
-    <p className="text-text-secondary mb-4">Bu bölüm yüklenirken bir hata oluştu.</p>
-    {retry && (
-      <button
-        onClick={retry}
-        className="px-4 py-2 bg-focus-blue text-white rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        Tekrar Dene
-      </button>
-    )}
-  </div>
-)
-
-// Utility function to create dynamic imports with consistent loading states
-export function createDynamicImport<T extends ComponentType<any>>(
-  importFn: () => Promise<{ default: T }>,
-  options?: {
-    loading?: ComponentType
-    error?: ComponentType<{ error?: Error; retry?: () => void }>
-    ssr?: boolean
-  }
-) {
-  return dynamic(importFn, {
-    loading: options?.loading || LoadingSpinner,
-    ssr: options?.ssr ?? true,
-  })
+// Type-safe dynamic import utility with loading states
+interface DynamicImportOptions {
+  fallback?: ComponentType;
+  errorBoundaryProps?: {
+    exerciseName?: string;
+    onBackToMenu?: () => void;
+    onRetry?: () => void;
+  };
+  ssr?: boolean;
 }
 
-// Pre-defined dynamic imports for major modules
-export const DynamicModuleCard = createDynamicImport(
-  () => import('../components/ModuleCard'),
-  { ssr: true }
-)
+/**
+ * Creates a dynamically imported component with lazy loading
+ * @param importFn - Function that returns the dynamic import
+ * @param options - Configuration options for loading behavior
+ */
+export function createDynamicComponent<T = any>(
+  importFn: () => Promise<{ default: ComponentType<T> }>,
+  options: DynamicImportOptions = {}
+) {
+  const {
+    fallback = ComponentSkeleton,
+    errorBoundaryProps = {},
+    ssr = false
+  } = options;
 
-export const DynamicProgressBar = createDynamicImport(
-  () => import('../components/ProgressBar'),
-  { ssr: false } // Progress bars are interactive, can load client-side
-)
+  return dynamic(importFn, {
+    loading: fallback,
+    ssr,
+  });
+}
 
-export const DynamicThemeToggle = createDynamicImport(
-  () => import('../components/ThemeToggle'),
-  { ssr: false } // Theme toggle is interactive, can load client-side
-)
-
-// Dynamic imports for larger sections that aren't immediately needed
-export const DynamicElevenLabsIntegration = createDynamicImport(
-  () => import('../lib/elevenlabs'),
-  { ssr: false } // Audio functionality is client-side only
-)
-
-// Route-based dynamic imports for better code splitting
-export const DynamicExercisePage = createDynamicImport(
-  () => import('../app/exercise/page'),
-  { ssr: true }
-)
-
-export const DynamicParentPanel = createDynamicImport(
-  () => import('../app/parent/page'),
-  { ssr: true }
-)
-
-export const DynamicSensorySettings = createDynamicImport(
-  () => import('../app/sensory-settings/page'),
-  { ssr: true }
-)
-
-export const DynamicAdminPanel = createDynamicImport(
-  () => import('../app/admin/page'),
-  { ssr: true }
-)
-
-// Preload important routes for better performance
-export const preloadRoutes = () => {
-  if (typeof window !== 'undefined') {
-    // Preload critical routes after initial page load
-    const criticalRoutes = [
-      () => import('../app/exercise/page'),
-      () => import('../components/ModuleCard'),
-    ]
-    
-    // Use requestIdleCallback for better performance
-    if ('requestIdleCallback' in window) {
-      criticalRoutes.forEach(route => {
-        window.requestIdleCallback(() => route())
-      })
-    } else {
-      // Fallback for browsers without requestIdleCallback
-      setTimeout(() => {
-        criticalRoutes.forEach(route => route())
-      }, 1000)
+/**
+ * Lazy-loaded exercise pages with error boundaries
+ */
+export const LazyLiteracyPage = createDynamicComponent(
+  () => import('@/app/exercise/literacy/page'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Okuryazarlık Modülü',
+      onBackToMenu: () => window.location.href = '/modules'
     }
   }
+);
+
+export const LazyVocabularyPage = createDynamicComponent(
+  () => import('@/app/exercise/vocabulary/page'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Anlam ve Kelime Dağarcığı',
+      onBackToMenu: () => window.location.href = '/modules'
+    }
+  }
+);
+
+export const LazySocialPage = createDynamicComponent(
+  () => import('@/app/exercise/social-communication/page'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Sosyal İletişim',
+      onBackToMenu: () => window.location.href = '/modules'
+    }
+  }
+);
+
+export const LazyWritingPage = createDynamicComponent(
+  () => import('@/app/exercise/writing-expression/page'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Yazma ve İfade',
+      onBackToMenu: () => window.location.href = '/modules'
+    }
+  }
+);
+
+export const LazyBasicConceptsPage = createDynamicComponent(
+  () => import('@/app/exercise/basic-concepts/page'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Temel Kavramlar',
+      onBackToMenu: () => window.location.href = '/modules'
+    }
+  }
+);
+
+/**
+ * Lazy-loaded admin and parent features
+ */
+export const LazyParentPage = createDynamicComponent(
+  () => import('@/app/parent/page'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Ebeveyn Paneli',
+      onBackToMenu: () => window.location.href = '/'
+    }
+  }
+);
+
+export const LazyAdminPage = createDynamicComponent(
+  () => import('@/app/admin/page'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Admin Paneli',
+      onBackToMenu: () => window.location.href = '/'
+    }
+  }
+);
+
+export const LazySensorySettingsPage = createDynamicComponent(
+  () => import('@/app/sensory-settings/page'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Duyusal Ayarlar',
+      onBackToMenu: () => window.location.href = '/'
+    }
+  }
+);
+
+/**
+ * Lazy-loaded exercise components (for vocabulary module)
+ */
+export const LazyWordMatchingGame = createDynamicComponent(
+  () => import('@/app/exercise/vocabulary/WordMatchingGame'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Kelime Eşleştirme Oyunu'
+    }
+  }
+);
+
+export const LazyMemoryGame = createDynamicComponent(
+  () => import('@/app/exercise/vocabulary/HafizaOyunu'),
+  {
+    errorBoundaryProps: {
+      exerciseName: 'Hafıza Oyunu'
+    }
+  }
+);
+
+/**
+ * Utility function for preloading components
+ * Call this to preload components before they're needed
+ */
+export function preloadComponents() {
+  // Preload the most commonly used components
+  const importPromises = [
+    import('@/app/exercise/literacy/page'),
+    import('@/app/exercise/vocabulary/page'),
+    import('@/app/parent/page'),
+  ];
+
+  // Return promise that resolves when all components are preloaded
+  return Promise.allSettled(importPromises);
 }
 
-// Progressive enhancement - load features based on user interaction
-export const loadFeatureOnDemand = (featureName: string) => {
-  const featureLoaders = {
-    'audio': () => import('../lib/elevenlabs'),
-    'admin': () => import('../app/admin/page'),
-    'analytics': () => import('../lib/analytics'),
-  }
+/**
+ * Preload component based on user interaction
+ * Useful for link hover states
+ */
+export function preloadComponentOnHover(
+  importFn: () => Promise<any>,
+  delay: number = 100
+) {
+  let timeoutId: NodeJS.Timeout;
+  let hasPreloaded = false;
+
+  return {
+    onMouseEnter: () => {
+      if (hasPreloaded) return;
+      
+      timeoutId = setTimeout(() => {
+        importFn().then(() => {
+          hasPreloaded = true;
+        });
+      }, delay);
+    },
+    onMouseLeave: () => {
+      clearTimeout(timeoutId);
+    }
+  };
+}
+
+// Performance monitoring for dynamic imports
+export function trackComponentLoadTime(componentName: string) {
+  const startTime = performance.now();
   
-  return featureLoaders[featureName as keyof typeof featureLoaders]?.()
+  return () => {
+    const endTime = performance.now();
+    const loadTime = endTime - startTime;
+    
+    // Log to console in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🚀 ${componentName} loaded in ${loadTime.toFixed(2)}ms`);
+    }
+    
+    // In production, you could send this to your analytics service
+    if (process.env.NODE_ENV === 'production') {
+      // Example: sendAnalytics('component_load_time', { component: componentName, time: loadTime });
+    }
+  };
 } 

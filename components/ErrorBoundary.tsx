@@ -142,4 +142,104 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
+// Specialized error boundary for exercises
+interface ExerciseErrorBoundaryProps {
+  children: ReactNode;
+  exerciseName?: string;
+  onBackToMenu?: () => void;
+  onRetry?: () => void;
+}
+
+interface ExerciseErrorState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+export class ExerciseErrorBoundary extends Component<ExerciseErrorBoundaryProps, ExerciseErrorState> {
+  constructor(props: ExerciseErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ExerciseErrorState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error(`Exercise Error (${this.props.exerciseName}):`, error, errorInfo);
+    
+    // Log specific exercise errors
+    if (process.env.NODE_ENV === 'production') {
+      // Send to analytics: exercise failure
+      // analytics.track('exercise_error', {
+      //   exerciseName: this.props.exerciseName,
+      //   error: error.message,
+      //   stack: error.stack
+      // });
+    }
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+    if (this.props.onRetry) {
+      this.props.onRetry();
+    }
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="max-w-2xl mx-auto p-6 text-center">
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <div className="w-20 h-20 mx-auto mb-6 bg-yellow-100 rounded-full flex items-center justify-center">
+              <span className="text-3xl">😅</span>
+            </div>
+            
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Egzersizde Bir Sorun Oluştu
+            </h2>
+            
+            <p className="text-gray-600 mb-6">
+              {this.props.exerciseName} egzersizinde beklenmeyen bir durum meydana geldi. 
+              Merak etme, tekrar deneyebilirsin!
+            </p>
+            
+            <div className="space-y-3">
+              <button
+                onClick={this.handleRetry}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-150 ease-in-out"
+              >
+                🔄 Egzersizi Tekrar Başlat
+              </button>
+              
+              {this.props.onBackToMenu && (
+                <button
+                  onClick={this.props.onBackToMenu}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-150 ease-in-out"
+                >
+                  📚 Ana Menüye Dön
+                </button>
+              )}
+            </div>
+
+            {process.env.NODE_ENV === 'development' && this.state.error && (
+              <details className="mt-6 text-left">
+                <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700">
+                  Geliştirici Bilgisi
+                </summary>
+                <pre className="mt-2 p-3 bg-gray-100 rounded text-xs text-gray-800 overflow-auto max-h-32">
+                  {this.state.error.toString()}
+                  {this.state.error.stack && `\n\n${this.state.error.stack}`}
+                </pre>
+              </details>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export default ErrorBoundary; 

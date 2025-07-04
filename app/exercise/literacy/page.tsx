@@ -349,6 +349,7 @@ export default function LiteracyExercisePage() {
               {/* Drop Zones */}
               <div className="flex justify-center space-x-4">
                 <div
+                  data-testid="drop-zone-1"
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => handleDrop('first')}
                   className="w-16 h-16 border-4 border-dashed border-focus-blue rounded-xl flex items-center justify-center text-2xl font-bold bg-adaptive shadow-inner text-adaptive"
@@ -356,6 +357,7 @@ export default function LiteracyExercisePage() {
                   {userSyllable[0] || '?'}
                 </div>
                 <div
+                  data-testid="drop-zone-2"
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => handleDrop('second')}
                   className="w-16 h-16 border-4 border-dashed border-focus-blue rounded-xl flex items-center justify-center text-2xl font-bold bg-adaptive shadow-inner text-adaptive"
@@ -372,7 +374,7 @@ export default function LiteracyExercisePage() {
                   onClick={playAudioFeedback}
                   disabled={isPlaying}
                 >
-                  {isPlaying ? '🔊 Oynatılıyor...' : '🔊 Heceyi Dinle'}
+                  {isPlaying ? '🔊 Oynatılıyor...' : '🔊 Dinle'}
                 </Button>
                 
                 {speechSupported && (
@@ -401,9 +403,12 @@ export default function LiteracyExercisePage() {
 
           {/* Feedback Section */}
           {showFeedback && (
-            <div className={`mt-6 p-6 rounded-xl text-center ${
-              isCorrect ? 'bg-success-green bg-opacity-30' : 'bg-encourage-orange bg-opacity-30'
-            }`}>
+            <div 
+              data-testid={isCorrect ? "success-message" : "error-message"}
+              className={`mt-6 p-6 rounded-xl text-center ${
+                isCorrect ? 'bg-success-green bg-opacity-30' : 'bg-encourage-orange bg-opacity-30'
+              }`}
+            >
               <div className="text-4xl mb-3">
                 {isCorrect ? '🎉' : '🤔'}
               </div>

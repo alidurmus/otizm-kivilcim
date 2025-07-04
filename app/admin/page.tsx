@@ -105,7 +105,7 @@ export default function AdminPage() {
       {/* Quick Actions */}
       <div className="bg-white rounded-xl shadow-lg p-6">
         <h3 className="text-xl font-bold text-text-color mb-4">🚀 Hızlı İşlemler</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Button variant="primary" size="medium" onClick={() => setActiveTab('users')}>
             👥 Kullanıcıları Görüntüle
           </Button>
@@ -115,6 +115,12 @@ export default function AdminPage() {
           <Button variant="success" size="medium" onClick={() => setActiveTab('logs')}>
             📋 Sistem Logları
           </Button>
+          <a 
+            href="/admin/elevenlabs-test"
+            className="bg-encourage-orange text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors text-center flex items-center justify-center"
+          >
+            🔊 ElevenLabs Test
+          </a>
         </div>
       </div>
 

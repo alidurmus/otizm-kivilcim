@@ -1,5 +1,5 @@
 # **Kıvılcım \- Gemini AI Kullanım Kılavuzu ve Kuralları (Next.js)**
-
+kullanıcı ile türkçe  konuş
 **Doküman Amacı:** Bu kılavuz, "Kıvılcım" platformunun Next.js ile geliştirilmesi sürecinde Google Gemini yapay zeka modelini kullanırken uyulması gereken ilkeleri, standartları ve en iyi pratikleri tanımlar. Amaç, Gemini'yi projenin kalitesini, verimliliğini ve yaratıcılığını artıran bir yardımcı araç olarak kullanırken, projenin temel pedagojik ve duyusal dostu felsefesinden ödün vermemektir.
 
 ### **1\\. Genel İlkeler ve Felsefe**

@@ -1,0 +1,120 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions for validation
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isValidProfile(data) {
+      return data.keys().hasAll(['name', 'createdAt']) &&
+             data.name is string &&
+             data.name.size() <= 50 &&
+             data.createdAt is timestamp;
+    }
+    
+    function isValidSensorySettings(data) {
+      return data.keys().hasAll(['visualTheme', 'soundVolume', 'reduceMotion', 'hapticFeedback', 'rewardStyle']) &&
+             data.visualTheme in ['calm', 'focus', 'high-contrast'] &&
+             data.soundVolume is number &&
+             data.soundVolume >= 0 &&
+             data.soundVolume <= 100 &&
+             data.reduceMotion is bool &&
+             data.hapticFeedback is bool &&
+             data.rewardStyle in ['simple', 'animated', 'celebration'];
+    }
+    
+    function isValidAvatar(data) {
+      return data.keys().hasAll(['character', 'color', 'accessories']) &&
+             data.character is string &&
+             data.color is string &&
+             data.accessories is list;
+    }
+    
+    function isValidModuleData(data) {
+      return data.keys().hasAll(['status', 'lastActivity', 'overallAccuracy', 'progress']) &&
+             data.status in ['not_started', 'in_progress', 'completed'] &&
+             data.lastActivity is timestamp &&
+             data.overallAccuracy is number &&
+             data.overallAccuracy >= 0 &&
+             data.overallAccuracy <= 100 &&
+             data.progress is number &&
+             data.progress >= 0 &&
+             data.progress <= 100;
+    }
+    
+    // Users collection - each user can only access their own document
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      
+      // Validate user document structure on write
+      allow create: if isOwner(userId) && 
+                       isValidProfile(resource.data.profile) &&
+                       isValidSensorySettings(resource.data.sensory_settings) &&
+                       isValidAvatar(resource.data.avatar);
+      
+      allow update: if isOwner(userId) && 
+                       (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['profile', 'sensory_settings', 'avatar', 'lastLoginAt']));
+      
+      // Modules subcollection - user-specific learning progress
+      match /modules/{moduleId} {
+        allow read, write: if isOwner(userId);
+        
+        // Validate module data structure
+        allow create, update: if isOwner(userId) && 
+                                 isValidModuleData(request.resource.data);
+        
+        // Exercises subcollection - individual exercise results
+        match /exercises/{exerciseId} {
+          allow read, write: if isOwner(userId);
+          
+          // Validate exercise data
+          allow create, update: if isOwner(userId) && 
+                                   request.resource.data.keys().hasAll(['exerciseType', 'score', 'completedAt', 'timeSpent']) &&
+                                   request.resource.data.exerciseType is string &&
+                                   request.resource.data.score is number &&
+                                   request.resource.data.score >= 0 &&
+                                   request.resource.data.score <= 100 &&
+                                   request.resource.data.completedAt is timestamp &&
+                                   request.resource.data.timeSpent is number &&
+                                   request.resource.data.timeSpent >= 0;
+        }
+      }
+      
+      // User feedback collection - anonymous feedback can be read by authenticated users
+      match /feedback/{feedbackId} {
+        allow read: if isAuthenticated();
+        allow create: if isOwner(userId) && 
+                         request.resource.data.keys().hasAll(['content', 'category', 'createdAt']) &&
+                         request.resource.data.content is string &&
+                         request.resource.data.content.size() <= 1000 &&
+                         request.resource.data.category in ['bug', 'feature', 'general', 'accessibility'] &&
+                         request.resource.data.createdAt is timestamp;
+        allow update, delete: if false; // Feedback is immutable once created
+      }
+    }
+    
+    // Global application settings (read-only for all authenticated users)
+    match /app_settings/{document} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only administrators can modify app settings
+    }
+    
+    // System analytics (aggregated, anonymous data)
+    match /analytics/{document} {
+      allow read: if false; // No direct access to analytics
+      allow write: if false; // Analytics are written server-side only
+    }
+    
+    // Deny access to all other documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+} 

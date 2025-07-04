@@ -18,19 +18,30 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   onClick,
   className = ''
 }) => {
+  const handleClick = () => {
+    console.log('ModuleCard handleClick called for:', title);
+    console.log('isActive:', isActive);
+    console.log('onClick function exists:', !!onClick);
+    
+    if (isActive && onClick) {
+      console.log('Calling onClick function...');
+      onClick();
+    } else {
+      console.log('Not calling onClick - isActive:', isActive, 'onClick exists:', !!onClick);
+    }
+  };
+
   return (
     <div
       className={`
         relative p-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105
         ${isActive 
-          ? 'bg-white border-2 border-focus-blue cursor-pointer' 
-          : 'bg-neutral-gray border-2 border-gray-300 opacity-70'
+          ? 'bg-white dark:bg-gray-800 border-2 border-blue-400 dark:border-blue-500' 
+          : 'bg-gray-100 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 opacity-70'
         }
         ${className}
       `}
-      onClick={isActive ? onClick : undefined}
-      role={isActive ? "button" : "presentation"}
-      tabIndex={isActive ? 0 : -1}
+      role={isActive ? "article" : "presentation"}
     >
       {/* Icon */}
       <div className="text-4xl mb-4 text-center">
@@ -38,12 +49,20 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
       </div>
       
       {/* Title */}
-      <h3 className={`text-xl font-bold mb-2 text-center ${isActive ? 'text-text-color' : 'text-gray-500'}`}>
+      <h3 className={`text-xl font-bold mb-2 text-center ${
+        isActive 
+          ? 'text-gray-900 dark:text-white' 
+          : 'text-gray-500 dark:text-gray-400'
+      }`}>
         {title}
       </h3>
       
       {/* Description */}
-      <p className={`text-sm mb-4 text-center ${isActive ? 'text-gray-600' : 'text-gray-400'}`}>
+      <p className={`text-sm mb-6 text-center ${
+        isActive 
+          ? 'text-gray-600 dark:text-gray-300' 
+          : 'text-gray-400 dark:text-gray-500'
+      }`}>
         {description}
       </p>
       
@@ -53,12 +72,13 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
           <Button 
             variant="primary" 
             size="medium"
-            onClick={onClick}
+            onClick={handleClick}
+            className="w-full font-bold text-white"
           >
             BAŞLA
           </Button>
         ) : (
-          <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-200 text-gray-500 text-sm font-semibold">
+          <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400 text-sm font-semibold w-full">
             🔒 YAKINDA
           </div>
         )}
@@ -66,8 +86,8 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
       
       {/* Lock overlay for inactive modules */}
       {!isActive && (
-        <div className="absolute inset-0 bg-gray-100 bg-opacity-50 rounded-2xl flex items-center justify-center">
-          <div className="text-6xl text-gray-400">
+        <div className="absolute inset-0 bg-gray-100 dark:bg-gray-700 bg-opacity-50 rounded-2xl flex items-center justify-center">
+          <div className="text-6xl text-gray-400 dark:text-gray-500">
             🔒
           </div>
         </div>

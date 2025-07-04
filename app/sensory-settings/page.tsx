@@ -19,8 +19,8 @@ export default function SensorySettingsPage() {
     if (typeof window !== 'undefined') {
       const savedSoundEnabled = localStorage.getItem('sound-effects');
       const savedAnimationEnabled = localStorage.getItem('animation-effects');
-      const savedTheme = localStorage.getItem('theme');
-      const savedFontFamily = localStorage.getItem('font-family');
+      const savedTheme = localStorage.getItem('sensory-theme');
+      const savedFontFamily = localStorage.getItem('sensory-font');
 
       return {
         theme: (savedTheme as 'calm' | 'focus' | 'high-contrast') || 'calm',
@@ -41,8 +41,8 @@ export default function SensorySettingsPage() {
   React.useEffect(() => {
     localStorage.setItem('sound-effects', JSON.stringify(settings.soundEnabled));
     localStorage.setItem('animation-effects', JSON.stringify(settings.animationEnabled));
-    localStorage.setItem('theme', settings.theme);
-    localStorage.setItem('font-family', settings.fontFamily);
+    localStorage.setItem('sensory-theme', settings.theme);
+    localStorage.setItem('sensory-font', settings.fontFamily);
   }, [settings]);
 
   const ToggleSwitch = ({ 
@@ -57,6 +57,8 @@ export default function SensorySettingsPage() {
     <div className="flex justify-between items-center py-4 border-b border-gray-100">
       <span className="font-medium text-text-color">{label}</span>
       <button
+        role="switch"
+        aria-checked={enabled}
         onClick={() => onChange(!enabled)}
         className={`w-12 h-6 rounded-full relative transition-all duration-300 ${
           enabled ? 'bg-focus-blue' : 'bg-gray-300'
@@ -88,6 +90,10 @@ export default function SensorySettingsPage() {
             🎛️ Duyusal Kontrol Paneli
           </h1>
           
+          <p className="text-center text-gray-600 mt-2">
+            Çocuğunuzun ihtiyaçlarına göre deneyimi kişiselleştirin
+          </p>
+          
           <div className="w-20"></div>
         </div>
 
@@ -96,12 +102,12 @@ export default function SensorySettingsPage() {
           
           {/* Theme Settings */}
           <div className="bg-white rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-bold text-text-color mb-6">🎨 Tema Ayarları</h3>
+            <h2 className="text-xl font-bold text-text-color mb-6">🎨 Tema Seçimi</h2>
             <div className="grid grid-cols-1 gap-3">
               {[
-                { key: 'calm', name: 'Sakin Mod', desc: 'Yumuşak renkler ve sakin animasyonlar' },
-                { key: 'focus', name: 'Odak Modu', desc: 'Minimal tasarım ve güçlü kontrastlar' },
-                { key: 'high-contrast', name: 'Yüksek Kontrast', desc: 'Siyah-beyaz ve yüksek görünürlük' }
+                { key: 'calm', name: 'Sakin Mod', desc: 'Yumuşak renkler ve sakin atmosfer' },
+                { key: 'focus', name: 'Odak Mod', desc: 'Daha parlak renkler ve net çizgiler' },
+                { key: 'high-contrast', name: 'Yüksek Kontrast', desc: 'Görme zorluğu yaşayanlar için' }
               ].map((theme) => (
                 <button
                   key={theme.key}
@@ -121,7 +127,7 @@ export default function SensorySettingsPage() {
 
           {/* Audio & Visual Settings */}
           <div className="bg-white rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-bold text-text-color mb-6">🔊 Ses ve Görsel Ayarlar</h3>
+            <h2 className="text-xl font-bold text-text-color mb-6">🔊 Ses Ayarları</h2>
             <div className="space-y-2">
               <ToggleSwitch
                 enabled={settings.soundEnabled}
@@ -138,11 +144,11 @@ export default function SensorySettingsPage() {
 
           {/* Font Settings */}
           <div className="bg-white rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-bold text-text-color mb-6">📝 Yazı Tipi</h3>
+            <h2 className="text-xl font-bold text-text-color mb-6">📝 Font Ayarları</h2>
             <div className="grid grid-cols-1 gap-3">
               {[
-                { key: 'nunito', name: 'Nunito (Varsayılan)', desc: 'Yuvarlak ve sıcak' },
-                { key: 'opendyslexic', name: 'OpenDyslexic', desc: 'Okuma güçlüğü için özel' }
+                { key: 'nunito', name: 'Nunito (Varsayılan)', desc: 'Standart, okuması kolay font' },
+                { key: 'opendyslexic', name: 'OpenDyslexic', desc: 'Disleksi dostu özel tasarım' }
               ].map((font) => (
                 <button
                   key={font.key}
