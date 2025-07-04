@@ -12,17 +12,13 @@ class ElevenLabsPlaybackError extends Error {
   }
 }
 
-// Browser-only ElevenLabs integration
+// Secure server-side ElevenLabs integration
 class ElevenLabsClient {
-  private apiKey: string;
   private defaultVoiceId: string = 'pNInz6obpgDQGcFmaJgB'; // Adam voice (Türkçe destekli)
-
-  constructor() {
-    this.apiKey = process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY || '';
-  }
 
   /**
    * Metni sese çevirir ve audio URL döndürür
+   * Artık server-side API route kullanır
    */
   async textToSpeech(
     text: string, 
@@ -36,34 +32,29 @@ class ElevenLabsClient {
     }
   ): Promise<string> {
     try {
-      if (!this.apiKey) {
-        throw new ElevenLabsAPIError('ElevenLabs API key not found', 401);
-      }
-
       const voiceId = options?.voiceId || this.defaultVoiceId;
       
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      // Server-side API route'unu kullan
+      const response = await fetch('/api/speech', {
         method: 'POST',
         headers: {
-          'Accept': 'audio/mpeg',
           'Content-Type': 'application/json',
-          'xi-api-key': this.apiKey,
         },
         body: JSON.stringify({
           text: text,
-          model_id: options?.model || 'eleven_multilingual_v2',
-          voice_settings: {
-            stability: options?.stability || 0.5,
-            similarity_boost: options?.similarityBoost || 0.8,
-            style: options?.style || 0.5,
-            use_speaker_boost: options?.useSpeakerBoost || true,
-          },
+          voiceId: voiceId,
+          model: options?.model || 'eleven_multilingual_v2',
+          stability: options?.stability || 0.5,
+          similarityBoost: options?.similarityBoost || 0.8,
+          style: options?.style || 0.5,
+          useSpeakerBoost: options?.useSpeakerBoost || true,
         }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new ElevenLabsAPIError(`ElevenLabs API error: ${response.status}`, response.status, errorText);
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || `HTTP ${response.status}`;
+        throw new ElevenLabsAPIError(`Server error: ${errorMessage}`, response.status);
       }
 
       const audioBlob = await response.blob();
@@ -81,27 +72,38 @@ class ElevenLabsClient {
   /**
    * Türkçe çocuk sesi için optimize edilmiş sesler
    */
-  getChildFriendlyVoices() {
-    return [
-      {
-        id: 'pNInz6obpgDQGcFmaJgB', // Adam - Sakin, açık konuşan
-        name: 'Adam',
-        description: 'Sakin ve açık konuşan erkek ses',
-        language: 'tr'
-      },
-      {
-        id: 'EXAVITQu4vr4xnSDxMaL', // Bella - Nazik kadın ses
-        name: 'Bella', 
-        description: 'Nazik ve anlaşılır kadın ses',
-        language: 'tr'
-      },
-      {
-        id: 'VR6AewLTigWG4xSOukaG', // Josh - Genç erkek ses
-        name: 'Josh',
-        description: 'Genç ve eğlenceli erkek ses', 
-        language: 'tr'
+  async getChildFriendlyVoices() {
+    try {
+      const response = await fetch('/api/speech');
+      if (!response.ok) {
+        throw new Error('Failed to fetch voices');
       }
-    ];
+      const data = await response.json();
+      return data.voices;
+    } catch (error) {
+      console.error('Failed to fetch voices:', error);
+      // Fallback to hardcoded voices
+      return [
+        {
+          id: 'pNInz6obpgDQGcFmaJgB',
+          name: 'Adam',
+          description: 'Sakin ve açık konuşan erkek ses',
+          language: 'tr'
+        },
+        {
+          id: 'EXAVITQu4vr4xnSDxMaL',
+          name: 'Bella', 
+          description: 'Nazik ve anlaşılır kadın ses',
+          language: 'tr'
+        },
+        {
+          id: 'VR6AewLTigWG4xSOukaG',
+          name: 'Josh',
+          description: 'Genç ve eğlenceli erkek ses', 
+          language: 'tr'
+        }
+      ];
+    }
   }
 
   /**
@@ -206,8 +208,8 @@ export function useElevenLabs() {
     }
   };
 
-  const getVoices = () => {
-    return elevenlabsClient.getChildFriendlyVoices();
+  const getVoices = async () => {
+    return await elevenlabsClient.getChildFriendlyVoices();
   };
 
   return {

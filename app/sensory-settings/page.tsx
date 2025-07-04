@@ -85,7 +85,7 @@ export default function SensorySettingsPage() {
           </Button>
           
           <h1 className="text-2xl md:text-3xl font-extrabold text-text-color text-center">
-            🔧 Duyusal Kontrol Paneli
+            🎛️ Duyusal Kontrol Paneli
           </h1>
           
           <div className="w-20"></div>

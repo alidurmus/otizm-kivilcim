@@ -7,36 +7,17 @@
 - button "Open issues overlay": 1 Issue
 - button "Collapse issues badge":
   - img
-- navigation:
-  - button "previous" [disabled]:
-    - img "previous"
-  - text: 1/1
-  - button "next" [disabled]:
-    - img "next"
-- img
-- img
-- text: Next.js 15.3.4 Turbopack
-- img
-- dialog "Runtime Error":
-  - text: Runtime Error
-  - button "Copy Stack Trace":
-    - img
-  - button "No related documentation found" [disabled]:
-    - img
-  - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools":
-    - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
-    - img
-  - paragraph: "Error: ENOENT: no such file or directory, open 'C:\\cursor\\otizm-kivilcim\\.next\\server\\app\\sensory-settings\\page\\build-manifest.json'"
-  - paragraph: Call Stack 21
-  - button "Show 21 ignore-listed frame(s)":
-    - text: Show 21 ignore-listed frame(s)
-    - img
-- contentinfo:
-  - paragraph: This error happened while generating the page. Any console logs will be displayed in the terminal window.
-  - region "Error feedback":
-    - paragraph:
-      - link "Was this helpful?":
-        - /url: https://nextjs.org/telemetry#error-feedback
-    - button "Mark as helpful"
-    - button "Mark as not helpful"
+- button "← Ana Sayfa"
+- heading "👨‍👩‍👧‍👦 Ebeveyn Paneli" [level=1]
+- button "📊 Genel Bakış"
+- button "📈 İlerleme"
+- button "⚙️ Ayarlar"
+- text: 3/5 Tamamlanan Egzersiz 7 Toplam Çalışma Günü 85% Başarı Oranı
+- heading "🏆 Son Başarılar" [level=3]
+- text: 🎯 İlk Hece İlk hecesini başarıyla oluşturdu! Bugün ⭐ Süreklilik 3 gün üst üste egzersiz yaptı Dün
+- heading "🚀 Yeni Maceralar" [level=3]
+- paragraph: Çocuğunuz okuryazarlık modülünde harika ilerliyor! Yakında yeni modüller açılacak.
+- text: 📚 Kelime Dağarcığı %60 tamamlandığında 💬 Sosyal İletişim %80 tamamlandığında
+- button "📚"
+- button "🔧"
 ```
