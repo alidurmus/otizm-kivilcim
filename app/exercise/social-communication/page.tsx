@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { useElevenLabs } from '@/lib/elevenlabs';
+import GameHelpModal from '@/components/GameHelpModal';
 
 type ActivityType = 'menu' | 'emotion-recognition' | 'social-stories' | 'daily-activities' | 'communication-skills';
 
@@ -103,6 +104,8 @@ export default function SocialCommunicationModulePage() {
   const [storyScore, setStoryScore] = useState(0);
   const [selectedActivityStep, setSelectedActivityStep] = useState(0);
   const [selectedActivity, setSelectedActivity] = useState<DailyActivity | null>(null);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [helpGameType, setHelpGameType] = useState<string>('emotion-recognition');
   
   const router = useRouter();
   const { speak } = useElevenLabs();
@@ -145,6 +148,11 @@ export default function SocialCommunicationModulePage() {
 
   const handleBackToModules = () => {
     router.push('/modules');
+  };
+
+  const handleShowHelp = (gameType: string) => {
+    setHelpGameType(gameType);
+    setShowHelpModal(true);
   };
 
   const handleEmotionClick = async (emotion: Emotion) => {
@@ -421,23 +429,39 @@ export default function SocialCommunicationModulePage() {
             <p className="text-gray-600 text-center">
               Her bir beceriyi dinlemek için kartlara tıkla! Bu ifadeleri günlük hayatta kullanarak iletişim becerilerini geliştirebilirsin.
             </p>
-          </div>
-        </div>
+                  </div>
       </div>
-    );
-  }
+
+      {/* Help Modal */}
+      <GameHelpModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+        gameType={helpGameType}
+        gameName=""
+      />
+    </div>
+  );
+}
 
   // Main Menu
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <button
-            onClick={handleBackToModules}
-            className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
-          >
-            ← Modüllere Dön
-          </button>
+          <div className="flex justify-between items-center mb-4">
+            <button
+              onClick={handleBackToModules}
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+            >
+              ← Modüllere Dön
+            </button>
+            <button
+              onClick={() => handleShowHelp('emotion-recognition')}
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg shadow hover:bg-blue-100 transition-colors"
+            >
+              ❓ Yardım
+            </button>
+          </div>
           
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             🤝 Sosyal İletişim
@@ -460,12 +484,21 @@ export default function SocialCommunicationModulePage() {
                 <p className="text-gray-600 mb-4">
                   {activity.description}
                 </p>
-                <button
-                  onClick={() => setCurrentActivity(activity.id)}
-                  className={`w-full py-3 px-4 rounded-lg text-white font-semibold transition-colors ${activity.color}`}
-                >
-                  Aktiviteyi Başlat
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentActivity(activity.id)}
+                    className={`flex-1 py-3 px-4 rounded-lg text-white font-semibold transition-colors ${activity.color}`}
+                  >
+                    Aktiviteyi Başlat
+                  </button>
+                  <button
+                    onClick={() => handleShowHelp(activity.id)}
+                    className="px-3 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                    title="Aktivite kurallarını görüntüle"
+                  >
+                    ❓
+                  </button>
+                </div>
               </div>
             </div>
           ))}

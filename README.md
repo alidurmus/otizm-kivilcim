@@ -130,6 +130,92 @@ Kıvılcım, çocuk verilerinin korunması için kapsamlı güvenlik önlemleri 
 - **Security Headers:** X-Frame-Options, X-Content-Type-Options vb.
 - **HTTPS Zorunluluğu:** Tüm iletişim şifreli kanallar üzerinden
 
+## 🎓 Eğitim Modülleri
+
+Kıvılcım platformu, otizmli çocukların farklı gelişim alanlarını desteklemek için kapsamlı modüller sunar:
+
+### 📚 Kelime Dağarcığı Modülü
+**Hedef:** Kelime tanıma, anlama ve hafıza becerilerini geliştirme
+
+**Aktiviteler:**
+- **🎯 Kelime Eşleştirme Oyunu:** Sesli kelimelerle resimleri eşleştirme
+- **🧠 Hafıza Oyunu:** Kelime-resim çiftlerini bulma ve hafıza güçlendirme
+
+**Özellikler:**
+- ElevenLabs API ile yüksek kaliteli Türkçe seslandirme
+- Web Speech API fallback desteği
+- İnteraktif kart sistemi
+- İlerleme takibi ve puan sistemi
+
+### 🤝 Sosyal İletişim Modülü
+**Hedef:** Sosyal etkileşim becerileri ve duygusal zeka geliştirme
+
+**Aktiviteler:**
+- **😊 Duygu Tanıma:** 6 temel duyguyu (mutlu, üzgün, kızgın, şaşırmış, korkmuş, heyecanlı) tanıma
+- **📖 Sosyal Hikayeler:** Günlük yaşam senaryolarında uygun davranışları öğrenme
+- **🌅 Günlük Aktiviteler:** Sabah rutini, arkadaşlarla oynama, alışveriş gibi adım adım rehberler
+- **💬 İletişim Becerileri:** Temel nezaket ifadeleri ve günlük konuşma kalıpları
+
+**Özellikler:**
+- İnteraktif duygu kartları
+- Çoktan seçmeli sorularla pekiştirme
+- Gerçek yaşam senaryoları
+- Ses ile desteklenmiş öğrenme
+
+### ✍️ Yazma ve İfade Etme Modülü
+**Hedef:** Motor becerileri, yazma ve yaratıcı ifade yeteneklerini geliştirme
+
+**Aktiviteler:**
+- **✏️ Harf Yazma:** A, B, C harflerini SVG rehberiyle izleme ve yazma
+- **🔤 Kelime Oluşturma:** Harfleri sürükle-bırak ile birleştirip kelime yapma (KEDI, ELMA, GÜNEŞ)
+- **📝 Cümle Kurma:** Kelimelerden anlamlı cümleler oluşturma
+- **📚 Hikaye Yazma:** Yaratıcı yazma promtları ile kendi hikayelerini yazma
+- **💭 İfade Etme:** Duygu ve deneyimleri yazılı olarak paylaşma
+
+**Özellikler:**
+- Canvas tabanlı çizim desteği
+- Drag & drop arayüzü
+- Kreatif yazma araçları
+- İpucu ve anahtar kelime desteği
+
+### 🧩 Temel Kavramlar Modülü
+**Hedef:** Okul öncesi temel kavramları ve bilişsel becerileri geliştirme
+
+**Aktiviteler:**
+- **🎨 Renkler:** 8 temel rengi tanıma ve öğrenme (kırmızı, mavi, sarı, yeşil, turuncu, mor, pembe, kahverengi)
+- **🔷 Şekiller:** 6 geometrik şekli keşfetme (daire, kare, üçgen, dikdörtgen, yıldız, kalp)
+- **🔢 Sayılar:** 1-10 arası sayıları nesnelerle eşleştirme
+- **📏 Boyutlar:** Büyük-küçük, uzun-kısa kavramlarını öğrenme
+- **🧭 Yönler:** Yukarı-aşağı, sağ-sol yön kavramları
+- **⚡ Zıt Kavramlar:** Karşıt anlamlı kelimeler (sıcak-soğuk, hızlı-yavaş)
+- **⏰ Zaman:** Gündüz-gece, mevsimler gibi zaman kavramları
+- **🐾 Hayvanlar:** Ev hayvanları, vahşi hayvanlar, kuşlar ve deniz hayvanları kategorilerini tanıma
+
+**Özellikler:**
+- Görsel öğrenme araçları
+- İnteraktif seçim sistemleri
+- SVG tabanlı şekil grafikleri
+- Ses ile desteklenmiş açıklamalar
+
+### 🎯 Pedagojik Yaklaşım
+
+Tüm modüller şu eğitim prensiplerini temel alır:
+
+- **🔄 ABA (Uygulamalı Davranış Analizi):** Anlık pekiştirme ve olumlu geri bildirim
+- **🏗️ TEACCH:** Yapılandırılmış ve öngörülebilir öğrenme ortamı
+- **🎭 DIR/Floortime:** Çocuğun ilgisini takip eden adaptatif içerik
+- **🌱 Montessori:** Çoklu duyusal öğrenme deneyimleri
+- **📚 MEB Müfredatı:** Türkiye eğitim standartlarına uygunluk
+
+### 🎮 Oyunlaştırma Özellikleri
+
+Her modül için:
+- ⭐ Yıldız ve puan sistemi
+- 🏆 Başarı rozetleri
+- 📊 İlerleme takibi
+- 🎉 Kutlama animasyonları
+- ❓ Yardım ve oyun kuralları sistemi
+
 ## 🛠️ Teknolojiler
 
 - **Framework:** [Next.js](https://nextjs.org) (App Router)

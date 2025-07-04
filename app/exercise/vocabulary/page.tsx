@@ -4,11 +4,14 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import WordMatchingGame from './WordMatchingGame';
 import HafizaOyunu from './HafizaOyunu';
+import GameHelpModal from '@/components/GameHelpModal';
 
 type GameType = 'menu' | 'word-matching' | 'memory';
 
 export default function VocabularyPage() {
   const [currentGame, setCurrentGame] = useState<GameType>('menu');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [helpGameType, setHelpGameType] = useState<string>('word-matching');
   const router = useRouter();
 
   const games = [
@@ -34,6 +37,11 @@ export default function VocabularyPage() {
     router.push('/modules');
   };
 
+  const handleShowHelp = (gameType: string) => {
+    setHelpGameType(gameType);
+    setShowHelpModal(true);
+  };
+
   if (currentGame === 'word-matching') {
     return <WordMatchingGame onBack={handleBackToMenu} />;
   }
@@ -47,12 +55,20 @@ export default function VocabularyPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <button
-            onClick={handleBackToModules}
-            className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
-          >
-            ← Modüllere Dön
-          </button>
+          <div className="flex justify-between items-center mb-4">
+            <button
+              onClick={handleBackToModules}
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+            >
+              ← Modüllere Dön
+            </button>
+            <button
+              onClick={() => handleShowHelp('word-matching')}
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg shadow hover:bg-blue-100 transition-colors"
+            >
+              ❓ Yardım
+            </button>
+          </div>
           
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             📚 Anlam ve Kelime Dağarcığı
@@ -76,12 +92,21 @@ export default function VocabularyPage() {
                 <p className="text-gray-600 mb-4">
                   {game.description}
                 </p>
-                <button
-                  onClick={() => setCurrentGame(game.id)}
-                  className={`w-full py-3 px-4 rounded-lg text-white font-semibold transition-colors ${game.color}`}
-                >
-                  Oyunu Başlat
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentGame(game.id)}
+                    className={`flex-1 py-3 px-4 rounded-lg text-white font-semibold transition-colors ${game.color}`}
+                  >
+                    Oyunu Başlat
+                  </button>
+                  <button
+                    onClick={() => handleShowHelp(game.id)}
+                    className="px-3 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                    title="Oyun kurallarını görüntüle"
+                  >
+                    ❓
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -108,6 +133,14 @@ export default function VocabularyPage() {
           </div>
         </div>
       </div>
+
+      {/* Help Modal */}
+      <GameHelpModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+        gameType={helpGameType}
+        gameName=""
+      />
     </div>
   );
 }
