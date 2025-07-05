@@ -51,6 +51,7 @@ const testFirebaseConnectivity = async (): Promise<boolean> => {
     const connectivityTest = new Promise((resolve) => {
       try {
         // Test if we can access auth state
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const unsubscribe = onAuthStateChanged(auth as any, () => {
           unsubscribe();
           resolve(true);
@@ -83,21 +84,28 @@ export const signInAnonymous = async (): Promise<User | null> => {
       return mockUser;
     }
 
-    // Try to sign in anonymously with timeout
-    const signInPromise = signInAnonymously(auth);
+    // Try to sign in anonymously with timeout - with type safety
+    if (!auth || typeof auth.currentUser === 'undefined') {
+      throw new Error('Auth not properly initialized');
+    }
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const signInPromise = signInAnonymously(auth as any); // Type assertion for Firebase compatibility
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Sign in timeout')), 5000)
     );
     
-    const result = await Promise.race([signInPromise, timeoutPromise]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await Promise.race([signInPromise, timeoutPromise]) as any;
     
-    if (result && 'user' in result) {
+    if (result && typeof result === 'object' && 'user' in result && result.user) {
       // Firebase authentication successful
       isUsingMockAuth = false;
+      const user = result.user as User;
       
       // Try to create user data (with fallback)
       try {
-        const userData = await getUserData(result.user.uid);
+        const userData = await getUserData(user.uid);
         
         if (!userData) {
           const initialUserData: UserData = {
@@ -119,22 +127,24 @@ export const signInAnonymous = async (): Promise<User | null> => {
             }
           };
           
-          await createUserData(result.user.uid, initialUserData);
+          await createUserData(user.uid, initialUserData);
           // User data created successfully
         }
-              } catch (_firestoreError) {
+      } catch (_firestoreError) {
         console.warn('⚠️ Firestore not available, continuing with authentication only');
       }
       
-      return result.user;
+      return user;
     }
     
     throw new Error('Invalid sign in result');
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle specific Firebase errors
-    if (error?.code) {
-      switch (error.code) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const firebaseError = error as any;
+    if (firebaseError?.code) {
+      switch (firebaseError.code) {
         case 'auth/network-request-failed':
           console.warn('🌐 Network request failed, using mock authentication');
           break;
@@ -145,10 +155,11 @@ export const signInAnonymous = async (): Promise<User | null> => {
           console.warn('🚫 Too many requests, using mock authentication');
           break;
         default:
-          console.warn(`🔥 Firebase auth error (${error.code}):`, error.message);
+          console.warn(`🔥 Firebase auth error (${firebaseError.code}):`, firebaseError.message);
       }
     } else {
-      console.warn('🔥 Firebase authentication failed:', error.message || error);
+      const errorMessage = firebaseError?.message || firebaseError;
+      console.warn('🔥 Firebase authentication failed:', errorMessage);
     }
     
     // Always fallback to mock user
@@ -167,7 +178,8 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
   }
 
   try {
-    return onAuthStateChanged(auth, (user) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return onAuthStateChanged(auth as any, (user) => {
       if (user) {
         console.warn('👤 Auth state changed: User signed in');
         isUsingMockAuth = false;
@@ -176,7 +188,7 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
         console.warn('👤 Auth state changed: Using mock user');
         callback(mockUser);
       } else {
-                  console.warn('👤 Auth state changed: No user');
+        console.warn('👤 Auth state changed: No user');
         callback(null);
       }
     }, (error) => {

@@ -19,6 +19,25 @@ class ElevenLabsPlaybackError extends Error {
   }
 }
 
+// Gülsu - Tek Türkçe Ses Sistemi 
+// Otizm dostu, tutarlı ve sakin ses deneyimi için tek ses kullanımı
+export const GULSU_VOICE = {
+  id: '9BWtsMINqrJLrRacOk9x', // Aria - ElevenLabs'dan Türkçe destekli
+  name: 'Gülsu',
+  description: 'Türkiye için özel optimize edilmiş nazik ve sakin kadın sesi - tüm konuşmalar için',
+  language: 'tr',
+  gender: 'female',
+  age: 'adult',
+  traits: ['calm', 'clear', 'gentle', 'patient', 'autism-friendly'],
+  bestFor: ['letters', 'words', 'sentences', 'celebrations', 'all_content'],
+  voice_settings: {
+    stability: 0.75,        // Sakin ve tutarlı ses
+    similarity_boost: 0.85,  // Yüksek kalite
+    style: 0.3,             // Doğal konuşma
+    use_speaker_boost: true  // Net konuşma
+  }
+};
+
 // Türkçe Bayan Ses Kütüphanesi - Otizm dostu ses seçenekleri
 export const TURKISH_FEMALE_VOICES = {
   bella: {
@@ -278,10 +297,9 @@ export function getRecommendedTurkishVoice(
   type: 'letter' | 'word' | 'sentence' | 'celebration',
   _gender: 'male' | 'female' | 'mixed' = 'mixed'
 ): string {
-  // 🎯 Kullanıcının tercih ettiği varsayılan ses - tüm konuşmalar için
-  const userPreferredVoice = 'xyqF3vGMQlPk3e7yA4DI';
-  
-  return userPreferredVoice;
+  // Gülsu - Tek Ses Sistemi
+  // Otizm dostu tutarlı ses deneyimi için her içerik türünde aynı ses
+  return GULSU_VOICE.id;
   
   // Eski gender-balanced logic - şimdilik devre dışı
   /*
@@ -316,7 +334,7 @@ export function getAllTurkishVoices() {
 
 // Client-side ElevenLabs integration using server proxy
 class ElevenLabsClient {
-  private defaultVoiceId: string = 'xyqF3vGMQlPk3e7yA4DI'; // Kullanıcının seçtiği varsayılan ses
+  private defaultVoiceId: string = GULSU_VOICE.id; // Gülsu - Tek tutarlı ses
   private cache: Map<string, { blob: Blob; timestamp: number }> = new Map(); // Cache audio blobs with timestamps
   private currentAudio: HTMLAudioElement | null = null; // Aktif ses instance'ını takip et
   private readonly CACHE_DURATION = 30 * 60 * 1000; // 30 minutes cache duration

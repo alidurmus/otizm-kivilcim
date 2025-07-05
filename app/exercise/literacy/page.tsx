@@ -68,6 +68,8 @@ type ExerciseState = {
   isListening: boolean; // Ses tanıma için
   isPlaying: boolean;   // Ses çalma için
   isComplete: boolean;  // Tüm egzersizler bitti mi?
+  autoProgressEnabled: boolean; // Otomatik ilerlemek istiyor mu?
+  showProceedButton: boolean; // İlerle butonu göster mi?
 };
 
 // 2. State'i değiştirebilecek tüm olası eylemler
@@ -80,7 +82,9 @@ type Action =
   | { type: 'NEXT_EXERCISE' }
   | { type: 'COMPLETE_ALL_EXERCISES' }
   | { type: 'SET_IS_PLAYING'; payload: boolean }
-  | { type: 'SET_IS_LISTENING'; payload: boolean };
+  | { type: 'SET_IS_LISTENING'; payload: boolean }
+  | { type: 'TOGGLE_AUTO_PROGRESS' }
+  | { type: 'SHOW_PROCEED_BUTTON'; payload: boolean };
 
 // 3. Bileşen yüklendiğindeki başlangıç state'i
 const initialState: ExerciseState = {
@@ -92,6 +96,8 @@ const initialState: ExerciseState = {
   isListening: false,
   isPlaying: false,
   isComplete: false,
+  autoProgressEnabled: true,
+  showProceedButton: false,
 };
 
 // 4. Reducer fonksiyonu: mevcut state'i ve bir eylemi alır, yeni state'i döndürür.
@@ -112,7 +118,12 @@ function exerciseReducer(state: ExerciseState, action: Action): ExerciseState {
       return { ...state, userSyllable: action.payload };
 
     case 'EVALUATE_ANSWER':
-      return { ...state, isCorrect: action.payload.isCorrect, showFeedback: true };
+      return { 
+        ...state, 
+        isCorrect: action.payload.isCorrect, 
+        showFeedback: true,
+        showProceedButton: action.payload.isCorrect && !state.autoProgressEnabled
+      };
 
     case 'TRY_AGAIN':
       return {
@@ -120,6 +131,7 @@ function exerciseReducer(state: ExerciseState, action: Action): ExerciseState {
         userSyllable: '',
         isCorrect: null,
         showFeedback: false,
+        showProceedButton: false,
       };
 
     case 'NEXT_EXERCISE':
@@ -127,6 +139,7 @@ function exerciseReducer(state: ExerciseState, action: Action): ExerciseState {
       return {
         ...initialState,
         currentExerciseIndex: state.currentExerciseIndex + 1,
+        autoProgressEnabled: state.autoProgressEnabled,
       };
 
     case 'COMPLETE_ALL_EXERCISES':
@@ -137,6 +150,12 @@ function exerciseReducer(state: ExerciseState, action: Action): ExerciseState {
 
     case 'SET_IS_LISTENING':
       return { ...state, isListening: action.payload };
+
+    case 'TOGGLE_AUTO_PROGRESS':
+      return { ...state, autoProgressEnabled: !state.autoProgressEnabled };
+
+    case 'SHOW_PROCEED_BUTTON':
+      return { ...state, showProceedButton: action.payload };
 
     default:
       return state;
@@ -157,6 +176,8 @@ export default function LiteracyExercisePage() {
     isListening,
     isPlaying,
     isComplete,
+    autoProgressEnabled,
+    showProceedButton,
   } = state;
 
   const exercise = exercises[currentExerciseIndex];
@@ -184,16 +205,18 @@ export default function LiteracyExercisePage() {
     if (correct) {
       await playCelebration();
       
-      setTimeout(() => {
-        if (currentExerciseIndex < exercises.length - 1) {
-          dispatch({ type: 'NEXT_EXERCISE' });
-        } else {
-          dispatch({ type: 'COMPLETE_ALL_EXERCISES' });
-        }
-      }, 3000); // Kutlama için bekle
+      if (autoProgressEnabled) {
+        setTimeout(() => {
+          if (currentExerciseIndex < exercises.length - 1) {
+            dispatch({ type: 'NEXT_EXERCISE' });
+          } else {
+            dispatch({ type: 'COMPLETE_ALL_EXERCISES' });
+          }
+        }, 3000); // Kutlama için bekle
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exercise.correctSyllable, currentExerciseIndex, exercises.length]);
+  }, [exercise.correctSyllable, currentExerciseIndex, exercises.length, autoProgressEnabled]);
 
   const handleDragStart = (letter: string) => {
     dispatch({ type: 'DRAG_START', payload: letter });
@@ -205,6 +228,18 @@ export default function LiteracyExercisePage() {
 
   const handleTryAgain = () => {
     dispatch({ type: 'TRY_AGAIN' });
+  };
+
+  const handleProceed = () => {
+    if (currentExerciseIndex < exercises.length - 1) {
+      dispatch({ type: 'NEXT_EXERCISE' });
+    } else {
+      dispatch({ type: 'COMPLETE_ALL_EXERCISES' });
+    }
+  };
+
+  const toggleAutoProgress = () => {
+    dispatch({ type: 'TOGGLE_AUTO_PROGRESS' });
   };
 
   const handleVoiceInput = () => {
@@ -279,18 +314,35 @@ export default function LiteracyExercisePage() {
 
   const playCelebration = useCallback(async () => {
     try {
-      const celebrationTexts = [
-        'Harikasın! Çok güzel yaptın!',
-        'Bravo! Mükemmel bir çalışma!',
-        'Süpersin! Devam et böyle!',
-        'Çok başarılısın! Harika iş!'
+      // Mevcut kutlama ses dosyalarından birini seç
+      const celebrationFiles = [
+        'harikasin-cok-guzel.mp3',
+        'bravo.mp3',
+        'mukemmel.mp3',
+        'cok-basarilisin.mp3',
+        'supersin.mp3',
+        'tebrikler.mp3',
+        'aferin-sana.mp3',
+        'cok-guzel-yaptin.mp3'
       ];
-      const randomText = celebrationTexts[Math.floor(Math.random() * celebrationTexts.length)];
-      await speak(randomText, 'celebration');
+      
+      const randomFile = celebrationFiles[Math.floor(Math.random() * celebrationFiles.length)];
+      const audio = new Audio(`/audio/celebrations/${randomFile}`);
+      
+      await new Promise((resolve, reject) => {
+        audio.onended = resolve;
+        audio.onerror = () => {
+          // Fallback to ElevenLabs if static file fails
+          speak('Harikasın! Çok güzel!', 'celebration').then(resolve).catch(reject);
+        };
+        audio.play().catch(() => {
+          // Fallback to ElevenLabs if play fails
+          speak('Harikasın! Çok güzel!', 'celebration').then(resolve).catch(reject);
+        });
+      });
     } catch (_error) {
-              // Celebration audio failed - continuing silently
-      // Hata durumunda Web Speech API fallback'i zaten çalışacak
-      // Eğer o da başarısız olursa sessizce devam et
+      // Final fallback - continue silently
+      console.log('Audio playback failed, continuing silently');
     }
   }, [speak]);
 
@@ -461,17 +513,57 @@ export default function LiteracyExercisePage() {
                 }
               </p>
               
-              {!isCorrect && (
-                <Button
-                  variant="primary"
-                  size="medium"
-                  onClick={handleTryAgain}
-                >
-                  Tekrar Dene
-                </Button>
+              <div className="flex justify-center space-x-4">
+                {!isCorrect && (
+                  <Button
+                    variant="primary"
+                    size="medium"
+                    onClick={handleTryAgain}
+                  >
+                    Tekrar Dene
+                  </Button>
+                )}
+                
+                {showProceedButton && (
+                  <Button
+                    variant="primary"
+                    size="medium"
+                    onClick={handleProceed}
+                    data-testid="proceed-button"
+                  >
+                    {currentExerciseIndex < exercises.length - 1 ? 'İlerle →' : 'Tamamla! 🏆'}
+                  </Button>
+                )}
+              </div>
+              
+              {isCorrect && !autoProgressEnabled && (
+                <p className="text-sm text-adaptive-secondary mt-3">
+                  🔵 Manuel kontrol açık - İlerlemek için butona tıklayın
+                </p>
               )}
             </div>
           )}
+
+          {/* Settings Panel */}
+          <div className="mt-6 p-4 bg-adaptive bg-opacity-50 rounded-xl text-center">
+            <div className="flex justify-center items-center space-x-4">
+              <label className="flex items-center space-x-2 text-sm text-adaptive">
+                <input
+                  type="checkbox"
+                  checked={autoProgressEnabled}
+                  onChange={toggleAutoProgress}
+                  className="w-4 h-4 text-focus-blue bg-adaptive border-adaptive-border rounded focus:ring-focus-blue focus:ring-2"
+                />
+                <span>Otomatik İlerleme</span>
+              </label>
+              <div className="text-xs text-adaptive-secondary">
+                {autoProgressEnabled 
+                  ? 'Doğru cevapta 3 saniye sonra otomatik geçiş' 
+                  : 'Manuel olarak "İlerle" butonuna tıklayın'
+                }
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

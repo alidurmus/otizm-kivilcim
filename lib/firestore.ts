@@ -129,6 +129,7 @@ const executeFirestoreOperation = async <T>(
     
   } catch (_error: unknown) {
     // Handle specific Firebase errors
+    const error = _error as { code?: string; message?: string }; // Type assertion for Firebase error handling
     if (error?.code) {
       switch (error.code) {
         case 'unavailable':

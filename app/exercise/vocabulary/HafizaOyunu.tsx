@@ -12,6 +12,16 @@ interface Card {
 
 const cardContents = ['🐱', '🐶', '🐸', '🐨', '🦁', '🐰'];
 
+// Emoji'leri Türkçe kelimelerle eşleştiren mapping
+const emojiToTurkish: { [key: string]: string } = {
+  '🐱': 'kedi',
+  '🐶': 'köpek',
+  '🐸': 'kurbağa',
+  '🐨': 'koala',
+  '🦁': 'aslan',
+  '🐰': 'tavşan'
+};
+
 export default function HafizaOyunu({ onBack }: { onBack?: () => void }) {
   const [cards, setCards] = useState<Card[]>([]);
   const [flippedCards, setFlippedCards] = useState<string[]>([]);
@@ -44,6 +54,12 @@ export default function HafizaOyunu({ onBack }: { onBack?: () => void }) {
     setCards(prev => prev.map(c => 
       c.id === cardId ? { ...c, isFlipped: true } : c
     ));
+
+    // Kartın Türkçe ismini Gülsu ile söyle
+    const turkishName = emojiToTurkish[card.content];
+    if (turkishName) {
+      await speak(turkishName, 'word');
+    }
 
     if (newFlippedCards.length === 2) {
       setMoves(prev => prev + 1);

@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp, Firestore } from 'firebase/firestore';
 import { setDoc, doc } from 'firebase/firestore';
 import { db } from './firebase';
 import { UserData, ModuleProgress, ExerciseResult } from './firestore';
@@ -58,7 +58,7 @@ export const createMockUserData = async (userId: string): Promise<boolean> => {
     };
 
     // Create user document
-    await setDoc(doc(db, 'users', userId), mockUserData);
+    await setDoc(doc(db as Firestore, 'users', userId), mockUserData);
 
     // Create module progress documents
     const modules = ['vocabulary', 'social_communication', 'writing_expression', 'basic_concepts', 'literacy'];
@@ -68,13 +68,13 @@ export const createMockUserData = async (userId: string): Promise<boolean> => {
       if (Math.random() > 0.7) continue;
       
       const moduleProgress = generateMockModuleProgress(moduleId);
-      await setDoc(doc(db, 'users', userId, 'modules', moduleId), moduleProgress);
+      await setDoc(doc(db as Firestore, 'users', userId, 'modules', moduleId), moduleProgress);
       
       // Add some exercise results
       const exerciseResults = generateMockExerciseResults(Math.floor(Math.random() * 8) + 3);
       for (let i = 0; i < exerciseResults.length; i++) {
         await setDoc(
-          doc(db, 'users', userId, 'modules', moduleId, 'exercises', `exercise_${i}`),
+          doc(db as Firestore, 'users', userId, 'modules', moduleId, 'exercises', `exercise_${i}`),
           exerciseResults[i]
         );
       }

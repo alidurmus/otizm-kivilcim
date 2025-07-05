@@ -1,7 +1,7 @@
 // Simplified Performance utilities for Kıvılcım platform
 // Based on React Performance Best Practices from React documentation
 
-import { useCallback, useRef, useEffect, useState, useTransition } from 'react';
+import { useCallback, useRef, useEffect, useState, useTransition, useMemo } from 'react';
 
 // Performance monitoring utilities
 export class PerformanceMonitor {
@@ -185,11 +185,14 @@ export function useLazyImport<T>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  // Combine dependencies with importFn using useMemo
+  const memoizedImportFn = useMemo(() => importFn, [importFn, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     setLoading(true);
     setError(null);
     
-    importFn()
+    memoizedImportFn()
       .then(module => {
         setComponent(module.default);
         setLoading(false);
@@ -198,7 +201,7 @@ export function useLazyImport<T>(
         setError(err);
         setLoading(false);
       });
-  }, [importFn, ...deps]);
+  }, [memoizedImportFn]);
 
   return { component, loading, error };
 }

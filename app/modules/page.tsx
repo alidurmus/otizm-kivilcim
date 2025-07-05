@@ -127,6 +127,10 @@ export default function ModulesPage() {
       }
     } else {
       // Module not active or route missing - ignoring click
+      console.log('Module inactive:', {
+        isActive: module.isActive,
+        hasRoute: !!module.route
+      });
     }
   };
 

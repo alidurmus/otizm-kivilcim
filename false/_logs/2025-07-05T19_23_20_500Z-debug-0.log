@@ -1,0 +1,18 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Users\hp\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.4.1
+2 info using node@v23.11.0
+3 silly config load:file:C:\Users\hp\AppData\Roaming\npm\node_modules\npm\npmrc
+4 silly config load:file:C:\cursor\otizm-kivilcim\.npmrc
+5 silly config load:file:C:\Users\hp\.npmrc
+6 silly config load:file:C:\Users\hp\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm run lint
+8 verbose argv "run" "lint" "--cache" "false"
+9 verbose logfile logs-max:10 dir:C:\cursor\otizm-kivilcim\false\_logs\2025-07-05T19_23_20_500Z-
+10 verbose logfile C:\cursor\otizm-kivilcim\false\_logs\2025-07-05T19_23_20_500Z-debug-0.log
+11 silly logfile done cleaning log files
+12 verbose cwd C:\cursor\otizm-kivilcim
+13 verbose os Windows_NT 10.0.26120
+14 verbose node v23.11.0
+15 verbose npm  v11.4.1
+16 verbose exit 0
+17 info ok
