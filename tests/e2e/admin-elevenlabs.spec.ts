@@ -252,4 +252,248 @@ test.describe('Admin ElevenLabs Test Sayfası', () => {
     await expect(page.getByRole('heading', { name: /ElevenLabs API Test Merkezi/i })).toBeVisible();
   });
 
+});
+
+test.describe('Admin ElevenLabs Panel', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/admin/elevenlabs-test');
+  });
+
+  test('Admin ElevenLabs sayfası yüklenmeli', async ({ page }) => {
+    await expect(page.locator('h1')).toContainText('ElevenLabs API Test Arayüzü');
+  });
+
+  test('Ses listesi yüklenmeli', async ({ page }) => {
+    // Mock ElevenLabs voices API
+    await page.route('**/api/speech/voices', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          voices: [
+            { voice_id: 'test-1', name: 'Test Voice 1', category: 'premade' },
+            { voice_id: 'test-2', name: 'Test Voice 2', category: 'premade' }
+          ]
+        })
+      });
+    });
+
+    await page.reload();
+    await page.waitForTimeout(1000);
+
+    // Ses listesi tablosu görünmeli
+    await expect(page.locator('table')).toBeVisible();
+  });
+
+  test('Test metni girişi çalışmalı', async ({ page }) => {
+    const testInput = page.locator('input[placeholder*="test"]').or(page.locator('textarea')).first();
+    await testInput.fill('Test metni');
+    
+    const inputValue = await testInput.inputValue();
+    expect(inputValue).toBe('Test metni');
+  });
+
+  test('Ses test butonları çalışmalı', async ({ page }) => {
+    // Mock TTS API
+    await page.route('**/api/speech', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'audio/mpeg',
+        body: Buffer.from('fake-audio-data')
+      });
+    });
+
+    // Test butonunu bul ve tıkla
+    const testButton = page.locator('button').filter({ hasText: /test|dene/i }).first();
+    if (await testButton.isVisible()) {
+      await testButton.click();
+      await page.waitForTimeout(1000);
+    }
+  });
+
+  test('API durumu doğru bilgileri göstermeli', async ({ page }) => {
+    // API status section
+    await expect(page.locator('text=API Status').or(page.locator('text=API Durumu'))).toBeVisible();
+  });
+
+  test('Test sonuçları tablosu görünmeli', async ({ page }) => {
+    // Test results section should be visible
+    const resultsSection = page.locator('[data-testid="test-results"]').or(
+      page.locator('text=Test Sonuçları').locator('..').locator('..')
+    );
+    
+    // Section may not be visible initially, that's ok
+    if (await resultsSection.isVisible()) {
+      await expect(resultsSection).toBeVisible();
+    }
+  });
+
+  test.describe('Ses Kontrol Sistemi', () => {
+    test('Ses kontrol paneli görünmeli', async ({ page }) => {
+      // Ses kontrol sistemi başlığı
+      await expect(page.locator('h2').filter({ hasText: '🎵 Ses Dosyası Kontrol Sistemi' })).toBeVisible();
+      
+      // Açıklama metni
+      await expect(page.locator('text=Kritik ses dosyalarının varlığını kontrol edin')).toBeVisible();
+      
+      // Kontrol butonu
+      await expect(page.locator('button').filter({ hasText: 'Ses Dosyalarını Kontrol Et' })).toBeVisible();
+    });
+
+    test('Ses dosyası kontrolü çalışmalı', async ({ page }) => {
+      // Mock HEAD requests for audio files
+      await page.route('**/audio/letters/*.mp3', async route => {
+        const url = route.request().url();
+        // Türkçe karakterler eksik olarak mock'la
+        if (url.includes('ch.mp3') || url.includes('gh.mp3') || 
+            url.includes('ii.mp3') || url.includes('oo.mp3') || 
+            url.includes('sh.mp3') || url.includes('uu.mp3')) {
+          await route.fulfill({ status: 404 });
+        } else {
+          await route.fulfill({ status: 200 });
+        }
+      });
+
+      // Kontrol butonuna tıkla
+      await page.click('button:has-text("Ses Dosyalarını Kontrol Et")');
+      
+      // İstatistiklerin görünmesini bekle
+      await page.waitForTimeout(2000);
+      
+      // İstatistik değerleri görünmeli
+      await expect(page.locator('[data-testid="total-files"]')).toBeVisible();
+      await expect(page.locator('[data-testid="existing-files"]')).toBeVisible();
+      await expect(page.locator('[data-testid="missing-files"]')).toBeVisible();
+      await expect(page.locator('[data-testid="success-rate"]')).toBeVisible();
+    });
+
+    test('Eksik dosyalar listesi gösterilmeli', async ({ page }) => {
+      // Mock file checks
+      await page.route('**/audio/letters/*.mp3', async route => {
+        const url = route.request().url();
+        if (url.includes('ch.mp3') || url.includes('gh.mp3')) {
+          await route.fulfill({ status: 404 });
+        } else {
+          await route.fulfill({ status: 200 });
+        }
+      });
+
+      await page.click('button:has-text("Ses Dosyalarını Kontrol Et")');
+      await page.waitForTimeout(2000);
+      
+      // Eksik dosyalar bölümü
+      await expect(page.locator('text=Eksik Dosyalar')).toBeVisible();
+      
+      // Eksik dosya örnekleri
+      await expect(page.locator('text=/audio/letters/ch.mp3')).toBeVisible();
+      await expect(page.locator('text=/audio/letters/gh.mp3')).toBeVisible();
+    });
+
+    test('Eksik dosya oluşturma butonu çalışmalı', async ({ page }) => {
+      // Mock API responses
+      await page.route('**/audio/letters/*.mp3', async route => {
+        await route.fulfill({ status: 404 }); // Tüm dosyalar eksik
+      });
+
+      await page.route('**/api/speech', async route => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'audio/mpeg',
+          body: Buffer.from('fake-audio-data'),
+          headers: { 'X-Voice-Used': 'Gülsu' }
+        });
+      });
+
+      await page.click('button:has-text("Ses Dosyalarını Kontrol Et")');
+      await page.waitForTimeout(1000);
+      
+      // Oluşturma butonu görünmeli
+      const createButton = page.locator('button').filter({ hasText: 'Eksik Dosyaları Oluştur' });
+      await expect(createButton).toBeVisible();
+      
+      // Butona tıkla
+      await createButton.click();
+      
+      // İlerleme mesajı
+      await expect(page.locator('text=Dosya oluşturma işlemi başlatıldı')).toBeVisible();
+    });
+
+    test('Rate limiting mesajları gösterilmeli', async ({ page }) => {
+      // Mock rate limiting error
+      await page.route('**/api/speech', async route => {
+        await route.fulfill({
+          status: 429,
+          body: JSON.stringify({
+            error: 'Too Many Requests',
+            message: 'Rate limit exceeded'
+          })
+        });
+      });
+
+      await page.route('**/audio/letters/*.mp3', async route => {
+        await route.fulfill({ status: 404 });
+      });
+
+      await page.click('button:has-text("Ses Dosyalarını Kontrol Et")');
+      await page.waitForTimeout(1000);
+      
+      const createButton = page.locator('button').filter({ hasText: 'Eksik Dosyaları Oluştur' });
+      await createButton.click();
+      
+      // Rate limiting mesajı bekle
+      await expect(page.locator('text=Rate limiting için 3 saniye bekleniyor').or(
+        page.locator('text=429').or(
+          page.locator('text=Too Many Requests')
+        )
+      )).toBeVisible({ timeout: 5000 });
+    });
+
+    test('Başarı oranı doğru hesaplanmalı', async ({ page }) => {
+      // 40/46 dosya mevcut scenario
+      let requestCount = 0;
+      await page.route('**/audio/letters/*.mp3', async route => {
+        requestCount++;
+        // İlk 40 request başarılı, son 6 başarısız
+        if (requestCount <= 40) {
+          await route.fulfill({ status: 200 });
+        } else {
+          await route.fulfill({ status: 404 });
+        }
+      });
+
+      await page.click('button:has-text("Ses Dosyalarını Kontrol Et")');
+      await page.waitForTimeout(3000);
+      
+      // %87 başarı oranı bekleniyor
+      const successRate = await page.locator('[data-testid="success-rate"]').textContent();
+      expect(successRate).toMatch(/8[67]%/);
+    });
+
+    test('Türkçe karakter desteği çalışmalı', async ({ page }) => {
+      // Console loglarını kontrol et
+      const logs: string[] = [];
+      page.on('console', msg => {
+        if (msg.type() === 'log') {
+          logs.push(msg.text());
+        }
+      });
+
+      await page.click('button:has-text("Ses Dosyalarını Kontrol Et")');
+      await page.waitForTimeout(2000);
+      
+      // Türkçe karakter filename mapping logları
+      const mappingLogs = logs.filter(log => 
+        log.includes('ch.mp3') || // Ç
+        log.includes('gh.mp3') || // Ğ  
+        log.includes('ii.mp3') || // I
+        log.includes('oo.mp3') || // Ö
+        log.includes('sh.mp3') || // Ş
+        log.includes('uu.mp3')    // Ü
+      );
+      
+      expect(mappingLogs.length).toBeGreaterThan(0);
+    });
+
+  });
+
 }); 

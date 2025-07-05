@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, Auth, User } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 // Mock Firebase config for development
 const firebaseConfig = {
@@ -12,10 +12,21 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:123456789:web:mock-app-id'
 };
 
+// Mock interfaces for development
+interface MockAuth extends Partial<Auth> {
+  currentUser: User | null;
+  onAuthStateChanged: (callback: (user: User | null) => void) => () => void;
+  signInAnonymously: () => Promise<{ user: { uid: string } }>;
+}
+
+interface MockFirestore {
+  app: null;
+}
+
 // Initialize Firebase with error handling
 let app;
-let auth;
-let db;
+let auth: Auth | MockAuth;
+let db: Firestore | MockFirestore;
 
 try {
   app = initializeApp(firebaseConfig);
@@ -28,8 +39,8 @@ try {
     currentUser: null,
     onAuthStateChanged: () => () => {},
     signInAnonymously: () => Promise.resolve({ user: { uid: 'mock-user-id' } })
-  } as any;
-  db = {} as any;
+  } as MockAuth;
+  db = { app: null } as MockFirestore;
 }
 
 export { auth, db };

@@ -471,7 +471,7 @@ export default function SocialCommunicationModulePage() {
           
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             🤝 Sosyal İletişim
-          </h1>
+      </h1>
           <p className="text-lg text-gray-600">
             Sosyal becerilerini geliştir ve iletişim kur!
           </p>

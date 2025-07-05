@@ -14,21 +14,45 @@ const NEW_VOICE_IDS = [
 interface ElevenLabsVoice {
   voice_id: string;
   name: string;
-  samples?: any[];
+  samples?: Array<{
+    sample_id?: string;
+    file_name?: string;
+    mime_type?: string;
+    size_bytes?: number;
+    hash?: string;
+  }>;
   category?: string;
   fine_tuning?: {
     language?: string;
     is_allowed_to_fine_tune?: boolean;
     finetuning_requested_at?: string;
     finetuning_state?: string;
-    verification_attempts?: any[];
+    verification_attempts?: Array<{
+      text?: string;
+      date_unix?: number;
+      accepted?: boolean;
+      similarity?: number;
+      levenshtein?: number;
+      recording?: {
+        recording_id?: string;
+        mime_type?: string;
+        size_bytes?: number;
+        upload_date_unix?: number;
+        transcription?: string;
+      };
+    }>;
     verification_failures?: string[];
     verification_attempts_count?: number;
     slice_ids?: string[];
     manual_verification?: {
       extra_text?: string;
       request_time_unix?: number;
-      files?: any[];
+      files?: Array<{
+        file_id?: string;
+        file_name?: string;
+        mime_type?: string;
+        size_bytes?: number;
+      }>;
     };
     manual_verification_requested?: boolean;
   };
@@ -171,7 +195,7 @@ export async function GET(request: NextRequest) {
       });
 
     console.log(`✅ Found ${newVoices.length} new voices from ${NEW_VOICE_IDS.length} requested IDs`);
-    console.log('📋 New voices:', newVoices.map((v: any) => ({ id: v.id, name: v.name })));
+    console.log('📋 New voices:', newVoices.map((v: { id: string; name: string }) => ({ id: v.id, name: v.name })));
 
     return NextResponse.json({
       success: true,

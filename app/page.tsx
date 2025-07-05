@@ -19,19 +19,16 @@ export default function HomePage() {
     const timer = setTimeout(() => {
       setShowContent(true);
       setIsLoading(false);
-      // Hoş geldin mesajını çal
-      if (!hasPlayedWelcome) {
-        playWelcomeMessage();
-        setHasPlayedWelcome(true);
-      }
+      // Hoş geldin mesajını otomatik çalma (autoplay policy nedeniyle)
+      // Kullanıcı etkileşimi gerekiyor
     }, 2000);
 
     return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasPlayedWelcome]);
+  }, []);
 
   const playWelcomeMessage = useCallback(async () => {
     try {
+      setHasPlayedWelcome(true);
       await speak("Merhaba! Kıvılcım'a hoş geldin! Birlikte öğrenmeye hazır mısın?", 'sentence');
     } catch (error) {
       console.error('Hoş geldin mesajı çalma hatası:', error);
@@ -130,19 +127,24 @@ export default function HomePage() {
             <div className="bg-white bg-opacity-60 p-4 rounded-lg shadow-sm max-w-md mx-auto">
               <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                 <span>🔊</span>
-                <span>Hoş geldin mesajını tekrar dinle:</span>
+                <span>{hasPlayedWelcome ? 'Hoş geldin mesajını tekrar dinle:' : 'Hoş geldin mesajını dinle:'}</span>
                 <Button 
                   variant="secondary" 
                   size="small"
                   onClick={playWelcomeMessage}
                   className="text-xs"
                 >
-                  🎵 Dinle
+                  🎵 {hasPlayedWelcome ? 'Tekrar Dinle' : 'Dinle'}
                 </Button>
               </div>
               <p className="text-xs text-center text-gray-500 mt-2">
                 Powered by ElevenLabs AI - Türkçe doğal ses teknolojisi
               </p>
+              {!hasPlayedWelcome && (
+                <p className="text-xs text-center text-blue-600 mt-1">
+                  💡 Ses sistemini test etmek için butona tıkla!
+                </p>
+              )}
             </div>
           </div>
 

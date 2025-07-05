@@ -74,34 +74,113 @@ export const BASIC_WORDS: StaticAudioFile[] = [
   { text: 'üş', filename: 'üş.mp3', type: 'word', category: 'syllables' },
   
   // Basit Türkçe kelimeler - aile ve günlük yaşam
-  { text: 'anne', filename: 'anne.mp3', type: 'word', category: 'words' },
-  { text: 'baba', filename: 'baba.mp3', type: 'word', category: 'words' },
-  { text: 'mama', filename: 'mama.mp3', type: 'word', category: 'words' },
-  { text: 'dede', filename: 'dede.mp3', type: 'word', category: 'words' },
-  { text: 'nene', filename: 'nene.mp3', type: 'word', category: 'words' },
-  { text: 'abla', filename: 'abla.mp3', type: 'word', category: 'words' },
-  { text: 'abi', filename: 'abi.mp3', type: 'word', category: 'words' },
+  { text: 'anne', filename: 'anne.mp3', type: 'word', category: 'family' },
+  { text: 'baba', filename: 'baba.mp3', type: 'word', category: 'family' },
+  { text: 'mama', filename: 'mama.mp3', type: 'word', category: 'family' },
+  { text: 'dede', filename: 'dede.mp3', type: 'word', category: 'family' },
+  { text: 'nene', filename: 'nene.mp3', type: 'word', category: 'family' },
+  { text: 'abla', filename: 'abla.mp3', type: 'word', category: 'family' },
+  { text: 'abi', filename: 'abi.mp3', type: 'word', category: 'family' },
+  { text: 'kardeş', filename: 'kardes.mp3', type: 'word', category: 'family' },
   
-  // Türkçe meyve ve hayvan isimleri
-  { text: 'elma', filename: 'elma.mp3', type: 'word', category: 'words' },
-  { text: 'armut', filename: 'armut.mp3', type: 'word', category: 'words' },
-  { text: 'kiraz', filename: 'kiraz.mp3', type: 'word', category: 'words' },
-  { text: 'üzüm', filename: 'üzüm.mp3', type: 'word', category: 'words' },
-  { text: 'kedi', filename: 'kedi.mp3', type: 'word', category: 'words' },
-  { text: 'köpek', filename: 'köpek.mp3', type: 'word', category: 'words' },
-  { text: 'kuş', filename: 'kuş.mp3', type: 'word', category: 'words' },
-  { text: 'balık', filename: 'balık.mp3', type: 'word', category: 'words' },
+  // Türkçe meyve ve sebzeler
+  { text: 'elma', filename: 'elma.mp3', type: 'word', category: 'fruits' },
+  { text: 'armut', filename: 'armut.mp3', type: 'word', category: 'fruits' },
+  { text: 'kiraz', filename: 'kiraz.mp3', type: 'word', category: 'fruits' },
+  { text: 'üzüm', filename: 'uzum.mp3', type: 'word', category: 'fruits' },
+  { text: 'muz', filename: 'muz.mp3', type: 'word', category: 'fruits' },
+  { text: 'çilek', filename: 'cilek.mp3', type: 'word', category: 'fruits' },
+  { text: 'domates', filename: 'domates.mp3', type: 'word', category: 'vegetables' },
+  { text: 'salatalık', filename: 'salatalik.mp3', type: 'word', category: 'vegetables' },
+  
+  // Hayvanlar
+  { text: 'kedi', filename: 'kedi.mp3', type: 'word', category: 'animals' },
+  { text: 'köpek', filename: 'kopek.mp3', type: 'word', category: 'animals' },
+  { text: 'kuş', filename: 'kus.mp3', type: 'word', category: 'animals' },
+  { text: 'balık', filename: 'balik.mp3', type: 'word', category: 'animals' },
+  { text: 'fil', filename: 'fil.mp3', type: 'word', category: 'animals' },
+  { text: 'kaplan', filename: 'kaplan.mp3', type: 'word', category: 'animals' },
+  { text: 'aslan', filename: 'aslan.mp3', type: 'word', category: 'animals' },
+  { text: 'tavşan', filename: 'tavsan.mp3', type: 'word', category: 'animals' },
   
   // Temel nesneler
-  { text: 'ev', filename: 'ev.mp3', type: 'word', category: 'words' },
-  { text: 'su', filename: 'su.mp3', type: 'word', category: 'words' },
-  { text: 'ekmek', filename: 'ekmek.mp3', type: 'word', category: 'words' },
-  { text: 'süt', filename: 'süt.mp3', type: 'word', category: 'words' },
-  { text: 'çay', filename: 'çay.mp3', type: 'word', category: 'words' },
-  { text: 'şeker', filename: 'şeker.mp3', type: 'word', category: 'words' },
+  { text: 'ev', filename: 'ev.mp3', type: 'word', category: 'objects' },
+  { text: 'su', filename: 'su.mp3', type: 'word', category: 'objects' },
+  { text: 'ekmek', filename: 'ekmek.mp3', type: 'word', category: 'objects' },
+  { text: 'süt', filename: 'sut.mp3', type: 'word', category: 'objects' },
+  { text: 'çay', filename: 'cay.mp3', type: 'word', category: 'objects' },
+  { text: 'şeker', filename: 'seker.mp3', type: 'word', category: 'objects' },
+  { text: 'kitap', filename: 'kitap.mp3', type: 'word', category: 'objects' },
+  { text: 'kalem', filename: 'kalem.mp3', type: 'word', category: 'objects' },
+  { text: 'çanta', filename: 'canta.mp3', type: 'word', category: 'objects' },
+
+  // Ek kelimeler - diğer sayfalarda kullanılan
+  { text: 'çe', filename: 'ce.mp3', type: 'word', category: 'syllables' },
+  { text: 'şa', filename: 'sa.mp3', type: 'word', category: 'syllables' },
+  { text: 'ğı', filename: 'gi.mp3', type: 'word', category: 'syllables' },
+  { text: 'öz', filename: 'oz.mp3', type: 'word', category: 'syllables' },
+  { text: 'ör', filename: 'or.mp3', type: 'word', category: 'syllables' },
 ];
 
-// Türkçe yönlendirme cümleleri
+// Ana sayfa diyalogları
+export const HOME_PAGE_DIALOGS: StaticAudioFile[] = [
+  { text: "Merhaba! Kıvılcım'a hoş geldin! Birlikte öğrenmeye hazır mısın?", filename: 'hosgeldin-mesaji.mp3', type: 'sentence', category: 'homepage' },
+];
+
+// Alfabe sayfası diyalogları
+export const ALPHABET_DIALOGS: StaticAudioFile[] = [
+  { text: "Alfabe okuma modülüne hoş geldin! Türk alfabesinin 29 harfini birlikte öğreneceğiz.", filename: 'alfabe-hosgeldin.mp3', type: 'sentence', category: 'alphabet' },
+];
+
+// Okuryazarlık egzersizi diyalogları  
+export const LITERACY_DIALOGS: StaticAudioFile[] = [
+  { text: "Bu hece el... el!", filename: 'bu-hece-el.mp3', type: 'word', category: 'literacy' },
+  { text: "Harikasın! Çok güzel yaptın!", filename: 'harikasin-cok-guzel.mp3', type: 'celebration', category: 'literacy' },
+  { text: "Bravo! Mükemmel bir çalışma!", filename: 'bravo-mukemmel-calisma.mp3', type: 'celebration', category: 'literacy' },
+  { text: "Süpersin! Devam et böyle!", filename: 'supersin-devam-et.mp3', type: 'celebration', category: 'literacy' },
+  { text: "Çok başarılısın! Harika iş!", filename: 'cok-basarilisin-harika-is.mp3', type: 'celebration', category: 'literacy' },
+];
+
+// Sosyal iletişim diyalogları
+export const SOCIAL_COMMUNICATION_DIALOGS: StaticAudioFile[] = [
+  { text: "Doğru!", filename: 'dogru.mp3', type: 'celebration', category: 'social' },
+  { text: "Tekrar dene.", filename: 'tekrar-dene-social.mp3', type: 'sentence', category: 'social' },
+  { text: "aktivitesini öğrenelim!", filename: 'aktivite-ogrenelim.mp3', type: 'sentence', category: 'social' },
+  { text: "Tebrikler! Aktiviteyi tamamladın!", filename: 'aktivite-tamamlandi.mp3', type: 'celebration', category: 'social' },
+];
+
+// Temel kavramlar diyalogları
+export const BASIC_CONCEPTS_DIALOGS: StaticAudioFile[] = [
+  { text: "Bu", filename: 'bu.mp3', type: 'word', category: 'concepts' },
+  { text: "rengi.", filename: 'rengi.mp3', type: 'word', category: 'concepts' },
+  { text: "sesi çıkarır.", filename: 'sesi-cikarir.mp3', type: 'sentence', category: 'concepts' },
+  { text: "tane elma", filename: 'tane-elma.mp3', type: 'sentence', category: 'concepts' },
+  { text: "der", filename: 'der.mp3', type: 'word', category: 'concepts' },
+];
+
+// Yazma-anlatım diyalogları
+export const WRITING_EXPRESSION_DIALOGS: StaticAudioFile[] = [
+  { text: "Tebrikler!", filename: 'tebrikler-yazma.mp3', type: 'celebration', category: 'writing' },
+  { text: "kelimesini tamamladın!", filename: 'kelimesini-tamamladin.mp3', type: 'sentence', category: 'writing' },
+  { text: "Tekrar dene. Harflerin sırasına dikkat et.", filename: 'harflerin-sirasina-dikkat.mp3', type: 'sentence', category: 'writing' },
+  { text: "Tüm kelimeleri tamamladın! Harikasın!", filename: 'tum-kelimeleri-tamamladin.mp3', type: 'celebration', category: 'writing' },
+  { text: "Harika cümle:", filename: 'harika-cumle.mp3', type: 'sentence', category: 'writing' },
+  { text: "Tüm cümleleri tamamladın! Muhteşemsin!", filename: 'tum-cumleleri-tamamladin.mp3', type: 'celebration', category: 'writing' },
+];
+
+// Yapboz diyalogları
+export const PUZZLE_DIALOGS: StaticAudioFile[] = [
+  { text: "seviye seçtin.", filename: 'seviye-sectin.mp3', type: 'sentence', category: 'puzzle' },
+  { text: "yapbozunu başlayalım!", filename: 'yapboz-baslayalim.mp3', type: 'sentence', category: 'puzzle' },
+];
+
+// Kelime oyunları diyalogları
+export const VOCABULARY_GAME_DIALOGS: StaticAudioFile[] = [
+  { text: "Harika! Eşleştirme buldu!", filename: 'harika-eslestirme-buldu.mp3', type: 'celebration', category: 'vocabulary' },
+  { text: "Tebrikler! Tüm eşleştirmeleri buldun!", filename: 'tum-eslestirmeleri-buldun.mp3', type: 'celebration', category: 'vocabulary' },
+];
+
+// Türkçe yönlendirme cümleleri - genişletilmiş
 export const INSTRUCTION_SENTENCES: StaticAudioFile[] = [
   { text: 'Başlayalım!', filename: 'baslayalim.mp3', type: 'sentence', category: 'instructions' },
   { text: 'Harfleri birleştir.', filename: 'harfleri-birlestir.mp3', type: 'sentence', category: 'instructions' },
@@ -113,9 +192,13 @@ export const INSTRUCTION_SENTENCES: StaticAudioFile[] = [
   { text: 'Sorun değil, tekrar deneyelim.', filename: 'sorun-degil-tekrar.mp3', type: 'sentence', category: 'instructions' },
   { text: 'Müthiş! Devam ediyoruz.', filename: 'muthis-devam-ediyoruz.mp3', type: 'sentence', category: 'instructions' },
   { text: 'Şimdi bir sonraki harfe geçelim.', filename: 'simdi-sonraki-harfe.mp3', type: 'sentence', category: 'instructions' },
+  { text: 'Bu kelimeyi okuyabilir misin?', filename: 'bu-kelimeyi-okuyabilir-misin.mp3', type: 'sentence', category: 'instructions' },
+  { text: 'Hangi harf eksik?', filename: 'hangi-harf-eksik.mp3', type: 'sentence', category: 'instructions' },
+  { text: 'Kelimeyi tamamla.', filename: 'kelimeyi-tamamla.mp3', type: 'sentence', category: 'instructions' },
+  { text: 'Mükemmel bir başlangıç!', filename: 'mukemmel-baslangic.mp3', type: 'sentence', category: 'instructions' },
 ];
 
-// Türkçe kutlama mesajları
+// Türkçe kutlama mesajları - genişletilmiş
 export const CELEBRATION_MESSAGES: StaticAudioFile[] = [
   { text: 'Harikasın!', filename: 'harikasin.mp3', type: 'celebration', category: 'praise' },
   { text: 'Bravo!', filename: 'bravo.mp3', type: 'celebration', category: 'praise' },
@@ -129,24 +212,47 @@ export const CELEBRATION_MESSAGES: StaticAudioFile[] = [
   { text: 'Devam et böyle!', filename: 'devam-et-boyle.mp3', type: 'celebration', category: 'praise' },
   { text: 'Muhteşemsin!', filename: 'muhtesemsin.mp3', type: 'celebration', category: 'praise' },
   { text: 'Çok güzeldi!', filename: 'cok-guzeldi.mp3', type: 'celebration', category: 'praise' },
+  { text: 'Harika ilerleme!', filename: 'harika-ilerleme.mp3', type: 'celebration', category: 'praise' },
+  { text: 'Sen bir yıldızsın!', filename: 'sen-bir-yildizsin.mp3', type: 'celebration', category: 'praise' },
+  { text: 'Mükemmel bir öğrencisin!', filename: 'mukemmel-ogrencisin.mp3', type: 'celebration', category: 'praise' },
 ];
 
 // Tüm statik ses dosyalarını birleştir
 export const ALL_STATIC_AUDIO: StaticAudioFile[] = [
   ...TURKISH_LETTERS,
   ...BASIC_WORDS,
+  ...HOME_PAGE_DIALOGS,
+  ...ALPHABET_DIALOGS,
+  ...LITERACY_DIALOGS,
+  ...SOCIAL_COMMUNICATION_DIALOGS,
+  ...BASIC_CONCEPTS_DIALOGS,
+  ...WRITING_EXPRESSION_DIALOGS,
+  ...PUZZLE_DIALOGS,
+  ...VOCABULARY_GAME_DIALOGS,
   ...INSTRUCTION_SENTENCES,
   ...CELEBRATION_MESSAGES,
 ];
 
-// Türkçe karakterli ses dosyası yolu oluşturucu
-export function getStaticAudioPath(text: string, type: VoiceType): string | null {
+// Gelişmiş multi-voice ses dosyası yolu oluşturucu
+export function getStaticAudioPath(text: string, type: VoiceType, voiceSlug?: string): string | null {
   const audioFile = ALL_STATIC_AUDIO.find(
     file => file.text.toLowerCase() === text.toLowerCase() && file.type === type
   );
   
   if (!audioFile) return null;
   
+  // Multi-voice support - eğer voice slug belirtilmişse o sesi kullan
+  if (voiceSlug) {
+    const voiceBasePath = `/audio/voices/${voiceSlug}`;
+    const typePath = type === 'letter' ? 'letters' : 
+                     type === 'word' ? 'words' : 
+                     type === 'sentence' ? 'sentences' : 
+                     'celebrations';
+    
+    return `${voiceBasePath}/${typePath}/${audioFile.filename}`;
+  }
+  
+  // Varsayılan yol (eski yapı için uyumluluk)
   const basePath = `/audio/${type === 'letter' ? 'letters' : 
                           type === 'word' ? 'words' : 
                           type === 'sentence' ? 'sentences' : 
@@ -155,9 +261,9 @@ export function getStaticAudioPath(text: string, type: VoiceType): string | null
   return `${basePath}/${audioFile.filename}`;
 }
 
-// Ses dosyası var mı kontrol et
-export function hasStaticAudio(text: string, type: VoiceType): boolean {
-  return getStaticAudioPath(text, type) !== null;
+// Ses dosyası var mı kontrol et - multi-voice destekli
+export function hasStaticAudio(text: string, type: VoiceType, voiceSlug?: string): boolean {
+  return getStaticAudioPath(text, type, voiceSlug) !== null;
 }
 
 // Kategori bazında ses dosyalarını getir
@@ -196,4 +302,25 @@ export function turkishToFilename(text: string): string {
     .replace(/[^a-z0-9]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+// Tüm ses dosyalarının istatistiklerini getir
+export function getAudioStats() {
+  const stats = {
+    totalFiles: ALL_STATIC_AUDIO.length,
+    byType: {
+      letter: ALL_STATIC_AUDIO.filter(f => f.type === 'letter').length,
+      word: ALL_STATIC_AUDIO.filter(f => f.type === 'word').length,
+      sentence: ALL_STATIC_AUDIO.filter(f => f.type === 'sentence').length,
+      celebration: ALL_STATIC_AUDIO.filter(f => f.type === 'celebration').length,
+    },
+    byCategory: {} as Record<string, number>
+  };
+  
+  // Kategori bazında sayım
+  ALL_STATIC_AUDIO.forEach(file => {
+    stats.byCategory[file.category] = (stats.byCategory[file.category] || 0) + 1;
+  });
+  
+  return stats;
 } 

@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+- button "Open issues overlay": 1 Issue
+- button "Collapse issues badge":
+  - img
+- navigation:
+  - button "previous" [disabled]:
+    - img "previous"
+  - text: 1/1
+  - button "next" [disabled]:
+    - img "next"
+- img
+- link "Next.js 15.3.4 (stale) Webpack":
+  - /url: https://nextjs.org/docs/messages/version-staleness
+  - img
+  - text: Next.js 15.3.4 (stale) Webpack
+- img
+- dialog "Runtime Error":
+  - text: Runtime Error
+  - button "Copy Stack Trace":
+    - img
+  - button "No related documentation found" [disabled]:
+    - img
+  - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools":
+    - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+    - img
+  - paragraph: "Error: Cannot find module './548.js' Require stack: - C:\\cursor\\otizm-kivilcim\\.next\\server\\webpack-runtime.js - C:\\cursor\\otizm-kivilcim\\.next\\server\\app\\_not-found\\page.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\require.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\load-components.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\build\\utils.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\build\\swc\\options.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\build\\swc\\index.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\build\\next-config-ts\\transpile-config.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\config.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\next.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\lib\\start-server.js"
+  - button "Show More"
+  - paragraph: Call Stack 50
+  - button "Show 42 ignore-listed frame(s)":
+    - text: Show 42 ignore-listed frame(s)
+    - img
+  - text: __webpack_require__.f.require .next\server\webpack-runtime.js (203:28) <unknown> .next\server\webpack-runtime.js (116:40) Array.reduce <anonymous> (0:0) __webpack_require__.e .next\server\webpack-runtime.js (115:67) Array.map <anonymous> (0:0) __webpack_require__.X .next\server\webpack-runtime.js (167:22) <unknown> .next\server\pages\_document.js (1:339) Object.<anonymous> .next\server\pages\_document.js (1:381)
+- contentinfo:
+  - paragraph: This error happened while generating the page. Any console logs will be displayed in the terminal window.
+  - region "Error feedback":
+    - paragraph:
+      - link "Was this helpful?":
+        - /url: https://nextjs.org/telemetry#error-feedback
+    - button "Mark as helpful"
+    - button "Mark as not helpful"
+```

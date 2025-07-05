@@ -1,6 +1,5 @@
 // Firebase Firestore service for Kıvılcım platform
 // Development version with mock data fallback
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { 
   collection, 
   doc, 
@@ -17,11 +16,11 @@ import {
   writeBatch,
   Firestore
 } from 'firebase/firestore';
-// @ts-ignore
+// @ts-expect-error - Mock fallback support for development
 import { db } from './firebase';
 
 // Type assertion for db
-// @ts-ignore
+// @ts-expect-error - Firebase can be null during initialization
 const firestore = db as Firestore | null;
 
 // User Data Types
@@ -69,7 +68,7 @@ export interface UserData {
 // Check if Firestore is available
 const isFirestoreAvailable = () => {
   try {
-    return firestore !== null && typeof firestore.doc === 'function';
+    return firestore !== null && firestore.app !== undefined;
   } catch {
     return false;
   }

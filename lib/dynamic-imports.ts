@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
-import { ComponentType } from 'react';
-import LazyLoadWrapper, { ComponentSkeleton } from '@/components/LazyLoadWrapper';
+import React, { ComponentType } from 'react';
+import { ComponentSkeleton } from '@/components/LazyLoadWrapper';
 
 // Type-safe dynamic import utility with loading states
 interface DynamicImportOptions {
@@ -24,12 +24,11 @@ export function createDynamicComponent<T = any>(
 ) {
   const {
     fallback = ComponentSkeleton,
-    errorBoundaryProps = {},
     ssr = false
   } = options;
 
   return dynamic(importFn, {
-    loading: fallback,
+    loading: () => React.createElement(fallback),
     ssr,
   });
 }

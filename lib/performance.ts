@@ -1,5 +1,4 @@
 // Performance monitoring and Core Web Vitals tracking
-import { onCLS, onFID, onFCP, onLCP, onTTFB } from 'web-vitals'
 import React, { useState, useCallback, useMemo, useRef, useEffect, startTransition, useTransition } from 'react'
 
 // Google Analytics gtag type declaration
@@ -270,7 +269,7 @@ export function withPerformanceTracking<P extends object>(
   Component: React.ComponentType<P>,
   componentName: string
 ) {
-  return React.memo((props: P) => {
+  const MemoizedComponent = React.memo((props: P) => {
     const { trackRender } = usePerformanceTracker();
     
     return useMemo(() => {
@@ -281,6 +280,9 @@ export function withPerformanceTracking<P extends object>(
       return result!;
     }, [props, trackRender]);
   }, shallowEqual);
+  
+  MemoizedComponent.displayName = `withPerformanceTracking(${componentName})`;
+  return MemoizedComponent;
 }
 
 // Bundle size optimization

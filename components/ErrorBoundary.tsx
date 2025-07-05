@@ -143,4 +143,115 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
+// Exercise-specific error boundary component
+interface ExerciseErrorBoundaryProps {
+  children: ReactNode;
+  exerciseName: string;
+  onBackToMenu?: () => void;
+  onRetry?: () => void;
+}
+
+interface ExerciseErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+  errorInfo?: ErrorInfo;
+}
+
+export class ExerciseErrorBoundary extends Component<ExerciseErrorBoundaryProps, ExerciseErrorBoundaryState> {
+  constructor(props: ExerciseErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ExerciseErrorBoundaryState {
+    return {
+      hasError: true,
+      error
+    };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.group(`🎯 Exercise Error Boundary: ${this.props.exerciseName}`);
+    console.error('Error:', error);
+    console.error('Error Info:', errorInfo);
+    console.error('Stack:', error.stack);
+    console.groupEnd();
+
+    this.setState({
+      errorInfo
+    });
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false });
+    if (this.props.onRetry) {
+      this.props.onRetry();
+    }
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white rounded-xl p-6 shadow-lg text-center">
+            <div className="text-6xl mb-4">😞</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Egzersizde Sorun
+            </h2>
+            <p className="text-gray-600 mb-1">
+              <strong>{this.props.exerciseName}</strong> egzersizinde bir hata oluştu.
+            </p>
+            <p className="text-gray-500 text-sm mb-6">
+              Tekrar deneyebilir veya ana menüye dönebilirsin.
+            </p>
+            
+            <div className="space-y-3">
+              <button
+                onClick={this.handleRetry}
+                className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              >
+                🔄 Tekrar Dene
+              </button>
+              
+              {this.props.onBackToMenu && (
+                <button
+                  onClick={this.props.onBackToMenu}
+                  className="w-full bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                >
+                  ← Ana Menüye Dön
+                </button>
+              )}
+              
+              <button
+                onClick={() => window.location.reload()}
+                className="w-full bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+              >
+                🔄 Sayfayı Yenile
+              </button>
+            </div>
+            
+            {process.env.NODE_ENV === 'development' && (
+              <details className="mt-6 text-left">
+                <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700">
+                  🔧 Geliştirici Bilgileri
+                </summary>
+                <div className="mt-2 p-3 bg-gray-100 rounded text-xs">
+                  <div className="font-semibold text-red-600 mb-2">Error:</div>
+                  <div className="text-red-800 mb-3">{this.state.error?.message}</div>
+                  <div className="font-semibold text-red-600 mb-2">Stack Trace:</div>
+                  <pre className="text-red-700 text-xs overflow-auto max-h-32">
+                    {this.state.error?.stack}
+                  </pre>
+                </div>
+              </details>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export default ErrorBoundary; 

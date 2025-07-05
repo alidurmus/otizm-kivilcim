@@ -18,6 +18,8 @@
     "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:debug": "npx playwright test --debug",
     "test:elevenlabs": "npx playwright test tests/e2e/elevenlabs-integration.spec.ts",
+    "test:audio-control": "npx playwright test tests/e2e/audio-control-system.spec.ts",
+    "test:admin": "npx playwright test tests/e2e/admin-elevenlabs.spec.ts",
     "test:unit": "jest",
     "test:unit:watch": "jest --watch",
     "test:unit:coverage": "jest --coverage",
@@ -42,6 +44,7 @@
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.5.0",
+    "axios": "^1.10.0",
     "dotenv": "^17.0.1",
     "firebase": "^11.10.0",
     "lucide-react": "^0.525.0",

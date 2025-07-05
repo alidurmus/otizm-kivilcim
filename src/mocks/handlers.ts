@@ -68,7 +68,16 @@ export const handlers = [
 
   http.post('https://api.elevenlabs.io/v1/text-to-speech/:voiceId', async ({ params, request }) => {
     const { voiceId } = params
-    const body = await request.json() as { text: string; model_id?: string; voice_settings?: any }
+    const body = await request.json() as { 
+      text: string; 
+      model_id?: string; 
+      voice_settings?: {
+        stability?: number;
+        similarity_boost?: number;
+        style?: number;
+        use_speaker_boost?: boolean;
+      };
+    }
 
     if (!body.text) {
       return new HttpResponse(

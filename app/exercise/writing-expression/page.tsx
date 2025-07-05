@@ -695,7 +695,7 @@ export default function WritingExpressionModulePage() {
           
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             ✍️ Yazma ve İfade Etme
-          </h1>
+      </h1>
           <p className="text-lg text-gray-600">
             Yazma becerilerini geliştir ve kendini ifade et!
           </p>

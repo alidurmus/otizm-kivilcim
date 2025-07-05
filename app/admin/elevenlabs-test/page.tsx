@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useElevenLabs } from '@/lib/elevenlabs';
 
 // Types for ElevenLabs admin test page
@@ -62,6 +62,22 @@ export default function ElevenLabsTestPage() {
   const [newVoices, setNewVoices] = useState<NewVoiceData[]>([]);
   const [loadingNewVoices, setLoadingNewVoices] = useState(false);
   const [showNewVoices, setShowNewVoices] = useState(false);
+  
+  // YENİ: Ses dosyası kontrol sistemi state'leri
+  const [audioFileStatus, setAudioFileStatus] = useState<{
+    totalFiles: number;
+    existingFiles: number;
+    missingFiles: string[];
+    checkInProgress: boolean;
+    lastCheck?: Date;
+  }>({
+    totalFiles: 0,
+    existingFiles: 0,
+    missingFiles: [],
+    checkInProgress: false
+  });
+  const [showAudioControls, setShowAudioControls] = useState(false);
+  const [creatingMissingFiles, setCreatingMissingFiles] = useState(false);
 
   const { speak, getVoices, testVoice, getApiStatus, getTestTexts } = useElevenLabs();
 
@@ -174,7 +190,7 @@ export default function ElevenLabsTestPage() {
     loadApiStatus();
   }, []);
 
-  const loadVoices = async () => {
+  const loadVoices = useCallback(async () => {
     try {
       console.log('🔄 Loading voices...');
       const voiceList = await getVoices();
@@ -212,16 +228,16 @@ export default function ElevenLabsTestPage() {
       setVoices([]); // Ensure voices is always an array
       setError('Ses listesi yüklenirken hata oluştu. API bağlantısını kontrol edin.');
     }
-  };
+  }, []);
 
-  const loadApiStatus = async () => {
+  const loadApiStatus = useCallback(async () => {
     try {
       const status = await getApiStatus();
       setApiStatus(status);
     } catch (err) {
       console.error('API status loading error:', err);
     }
-  };
+  }, []);
 
   // Yeni voice'ları ElevenLabs API'den çek
   const fetchNewVoices = async () => {
@@ -478,6 +494,231 @@ export default function ElevenLabsTestPage() {
 
   const testTexts = getTestTexts();
 
+  // YENİ: Ses dosyası varlık kontrolü fonksiyonları
+  const checkAudioFiles = async () => {
+    setAudioFileStatus(prev => ({ ...prev, checkInProgress: true }));
+    
+    try {
+      // Kontrol edilecek kritik ses dosyaları
+      const criticalAudioFiles = [
+        // Ana sayfam hoş geldin mesajları
+        '/audio/sentences/hosgeldin-mesaji.mp3',
+        '/audio/sentences/alfabe-hosgeldin.mp3',
+        
+        // Türkçe harfler (29 harf)
+        '/audio/letters/a.mp3', '/audio/letters/b.mp3', '/audio/letters/c.mp3',
+        '/audio/letters/ch.mp3', '/audio/letters/d.mp3', '/audio/letters/e.mp3',
+        '/audio/letters/f.mp3', '/audio/letters/g.mp3', '/audio/letters/gh.mp3',
+        '/audio/letters/h.mp3', '/audio/letters/ii.mp3', '/audio/letters/i.mp3',
+        '/audio/letters/j.mp3', '/audio/letters/k.mp3', '/audio/letters/l.mp3',
+        '/audio/letters/m.mp3', '/audio/letters/n.mp3', '/audio/letters/o.mp3',
+        '/audio/letters/oo.mp3', '/audio/letters/p.mp3', '/audio/letters/r.mp3',
+        '/audio/letters/s.mp3', '/audio/letters/sh.mp3', '/audio/letters/t.mp3',
+        '/audio/letters/u.mp3', '/audio/letters/uu.mp3', '/audio/letters/v.mp3',
+        '/audio/letters/y.mp3', '/audio/letters/z.mp3',
+        
+        // Temel kutlama mesajları
+        '/audio/celebrations/aferin-sana.mp3',
+        '/audio/celebrations/bravo.mp3',
+        '/audio/celebrations/cok-basarilisin-harika-is.mp3',
+        '/audio/celebrations/harikasin-cok-guzel.mp3',
+        '/audio/celebrations/mukemmel-devam-et.mp3',
+        
+        // Okuryazarlık modülü hece dosyaları
+        '/audio/words/bu-hece-el.mp3',
+        '/audio/words/bu-hece-al.mp3',
+        '/audio/words/bu-hece-ol.mp3',
+        '/audio/words/bu-hece-ul.mp3',
+        '/audio/words/bu-hece-il.mp3',
+        
+        // Temel kelimeler
+        '/audio/words/elma.mp3',
+        '/audio/words/anne.mp3',
+        '/audio/words/baba.mp3',
+        '/audio/words/su.mp3',
+        '/audio/words/ekmek.mp3'
+      ];
+      
+      const missingFiles: string[] = [];
+      const existingFiles: string[] = [];
+      
+      // Her dosyanın varlığını kontrol et
+      for (const filePath of criticalAudioFiles) {
+        try {
+          const response = await fetch(filePath, { method: 'HEAD' });
+          if (response.ok) {
+            existingFiles.push(filePath);
+          } else {
+            missingFiles.push(filePath);
+          }
+        } catch (error) {
+          missingFiles.push(filePath);
+        }
+      }
+      
+      setAudioFileStatus({
+        totalFiles: criticalAudioFiles.length,
+        existingFiles: existingFiles.length,
+        missingFiles,
+        checkInProgress: false,
+        lastCheck: new Date()
+      });
+      
+      console.log('📊 Audio File Status:', {
+        total: criticalAudioFiles.length,
+        existing: existingFiles.length,
+        missing: missingFiles.length,
+        missingList: missingFiles
+      });
+      
+    } catch (error) {
+      console.error('Error checking audio files:', error);
+      setAudioFileStatus(prev => ({ ...prev, checkInProgress: false }));
+    }
+  };
+
+  const createMissingAudioFiles = async () => {
+    if (audioFileStatus.missingFiles.length === 0) {
+      alert('Eksik ses dosyası bulunamadı!');
+      return;
+    }
+    
+    setCreatingMissingFiles(true);
+    
+    try {
+      console.log(`🔄 ${audioFileStatus.missingFiles.length} eksik dosya için sıralı oluşturma başlatılıyor...`);
+      
+      const results = [];
+      
+      // Sıralı işlem için for loop kullan (paralel yerine)
+      for (let i = 0; i < audioFileStatus.missingFiles.length; i++) {
+        const filePath = audioFileStatus.missingFiles[i];
+        const filename = filePath.split('/').pop()?.replace('.mp3', '') || '';
+        
+        // Dosya tipini belirle
+        let contentType: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence';
+        let text = filename;
+        
+        if (filePath.includes('/letters/')) {
+          contentType = 'letter';
+          // Harf mapping
+          const letterMappings: { [key: string]: string } = {
+            'ch': 'Ç', 'gh': 'Ğ', 'ii': 'I', 'i': 'İ',
+            'oo': 'Ö', 'sh': 'Ş', 'uu': 'Ü'
+          };
+          text = letterMappings[filename] || filename.toUpperCase();
+        } else if (filePath.includes('/words/')) {
+          contentType = 'word';
+          if (filename.startsWith('bu-hece-')) {
+            const vowel = filename.replace('bu-hece-', '');
+            text = `Bu hece ${vowel}... ${vowel}!`;
+          }
+        } else if (filePath.includes('/celebrations/')) {
+          contentType = 'celebration';
+          const celebrationMappings: { [key: string]: string } = {
+            'aferin-sana': 'Aferin sana!',
+            'bravo': 'Bravo!',
+            'cok-basarilisin-harika-is': 'Çok başarılısın! Harika iş!',
+            'harikasin-cok-guzel': 'Harikasın! Çok güzel yaptın!',
+            'mukemmel-devam-et': 'Mükemmel! Devam et!'
+          };
+          text = celebrationMappings[filename] || filename.replace(/-/g, ' ');
+        } else if (filePath.includes('/sentences/')) {
+          const sentenceMappings: { [key: string]: string } = {
+            'hosgeldin-mesaji': 'Kıvılcım platformuna hoş geldin!',
+            'alfabe-hosgeldin': 'Alfabe okuma modülüne hoş geldin! 29 harflik Türk alfabesini birlikte öğreneceğiz.'
+          };
+          text = sentenceMappings[filename] || filename.replace(/-/g, ' ');
+        }
+        
+        console.log(`🔄 [${i+1}/${audioFileStatus.missingFiles.length}] Creating: ${text} (${contentType}) -> ${filePath}`);
+        
+        try {
+          // ElevenLabs API ile ses oluştur
+          const response = await fetch('/api/speech', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              text,
+              type: contentType,
+              voiceId: 'jbJMQWv1eS4YjQ6PCcn6', // Gülsu voice
+              language: 'tr'
+            })
+          });
+          
+          if (response.ok) {
+            console.log(`✅ [${i+1}/${audioFileStatus.missingFiles.length}] Created: ${filePath}`);
+            results.push({ filePath, success: true });
+          } else {
+            const errorText = await response.text();
+            console.error(`❌ [${i+1}/${audioFileStatus.missingFiles.length}] Failed: ${filePath} - ${errorText}`);
+            results.push({ filePath, success: false, error: errorText });
+          }
+        } catch (error) {
+          console.error(`❌ [${i+1}/${audioFileStatus.missingFiles.length}] Error: ${filePath}`, error);
+          results.push({ filePath, success: false, error: String(error) });
+        }
+        
+        // Rate limiting için bekleme (son dosya değilse)
+        if (i < audioFileStatus.missingFiles.length - 1) {
+          console.log(`⏳ Rate limiting için 3 saniye bekleniyor...`);
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+      }
+      
+      const successful = results.filter(r => r.success).length;
+      const failed = results.filter(r => !r.success).length;
+      
+      alert(`Ses dosyası oluşturma tamamlandı!\n✅ Başarılı: ${successful}\n❌ Başarısız: ${failed}\n\n${failed > 0 ? 'Başarısız olanlar için lütfen birkaç dakika bekleyip tekrar deneyin.' : 'Tüm dosyalar başarıyla oluşturuldu!'}`);
+      
+      // Kontrol tekrar çalıştır
+      setTimeout(() => checkAudioFiles(), 2000);
+      
+    } catch (error) {
+      console.error('Error creating missing audio files:', error);
+      alert('Ses dosyası oluşturma hatası: ' + error);
+    } finally {
+      setCreatingMissingFiles(false);
+    }
+  };
+
+  const testAudioQuality = async (filePath: string) => {
+    try {
+      const audio = new Audio(filePath);
+      
+      return new Promise((resolve) => {
+        audio.oncanplaythrough = () => {
+          resolve({
+            filePath,
+            duration: audio.duration,
+            canPlay: true,
+            quality: audio.duration > 0 ? 'good' : 'poor'
+          });
+        };
+        
+        audio.onerror = () => {
+          resolve({
+            filePath,
+            duration: 0,
+            canPlay: false,
+            quality: 'error'
+          });
+        };
+        
+        audio.load();
+      });
+      
+    } catch (error) {
+      return {
+        filePath,
+        duration: 0,
+        canPlay: false,
+        quality: 'error',
+        error: error
+      };
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6">
       <div className="max-w-6xl mx-auto">
@@ -501,88 +742,133 @@ export default function ElevenLabsTestPage() {
           </div>
         </div>
 
-        {/* Yeni Voice'ları Çek Butonu */}
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-lg shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between">
+        {/* YENİ: Ses Dosyası Kontrol Paneli */}
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg shadow-lg p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-                🆕 Yeni Voice'ları Keşfet
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                🎵 Ses Dosyası Kontrol Sistemi
+                {audioFileStatus.lastCheck && (
+                  <span className="text-sm text-gray-500 font-normal">
+                    (Son kontrol: {audioFileStatus.lastCheck.toLocaleTimeString()})
+                  </span>
+                )}
               </h2>
               <p className="text-gray-600 dark:text-gray-300">
-                ElevenLabs API'den yeni eklenen voice'ların bilgilerini çekin ve test edin
+                Kritik ses dosyalarının varlığını kontrol edin ve eksikleri otomatik oluşturun
               </p>
             </div>
             <button
-              onClick={fetchNewVoices}
-              disabled={loadingNewVoices}
-              className="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+              onClick={() => setShowAudioControls(!showAudioControls)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
             >
-              {loadingNewVoices ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  Yükleniyor...
-                </>
-              ) : (
-                <>
-                  🔄 Voice Bilgilerini Çek
-                </>
-              )}
+              {showAudioControls ? '🔼 Gizle' : '🔽 Göster'}
             </button>
           </div>
 
-          {/* Yeni Voice'lar Listesi */}
-          {showNewVoices && (
-            <div className="mt-6">
-              <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-                📋 Bulunan Yeni Voice'lar ({newVoices.length})
-              </h3>
-              {newVoices.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {newVoices.map((newVoice, index) => (
-                    <div key={`new-voice-${newVoice.id}-${index}`} className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-purple-200 dark:border-purple-700">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h4 className="font-semibold text-gray-800 dark:text-white">
-                            🎤 {newVoice.name}
-                          </h4>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
-                            {newVoice.id}
-                          </p>
-                        </div>
-                        {newVoice.isVerified && (
-                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                            ✅ Verified
-                          </span>
-                        )}
-                      </div>
-                      
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                        {newVoice.description}
-                      </p>
-                      
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                          {newVoice.language}
-                        </span>
-                        <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
-                          {newVoice.category}
-                        </span>
-                      </div>
-
-                      <button
-                        onClick={() => testNewVoice(newVoice)}
-                        disabled={loading || isPlaying}
-                        className="w-full bg-purple-500 hover:bg-purple-600 disabled:bg-purple-300 text-white text-sm px-3 py-2 rounded transition-colors duration-200"
-                      >
-                        {loading && isPlaying ? '🔊 Test Ediliyor...' : '🧪 Test Et'}
-                      </button>
-                    </div>
-                  ))}
+          {showAudioControls && (
+            <div className="space-y-6">
+              {/* Ses Dosyası İstatistikleri */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-green-200 dark:border-green-700">
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Toplam Dosya</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {audioFileStatus.totalFiles}
+                  </div>
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500 dark:text-gray-400">
-                    ❌ Yeni voice bulunamadı. Voice ID'leri kontrol edin.
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-blue-200 dark:border-blue-700">
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Mevcut</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {audioFileStatus.existingFiles}
+                  </div>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-red-200 dark:border-red-700">
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Eksik</div>
+                  <div className="text-2xl font-bold text-red-600">
+                    {audioFileStatus.missingFiles.length}
+                  </div>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-purple-200 dark:border-purple-700">
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Başarı Oranı</div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {audioFileStatus.totalFiles > 0 
+                      ? Math.round((audioFileStatus.existingFiles / audioFileStatus.totalFiles) * 100)
+                      : 0}%
+                  </div>
+                </div>
+              </div>
+
+              {/* Kontrol Butonları */}
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={checkAudioFiles}
+                  disabled={audioFileStatus.checkInProgress}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+                >
+                  {audioFileStatus.checkInProgress ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      Kontrol Ediliyor...
+                    </>
+                  ) : (
+                    <>
+                      🔍 Ses Dosyalarını Kontrol Et
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={createMissingAudioFiles}
+                  disabled={creatingMissingFiles || audioFileStatus.missingFiles.length === 0}
+                  className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+                >
+                  {creatingMissingFiles ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      Oluşturuluyor...
+                    </>
+                  ) : (
+                    <>
+                      ⚡ Eksik Dosyaları Oluştur ({audioFileStatus.missingFiles.length})
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Eksik Dosyalar Listesi */}
+              {audioFileStatus.missingFiles.length > 0 && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4">
+                  <h3 className="font-medium text-red-800 dark:text-red-200 mb-3 flex items-center gap-2">
+                    ❌ Eksik Ses Dosyaları ({audioFileStatus.missingFiles.length})
+                  </h3>
+                  <div className="max-h-40 overflow-y-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {audioFileStatus.missingFiles.map((filePath, index) => {
+                        const filename = filePath.split('/').pop();
+                        const category = filePath.includes('/letters/') ? '🔤' : 
+                                       filePath.includes('/words/') ? '📝' :
+                                       filePath.includes('/sentences/') ? '💬' :
+                                       filePath.includes('/celebrations/') ? '🎉' : '📁';
+                        
+                        return (
+                          <div key={index} className="text-sm font-mono text-red-700 dark:text-red-300 bg-white dark:bg-gray-800 rounded px-2 py-1 border">
+                            {category} {filename}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Başarı Mesajı */}
+              {audioFileStatus.existingFiles > 0 && audioFileStatus.missingFiles.length === 0 && (
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4">
+                  <h3 className="font-medium text-green-800 dark:text-green-200 mb-2 flex items-center gap-2">
+                    ✅ Tüm Kritik Ses Dosyaları Mevcut!
+                  </h3>
+                  <p className="text-green-700 dark:text-green-300 text-sm">
+                    {audioFileStatus.existingFiles} adet ses dosyası başarıyla doğrulandı. Platform tam kapasiteyle çalışıyor.
                   </p>
                 </div>
               )}

@@ -3,72 +3,72 @@
 
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: '.env.local' });
+const axios = require('axios');
+require('dotenv').config();
 
 // ElevenLabs API configuration
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+const ELEVENLABS_BASE_URL = 'https://api.elevenlabs.io/v1';
 
-// 7 Seçilmiş Türkçe Ses Konfigürasyonu (2 yeni ses eklendi)
-const TURKISH_VOICES = [
-  {
+if (!ELEVENLABS_API_KEY) {
+  console.error('❌ ELEVENLABS_API_KEY environment variable is required');
+  process.exit(1);
+}
+
+// 7 Selected Turkish Voices (5 female + 2 male)
+const SELECTED_TURKISH_VOICES = {
+  gulsu: {
     id: 'jbJMQWv1eS4YjQ6PCcn6',
     name: 'Gülsu',
     slug: 'gulsu',
     gender: 'female',
-    description: 'Genç Türk kadını, enerjik ve samimi ses. Hikayeler ve kitaplar için mükemmel.'
+    traits: ['energetic', 'sincere', 'clear']
   },
-  {
-    id: 'mBUB5zYuPwfVE6DTcEjf', 
+  edaAtlas: {
+    id: 'mBUB5zYuPwfVE6DTcEjf',
     name: 'Eda Atlas',
     slug: 'eda-atlas',
     gender: 'female',
-    description: 'Genç, parlak Türk kadını sesi. Kurumsal, radyo ve TV reklamları için mükemmel seçim.'
+    traits: ['bright', 'professional', 'corporate']
   },
-  {
+  ayca: {
     id: 'eUUtjbi66JcWz3T4Gvvo',
     name: 'Ayça',
     slug: 'ayca',
     gender: 'female',
-    description: 'Dinamik genç kadın sesi. Anlatıcılar ve motivasyonel konuşmalar için uygun.'
+    traits: ['dynamic', 'motivational', 'narrator']
   },
-  {
+  yusufSuratli: {
     id: 'V6TFTAE0gaN8LtBwl70x',
     name: 'Yusuf Suratlı',
     slug: 'yusuf-suratli',
     gender: 'male',
-    description: 'Parlak, genç yetişkin erkek sesi. Anlatıcı, konuşmacı, kitap seslendirme için mükemmel.'
+    traits: ['bright', 'narrator', 'speaker']
   },
-  {
+  sermin: {
     id: '9GYMX9eMWSq1yjiwXb7B',
     name: 'Sermin',
     slug: 'sermin',
     gender: 'female',
-    description: 'Orijinal, akıcı ve vurgulu Türkçe kadın sesi.'
+    traits: ['original', 'fluent', 'accented']
   },
-  {
+  cavit: {
     id: 'Y2T2O1csKPgWgyuKcU0a',
     name: 'Cavit',
     slug: 'cavit',
     gender: 'male',
-    description: 'Güçlü ve net erkek sesi. Profesyonel anlatım ve eğitici içerikler için ideal.'
+    traits: ['strong', 'clear', 'professional']
   },
-  {
+  mehmet: {
     id: 'fg8pljYEn5ahwjyOQaro',
     name: 'Mehmet',
     slug: 'mehmet',
     gender: 'male',
-    description: 'Samimi ve sıcak erkek sesi. Günlük konuşmalar ve çocuk eğitimi için uygun.'
+    traits: ['friendly', 'warm', 'child_friendly']
   }
-];
+};
 
-if (!ELEVENLABS_API_KEY) {
-  console.error('❌ ELEVENLABS_API_KEY not found in .env.local');
-  console.log('   Please add your ElevenLabs API key to .env.local file');
-  console.log('   Get your API key from: https://elevenlabs.io/');
-  process.exit(1);
-}
-
-// Complete Turkish content (29 letters + words + sentences + celebrations)
+// Complete Turkish content - TÜM SAYFALARDAKİ DİYALOGLAR DAHİL
 const AUDIO_CONTENT = {
   letters: [
     // 29 harflik Türk alfabesi
@@ -88,9 +88,14 @@ const AUDIO_CONTENT = {
     // Hayvanlar
     'kedi', 'köpek', 'kuş', 'balık', 'fil', 'kaplan', 'aslan', 'tavşan',
     // Temel objeler
-    'ev', 'su', 'ekmek', 'süt', 'çay', 'şeker', 'kitap', 'kalem', 'çanta'
+    'ev', 'su', 'ekmek', 'süt', 'çay', 'şeker', 'kitap', 'kalem', 'çanta',
+    // Temel kavramlar diyaloglarından tek kelimeler
+    'Bu', 'rengi.', 'der',
+    // Okuryazarlık egzersizlerinden
+    'Bu hece el... el!'
   ],
   sentences: [
+    // Temel yönlendirmeler
     'Başlayalım!',
     'Harfleri birleştir.',
     'Bu harfi söyle.',
@@ -104,9 +109,33 @@ const AUDIO_CONTENT = {
     'Bu kelimeyi okuyabilir misin?',
     'Hangi harf eksik?',
     'Kelimeyi tamamla.',
-    'Mükemmel bir başlangıç!'
+    'Mükemmel bir başlangıç!',
+    
+    // Ana sayfa diyalogları
+    "Merhaba! Kıvılcım'a hoş geldin! Birlikte öğrenmeye hazır mısın?",
+    
+    // Alfabe sayfası diyalogları
+    "Alfabe okuma modülüne hoş geldin! Türk alfabesinin 29 harfini birlikte öğreneceğiz.",
+    
+    // Sosyal iletişim diyalogları
+    "Tekrar dene.",
+    "aktivitesini öğrenelim!",
+    
+    // Temel kavramlar diyalogları
+    "sesi çıkarır.",
+    "tane elma",
+    
+    // Yazma-anlatım diyalogları
+    "kelimesini tamamladın!",
+    "Tekrar dene. Harflerin sırasına dikkat et.",
+    "Harika cümle:",
+    
+    // Yapboz diyalogları
+    "seviye seçtin.",
+    "yapbozunu başlayalım!"
   ],
   celebrations: [
+    // Temel kutlamalar
     'Harikasın!',
     'Bravo!',
     'Mükemmel!',
@@ -121,7 +150,26 @@ const AUDIO_CONTENT = {
     'Çok güzeldi!',
     'Harika ilerleme!',
     'Sen bir yıldızsın!',
-    'Mükemmel bir öğrencisin!'
+    'Mükemmel bir öğrencisin!',
+    
+    // Okuryazarlık egzersizi kutlamaları
+    "Harikasın! Çok güzel yaptın!",
+    "Bravo! Mükemmel bir çalışma!",
+    "Süpersin! Devam et böyle!",
+    "Çok başarılısın! Harika iş!",
+    
+    // Sosyal iletişim kutlamaları
+    "Doğru!",
+    "Tebrikler! Aktiviteyi tamamladın!",
+    
+    // Yazma-anlatım kutlamaları
+    "Tebrikler!",
+    "Tüm kelimeleri tamamladın! Harikasın!",
+    "Tüm cümleleri tamamladın! Muhteşemsin!",
+    
+    // Kelime oyunları kutlamaları
+    "Harika! Eşleştirme buldu!",
+    "Tebrikler! Tüm eşleştirmeleri buldun!"
   ]
 };
 
@@ -170,198 +218,149 @@ function turkishToFilename(text) {
     .replace(/^-|-$/g, '');
 }
 
-// Generate filename from Turkish text
-function generateFilename(text) {
-  return turkishToFilename(text) + '.mp3';
-}
-
-// Generate audio file using ElevenLabs API
-async function generateAudio(text, voiceId, type) {
-  const settings = VOICE_SETTINGS[type];
+// Generate audio using ElevenLabs API
+async function generateAudio(text, voiceId, settings) {
+  const url = `${ELEVENLABS_BASE_URL}/text-to-speech/${voiceId}`;
   
+  const requestBody = {
+    text: text,
+    model_id: "eleven_multilingual_v2",
+    voice_settings: {
+      stability: settings.stability,
+      similarity_boost: settings.similarity_boost,
+      style: settings.style,
+      use_speaker_boost: settings.use_speaker_boost
+    }
+  };
+
   try {
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-      method: 'POST',
+    const response = await axios.post(url, requestBody, {
       headers: {
         'Accept': 'audio/mpeg',
         'Content-Type': 'application/json',
         'xi-api-key': ELEVENLABS_API_KEY
       },
-      body: JSON.stringify({
-        text,
-        model_id: 'eleven_multilingual_v2', // Turkish support
-        voice_settings: settings
-      })
+      responseType: 'arraybuffer',
+      timeout: 30000 // 30 second timeout
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API error ${response.status}: ${errorText}`);
-    }
-
-    const audioBuffer = await response.arrayBuffer();
-    return audioBuffer;
+    return Buffer.from(response.data);
   } catch (error) {
-    console.error(`    ❌ Error generating audio for "${text}":`, error.message);
+    console.error(`❌ Audio generation failed for "${text}":`, 
+      error.response ? error.response.status : error.message);
     throw error;
   }
 }
 
-// Save audio file in voice-specific directory
-async function saveAudioFile(audioBuffer, filename, voiceSlug, type) {
-  const dir = path.join(__dirname, '..', 'public', 'audio', 'voices', voiceSlug, type);
-  const filepath = path.join(dir, filename);
-  
-  // Ensure directory exists
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-    console.log(`  📁 Created directory: ${dir}`);
-  }
-  
-  try {
-    fs.writeFileSync(filepath, Buffer.from(audioBuffer));
-    console.log(`    💾 Saved: voices/${voiceSlug}/${type}/${filename}`);
-  } catch (error) {
-    console.error(`    ❌ Error saving ${filepath}:`, error.message);
-    throw error;
+// Ensure directory exists
+function ensureDirectoryExists(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+    console.log(`📁 Created directory: ${dirPath}`);
   }
 }
 
-// Generate audio files for a specific voice
-async function generateVoiceAudioFiles(voice) {
-  console.log(`\n🎙️  Generating audio files for: ${voice.name} (${voice.gender})`);
-  console.log(`    Description: ${voice.description}`);
-  console.log(`    Voice ID: ${voice.id}`);
-  
+// Main generation function
+async function generateAllAudio() {
+  const startTime = Date.now();
   let totalFiles = 0;
   let successCount = 0;
-  let errorCount = 0;
+  let failureCount = 0;
+
+  console.log('🎙️ Tüm sayfalardaki diyaloglar için multi-voice MP3 üretimi başlıyor...\n');
+
+  // Voice ve content type bazında istatistikler
+  const voiceList = Object.values(SELECTED_TURKISH_VOICES);
+  const contentTypes = Object.keys(AUDIO_CONTENT);
   
-  for (const [type, items] of Object.entries(AUDIO_CONTENT)) {
-    console.log(`\n  📝 Processing ${type}... (${items.length} items)`);
+  console.log(`📊 Üretim kapsamı:`);
+  console.log(`   🎤 Sesler: ${voiceList.length} (${voiceList.filter(v => v.gender === 'female').length} kadın, ${voiceList.filter(v => v.gender === 'male').length} erkek)`);
+  console.log(`   📝 İçerik türleri: ${contentTypes.length}`);
+  
+  contentTypes.forEach(type => {
+    console.log(`   📋 ${type}: ${AUDIO_CONTENT[type].length} öğe`);
+  });
+  
+  const totalExpectedFiles = voiceList.length * 
+    contentTypes.reduce((sum, type) => sum + AUDIO_CONTENT[type].length, 0);
+  console.log(`   🎯 Toplam hedef dosya sayısı: ${totalExpectedFiles}\n`);
+
+  // Her voice için ayrı klasör oluştur ve ses dosyalarını üret
+  for (const voice of voiceList) {
+    console.log(`\n🎭 ${voice.name} (${voice.gender}) için ses dosyaları üretiliyor...`);
     
-    for (const text of items) {
-      try {
-        const filename = generateFilename(text);
-        console.log(`    🎵 "${text}" -> ${filename}`);
+    const voiceDir = path.join('public', 'audio', 'voices', voice.slug);
+    ensureDirectoryExists(voiceDir);
+
+    for (const [contentType, contentArray] of Object.entries(AUDIO_CONTENT)) {
+      const typeDir = path.join(voiceDir, contentType);
+      ensureDirectoryExists(typeDir);
+      
+      console.log(`  📂 ${contentType} klasörü: ${contentArray.length} dosya`);
+
+      for (const text of contentArray) {
+        const filename = `${turkishToFilename(text)}.mp3`;
+        const outputPath = path.join(typeDir, filename);
         
-        const audioBuffer = await generateAudio(text, voice.id, type);
-        await saveAudioFile(audioBuffer, filename, voice.slug, type);
-        
-        successCount++;
-        totalFiles++;
-        
-        // Rate limiting - wait between requests
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-      } catch (error) {
-        console.error(`    ❌ Failed to generate "${text}": ${error.message}`);
-        errorCount++;
-        totalFiles++;
+        // Dosya zaten varsa atla
+        if (fs.existsSync(outputPath)) {
+          console.log(`  ⏩ Var olan dosya atlandı: ${filename}`);
+          totalFiles++;
+          successCount++;
+          continue;
+        }
+
+        try {
+          const audioBuffer = await generateAudio(
+            text, 
+            voice.id, 
+            VOICE_SETTINGS[contentType]
+          );
+          
+          fs.writeFileSync(outputPath, audioBuffer);
+          console.log(`  ✅ Oluşturuldu: ${filename} (${Math.round(audioBuffer.length / 1024)}KB)`);
+          
+          successCount++;
+          totalFiles++;
+          
+          // Rate limiting - 1 saniye bekle
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+        } catch (error) {
+          console.error(`  ❌ Hata (${filename}): ${error.message}`);
+          failureCount++;
+          totalFiles++;
+        }
       }
     }
   }
-  
-  console.log(`\n  ✅ ${voice.name} completed: ${successCount}/${totalFiles} files generated`);
-  if (errorCount > 0) {
-    console.log(`  ⚠️  ${errorCount} errors occurred`);
-  }
-  
-  return { totalFiles, successCount, errorCount };
-}
 
-// Main execution function
-async function generateAllVoicesAudioFiles() {
-  console.log('🎵 Multi-Voice Turkish Audio Generation Started!\n');
-  console.log('🇹🇷 Generating audio files for 7 Turkish voices\n');
-  console.log('═══════════════════════════════════════════════════════════════\n');
-  
-  const startTime = Date.now();
-  let grandTotalFiles = 0;
-  let grandSuccessCount = 0;
-  let grandErrorCount = 0;
-  
-  // Calculate total content count
-  const totalContent = Object.values(AUDIO_CONTENT).reduce((sum, items) => sum + items.length, 0);
-  console.log(`📊 Content summary:`);
-  console.log(`   - Letters: ${AUDIO_CONTENT.letters.length} (Turkish alphabet)`);
-  console.log(`   - Words: ${AUDIO_CONTENT.words.length} (heceler, kelimeler)`);
-  console.log(`   - Sentences: ${AUDIO_CONTENT.sentences.length} (yönlendirmeler)`);
-  console.log(`   - Celebrations: ${AUDIO_CONTENT.celebrations.length} (kutlamalar)`);
-  console.log(`   - Total per voice: ${totalContent} files`);
-  console.log(`   - Total for 7 voices: ${totalContent * TURKISH_VOICES.length} files\n`);
-  
-  // Generate for each voice
-  for (let i = 0; i < TURKISH_VOICES.length; i++) {
-    const voice = TURKISH_VOICES[i];
-    console.log(`\n${'='.repeat(70)}`);
-    console.log(`🎯 Voice ${i + 1}/${TURKISH_VOICES.length}: ${voice.name}`);
-    console.log(`${'='.repeat(70)}`);
-    
-    try {
-      const stats = await generateVoiceAudioFiles(voice);
-      grandTotalFiles += stats.totalFiles;
-      grandSuccessCount += stats.successCount;
-      grandErrorCount += stats.errorCount;
-      
-    } catch (error) {
-      console.error(`❌ Fatal error processing ${voice.name}:`, error.message);
-      grandErrorCount += totalContent;
-      grandTotalFiles += totalContent;
-    }
-  }
-  
   const endTime = Date.now();
   const duration = Math.round((endTime - startTime) / 1000);
+
+  console.log('\n🎉 Multi-voice ses dosyası üretimi tamamlandı!');
+  console.log(`\n📊 İstatistikler:`);
+  console.log(`   ⏱️ Süre: ${duration} saniye`);
+  console.log(`   📁 Toplam dosya: ${totalFiles}`);
+  console.log(`   ✅ Başarılı: ${successCount}`);
+  console.log(`   ❌ Başarısız: ${failureCount}`);
+  console.log(`   🎯 Başarı oranı: ${Math.round((successCount / totalFiles) * 100)}%`);
   
-  // Final summary
-  console.log('\n' + '═'.repeat(70));
-  console.log('🎉 MULTI-VOICE TURKISH AUDIO GENERATION COMPLETED!');
-  console.log('═'.repeat(70));
-  console.log(`📊 Final Statistics:`);
-  console.log(`   🏁 Total files: ${grandTotalFiles}`);
-  console.log(`   ✅ Success: ${grandSuccessCount}`);
-  console.log(`   ❌ Errors: ${grandErrorCount}`);
-  console.log(`   ⏱️  Duration: ${duration} seconds`);
-  console.log(`   📁 Files organized in: public/audio/voices/`);
-  console.log(`   🎭 Voices available:`);
-  
-  TURKISH_VOICES.forEach(voice => {
-    console.log(`      - ${voice.name} (${voice.gender}) -> /voices/${voice.slug}/`);
+  console.log(`\n🗂️ Oluşturulan klasör yapısı:`);
+  console.log(`   public/audio/voices/`);
+  Object.values(SELECTED_TURKISH_VOICES).forEach(voice => {
+    console.log(`   ├── ${voice.slug}/ (${voice.name})`);
+    Object.keys(AUDIO_CONTENT).forEach(type => {
+      console.log(`   │   ├── ${type}/`);
+    });
   });
   
-  console.log(`   🎯 Content types per voice:`);
-  console.log(`      - letters/ (${AUDIO_CONTENT.letters.length} files)`);
-  console.log(`      - words/ (${AUDIO_CONTENT.words.length} files)`);
-  console.log(`      - sentences/ (${AUDIO_CONTENT.sentences.length} files)`);
-  console.log(`      - celebrations/ (${AUDIO_CONTENT.celebrations.length} files)`);
-  
-  console.log(`\n🔧 Usage in code:`);
-  console.log(`   // Voice selection example`);
-  console.log(`   const audioPath = '/audio/voices/gulsu/letters/a.mp3';`);
-  console.log(`   const audioPath = '/audio/voices/eda-atlas/words/elma.mp3';`);
-  console.log(`   const audioPath = '/audio/voices/yusuf-suratli/sentences/baslayal-m.mp3';`);
-  
-  if (grandErrorCount === 0) {
-    console.log(`\n🎉 Perfect! All ${grandSuccessCount} files generated successfully!`);
-  } else {
-    console.log(`\n⚠️  Generated ${grandSuccessCount}/${grandTotalFiles} files with ${grandErrorCount} errors.`);
-  }
-  
-  console.log('\n🎵 Multi-voice Turkish audio system ready for Kıvılcım platform!');
+  console.log(`\n🎵 Tüm sayfalardaki diyaloglar artık 7 farklı sesle MP3 formatında hazır!`);
 }
 
-// Error handling and execution
+// Script'i çalıştır
 if (require.main === module) {
-  generateAllVoicesAudioFiles()
-    .catch(error => {
-      console.error('💥 Fatal error:', error);
-      process.exit(1);
-    });
+  generateAllAudio().catch(console.error);
 }
 
-module.exports = {
-  generateAllVoicesAudioFiles,
-  TURKISH_VOICES,
-  AUDIO_CONTENT
-}; 
+module.exports = { generateAllAudio }; 

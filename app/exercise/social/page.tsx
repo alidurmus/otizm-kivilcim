@@ -86,7 +86,7 @@ export default function SocialPage() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [score, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
-  const { playTextToSpeech, isLoading } = useElevenLabs();
+  const { speak } = useElevenLabs();
 
   const exercise = socialExercises[currentExercise];
 
@@ -96,9 +96,9 @@ export default function SocialPage() {
       const textToRead = exercise.scenario 
         ? `${exercise.scenario} ${exercise.question}` 
         : exercise.question;
-      playTextToSpeech(textToRead, 'sentence');
+      speak(textToRead, 'sentence');
     }
-  }, [currentExercise, exercise, playTextToSpeech]);
+  }, [currentExercise, exercise, speak]);
 
   const handleAnswerSelect = (answerId: string) => {
     setSelectedAnswer(answerId);
@@ -110,14 +110,14 @@ export default function SocialPage() {
     
     if (isCorrect) {
       setScore(prev => prev + 1);
-      playTextToSpeech('Mükemmel! ' + selectedOption.explanation, 'celebration');
+      speak('Mükemmel! ' + selectedOption.explanation, 'celebration');
       setShowCelebration(true);
       
       setTimeout(() => {
         handleNext();
       }, 4000);
     } else {
-      playTextToSpeech(selectedOption?.explanation + ' Tekrar deneyelim!', 'sentence');
+      speak(selectedOption?.explanation + ' Tekrar deneyelim!', 'sentence');
       setTimeout(() => {
         setShowFeedback(false);
         setSelectedAnswer(null);
@@ -134,7 +134,7 @@ export default function SocialPage() {
       setAttempts(0);
     } else {
       // Exercise completed
-      playTextToSpeech(`Harika! Tüm sosyal beceri egzersizlerini tamamladın! ${score} doğru cevap verdin!`, 'celebration');
+      speak(`Harika! Tüm sosyal beceri egzersizlerini tamamladın! ${score} doğru cevap verdin!`, 'celebration');
     }
   };
 
@@ -157,14 +157,14 @@ export default function SocialPage() {
     const textToRead = exercise.scenario 
       ? `${exercise.scenario} ${exercise.question}` 
       : exercise.question;
-    playTextToSpeech(textToRead, 'sentence');
+    speak(textToRead, 'sentence');
   };
 
   const repeatQuestion = () => {
     const textToRead = exercise.scenario 
       ? `${exercise.scenario} ${exercise.question}` 
       : exercise.question;
-    playTextToSpeech(textToRead, 'sentence');
+    speak(textToRead, 'sentence');
   };
 
   if (currentExercise >= socialExercises.length) {
@@ -251,7 +251,7 @@ export default function SocialPage() {
               onClick={repeatQuestion}
               variant="secondary"
               size="small"
-              disabled={isLoading}
+              disabled={false}
               className="mb-6"
             >
               🔊 Tekrar Dinle

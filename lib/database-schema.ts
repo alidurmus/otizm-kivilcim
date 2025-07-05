@@ -151,7 +151,12 @@ export interface UserProgress {
     correctAnswers?: number;
     incorrectAnswers?: number;
     hintsUsed?: number;
-    mistakes?: any[];
+    mistakes?: Array<{
+      question: string;
+      userAnswer: string;
+      correctAnswer: string;
+      timestamp: Date;
+    }>;
   };
 }
 
@@ -195,7 +200,7 @@ export interface AdminLog {
   action: 'create' | 'update' | 'delete' | 'publish' | 'unpublish';
   entityType: 'story' | 'module' | 'exercise' | 'user' | 'content';
   entityId: string;
-  details?: any;
+  details?: Record<string, unknown>;
   timestamp: Date;
   ip?: string;
   userAgent?: string;
@@ -204,7 +209,7 @@ export interface AdminLog {
 export interface SystemConfig {
   id: string;
   key: string;
-  value: any;
+  value: string | number | boolean | Record<string, unknown> | unknown[];
   type: 'string' | 'number' | 'boolean' | 'object' | 'array';
   description?: string;
   category: 'general' | 'ui' | 'audio' | 'security' | 'performance';

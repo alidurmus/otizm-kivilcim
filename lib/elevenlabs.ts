@@ -2,7 +2,7 @@
 // Uses Next.js API routes for secure server-side processing
 // with Static Audio Files fallback for better performance
 
-import { getStaticAudioPath, hasStaticAudio, turkishToFilename } from './audio-constants';
+import { getStaticAudioPath, turkishToFilename } from './audio-constants';
 
 // Error classes for better error handling
 class ElevenLabsAPIError extends Error {
@@ -318,8 +318,9 @@ export function getAllTurkishVoices() {
 // Client-side ElevenLabs integration using server proxy
 class ElevenLabsClient {
   private defaultVoiceId: string = 'xyqF3vGMQlPk3e7yA4DI'; // Kullanıcının seçtiği varsayılan ses
-  private cache: Map<string, string> = new Map();
+  private cache: Map<string, { blob: Blob; timestamp: number }> = new Map(); // Cache audio blobs with timestamps
   private currentAudio: HTMLAudioElement | null = null; // Aktif ses instance'ını takip et
+  private readonly CACHE_DURATION = 30 * 60 * 1000; // 30 minutes cache duration
 
   constructor() {
     console.log('🎙️ ElevenLabs client initialized');
@@ -330,16 +331,43 @@ class ElevenLabsClient {
    */
   stopCurrentAudio(): void {
     if (this.currentAudio) {
-      this.currentAudio.pause();
-      this.currentAudio.currentTime = 0;
+      console.log('🛑 Stopping current audio');
       
-      // Event listener'ları temizle
-      this.currentAudio.onended = null;
-      this.currentAudio.onerror = null;
-      this.currentAudio.onabort = null;
-      
-      this.currentAudio = null;
-      console.log('🛑 Previous audio stopped');
+      try {
+        // Ses çalarken durdurma
+        if (!this.currentAudio.paused) {
+          this.currentAudio.pause();
+        }
+        
+        // Zamanı sıfırla
+        this.currentAudio.currentTime = 0;
+        
+        // Event listener'ları temizle
+        this.currentAudio.onended = null;
+        this.currentAudio.onerror = null;
+        this.currentAudio.onabort = null;
+        this.currentAudio.oncanplay = null;
+        this.currentAudio.onloadstart = null;
+        
+      } catch (error) {
+        console.warn('Error stopping audio (ignored):', error);
+      } finally {
+        // Reference'ı her durumda temizle
+        this.currentAudio = null;
+      }
+    }
+  }
+
+  private isCacheValid(timestamp: number): boolean {
+    return Date.now() - timestamp < this.CACHE_DURATION;
+  }
+
+  private cleanExpiredCache(): void {
+    const now = Date.now();
+    for (const [key, { timestamp }] of this.cache.entries()) {
+      if (now - timestamp > this.CACHE_DURATION) {
+        this.cache.delete(key);
+      }
     }
   }
 
@@ -353,19 +381,20 @@ class ElevenLabsClient {
     type: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence',
     voiceId?: string
   ): Promise<string> {
-    // Input validation with Turkish character support
+    // Input validation
     if (!text || text.trim().length === 0) {
-      throw new Error('Boş metin ses olarak çevrilemez');
+      throw new Error('Metin boş olamaz');
     }
 
     if (text.length > 1000) {
       throw new Error('Metin çok uzun (maksimum 1000 karakter)');
     }
 
-    // Turkish character validation
-    const turkishPattern = /^[a-zA-ZçğıöşüÇĞIİÖŞÜ\s.,!?-]+$/;
+    // Updated Turkish character validation - includes apostrophes, numbers and common punctuation
+    const turkishPattern = /^[a-zA-Z0-9çğıöşüÇĞIİÖŞÜ\s.,!?'\"'-]+$/;
     if (!turkishPattern.test(text)) {
       console.warn('Text contains non-Turkish characters:', text);
+      // Don't block - just warn and continue
     }
 
     // 1. ÖNCE: Statik ses dosyasını kontrol et
@@ -375,11 +404,15 @@ class ElevenLabsClient {
       return staticAudioPath;
     }
 
-    // 2. CACHE kontrolü
+    // 2. CACHE kontrolü - clean expired entries first
+    this.cleanExpiredCache();
     const cacheKey = `${text}-${type}-${voiceId || this.defaultVoiceId}`;
-    if (this.cache.has(cacheKey)) {
+    const cachedData = this.cache.get(cacheKey);
+    
+    if (cachedData && this.isCacheValid(cachedData.timestamp)) {
       console.log(`💾 Using cached audio for "${text}"`);
-      return this.cache.get(cacheKey)!;
+      // Create a new blob URL each time to avoid revocation issues
+      return URL.createObjectURL(cachedData.blob);
     }
 
     // 3. SERVER-SIDE API route kullan (ElevenLabs SDK proxy)
@@ -407,12 +440,17 @@ class ElevenLabsClient {
         );
       }
 
-      // Convert response to blob and create URL
+      // Convert response to blob
       const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
       
-      // Cache the result
-      this.cache.set(cacheKey, audioUrl);
+      // Cache the blob data with timestamp
+      this.cache.set(cacheKey, {
+        blob: audioBlob,
+        timestamp: Date.now()
+      });
+      
+      // Create URL for immediate use
+      const audioUrl = URL.createObjectURL(audioBlob);
       
       console.log(`✅ Turkish audio generated successfully for: "${text}"`);
       return audioUrl;
@@ -435,6 +473,9 @@ class ElevenLabsClient {
     try {
       // 🛑 Önceki sesi durdur - ses karışıklığını önle
       this.stopCurrentAudio();
+      
+      // Browser'ın audio state'ini stabilize etmesi için daha uzun delay
+      await new Promise(resolve => setTimeout(resolve, 150));
       
       console.log(`🔊 Speaking: "${text}" (type: ${type})`);
       
@@ -477,7 +518,7 @@ class ElevenLabsClient {
         };
         
         audio.onerror = (error) => {
-          console.warn('Audio playback failed, falling back to Web Speech API:', error);
+          console.warn('🔊 Audio playback failed, falling back to Web Speech API:', error);
           if (audioUrl.startsWith('blob:')) {
             URL.revokeObjectURL(audioUrl);
           }
@@ -492,7 +533,7 @@ class ElevenLabsClient {
         };
         
         audio.onabort = () => {
-          console.warn('Audio playback aborted');
+          console.warn('🔊 Audio playback aborted');
           if (audioUrl.startsWith('blob:')) {
             URL.revokeObjectURL(audioUrl);
           }
@@ -502,29 +543,31 @@ class ElevenLabsClient {
             this.currentAudio = null;
           }
           
-          resolve(); // Abort edildiğinde fallback yapmaya gerek yok
+          // Graceful resolution instead of rejection
+          resolve();
         };
         
-        // Play promise'ini handle et
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.warn('Audio play promise rejected, falling back to Web Speech API:', error);
-            if (audioUrl.startsWith('blob:')) {
-              URL.revokeObjectURL(audioUrl);
-            }
-            
-            // Sadece bu audio hala aktifse temizle
-            if (this.currentAudio === audio) {
-              this.currentAudio = null;
-            }
-            
-            this.fallbackToWebSpeech(text).then(resolve).catch(reject);
-          });
-        }
+        // Audio çalmaya başla - error handling ile
+        audio.play().catch((playError) => {
+          console.warn('🔄 Audio play was interrupted, retrying with Web Speech API', playError);
+          
+          // Cleanup
+          if (audioUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(audioUrl);
+          }
+          
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          
+          // Fallback instead of failure
+          this.fallbackToWebSpeech(text).then(resolve).catch(reject);
+        });
       });
+      
     } catch (error) {
-      console.warn('ElevenLabs failed, falling back to Web Speech API:', error);
+      console.error('ElevenLabs speak error:', error);
+      // Fallback to Web Speech API on any error
       return this.fallbackToWebSpeech(text);
     }
   }
@@ -554,9 +597,9 @@ class ElevenLabsClient {
           let errorMsg = 'Unknown error';
           
           try {
-            // Safely extract error information
-            if (error && typeof error === 'object') {
-              errorMsg = error.error || error.message || 'Speech synthesis failed';
+            // SpeechSynthesisErrorEvent has an 'error' property with the error type
+            if (error && typeof error === 'object' && 'error' in error) {
+              errorMsg = error.error || 'Speech synthesis failed';
             } else if (typeof error === 'string') {
               errorMsg = error;
             }
@@ -784,12 +827,7 @@ class ElevenLabsClient {
    * Cache'i temizle
    */
   clearCache() {
-    // Revoke all blob URLs to prevent memory leaks
-    for (const url of this.cache.values()) {
-      if (url.startsWith('blob:')) {
-        URL.revokeObjectURL(url);
-      }
-    }
+    // Clear all cached blob data (no need to revoke URLs since we create them on-demand)
     this.cache.clear();
     console.log('🧹 ElevenLabs cache cleared');
   }

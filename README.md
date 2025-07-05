@@ -41,8 +41,9 @@
 - **🔒 Güvenli Ses Entegrasyonu:** Server-side API key management ve IP tabanlı rate limiting
 - **📊 Gelişmiş Admin Panel:** Gender filtering, voice statistics, API status dashboard, real-time testing interface
 - **🎮 Oyunlaştırma ve Pekiştirme:** [Uygulamalı Davranış Analizi (ABA)](https://tohumotizm.org.tr/tedavi-yontemleri/uygulamali-davranis-analizi/) prensiplerine dayalı anlık ödül sistemi
-- **🎯 Duyusal Kontrol Paneli:** Her çocuğın duyusal profiline göre tamamen kişiselleştirilebilir arayüz
+- **🎯 Duyusal Kontrol Paneli:** Her çocuğun duyusal profiline göre tamamen kişiselleştirilebilir arayüz
 - **📈 Ebeveyn Paneli:** Anlaşılır grafikler, özet kartlar ve motive edici geri bildirimler
+- **🔧 Ses Kontrol Sistemi:** Admin panelinde kapsamlı ses dosyası varlık kontrolü ve otomatik eksik dosya oluşturma
 - **♿ Erişilebilirlik:** WCAG 2.1 AA standartlarına uygun tasarım
 - **🧪 %95+ Test Coverage:** Kapsamlı Playwright E2E ve unit test coverage
 - **🇹🇷 Full Turkish Support:** 29 harflik Türk alfabesi desteği (ç, ğ, ı, ö, ş, ü dahil)

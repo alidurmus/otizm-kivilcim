@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Volume2, RotateCcw, Star, Award, BookOpen } from 'lucide-react';
+import { ArrowLeft, Volume2, Star, Award, BookOpen } from 'lucide-react';
 import { useElevenLabs } from '@/lib/elevenlabs';
 
 // Türk alfabesi harfleri - 29 harf
@@ -12,9 +12,8 @@ const TURKISH_ALPHABET = [
   'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z'
 ];
 
-// Sesli ve sessiz harfler
+// Sesli harfler
 const VOWELS = ['A', 'E', 'I', 'İ', 'O', 'Ö', 'U', 'Ü'];
-const CONSONANTS = TURKISH_ALPHABET.filter(letter => !VOWELS.includes(letter));
 
 interface AlphabetStats {
   totalLetters: number;
@@ -37,12 +36,7 @@ export default function AlphabetReadingPage() {
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [gameStats, setGameStats] = useState<AlphabetStats>({
-    totalLetters: TURKISH_ALPHABET.length,
-    learnedLetters: 0,
-    currentStreak: 0,
-    score: 0
-  });
+
 
   // Quiz state
   const [quizOptions, setQuizOptions] = useState<string[]>([]);

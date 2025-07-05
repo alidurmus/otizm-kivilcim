@@ -181,6 +181,7 @@ Admin paneli şu yeni özellikleri sunar:
 - **🇹🇷 Turkish Character Testing** - Full 29-letter alphabet support
 - **⚡ Quick Test Suggestions** - Pre-filled test texts
 - **🎨 Visual Improvements** - Icons, better UX, enhanced responsiveness
+- **🔧 Ses Kontrol Sistemi** - 49 kritik ses dosyası varlık kontrolü ve otomatik eksik dosya oluşturma
 
 ### Admin Interface Usage
 
