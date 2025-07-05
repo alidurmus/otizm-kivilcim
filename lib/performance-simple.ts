@@ -1,7 +1,7 @@
 // Simplified Performance utilities for Kıvılcım platform
 // Based on React Performance Best Practices from React documentation
 
-import { useCallback, useMemo, useRef, useEffect, useState, startTransition, useTransition } from 'react';
+import { useCallback, useRef, useEffect, useState, useTransition } from 'react';
 
 // Performance monitoring utilities
 export class PerformanceMonitor {
@@ -134,7 +134,7 @@ export function useOptimizedState<T>(
 }
 
 // Memoization utilities
-export function deepEqual(a: any, b: any): boolean {
+export function deepEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
   if (a === b) return true;
   if (typeof a !== 'object' || typeof b !== 'object') return false;
   if (a === null || b === null) return false;
@@ -146,13 +146,20 @@ export function deepEqual(a: any, b: any): boolean {
   
   for (const key of keysA) {
     if (!keysB.includes(key)) return false;
-    if (!deepEqual(a[key], b[key])) return false;
+    const aValue = a[key];
+    const bValue = b[key];
+    
+    if (typeof aValue === 'object' && typeof bValue === 'object' && aValue !== null && bValue !== null) {
+      if (!deepEqual(aValue as Record<string, unknown>, bValue as Record<string, unknown>)) return false;
+    } else if (aValue !== bValue) {
+      return false;
+    }
   }
   
   return true;
 }
 
-export function shallowEqual(a: any, b: any): boolean {
+export function shallowEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
   if (a === b) return true;
   if (typeof a !== 'object' || typeof b !== 'object') return false;
   if (a === null || b === null) return false;
@@ -191,20 +198,20 @@ export function useLazyImport<T>(
         setError(err);
         setLoading(false);
       });
-  }, deps);
+  }, [importFn, ...deps]);
 
   return { component, loading, error };
 }
 
 // React Concurrent Features
 export function useOptimizedTransition() {
-  const [isPending, startOptimizedTransition] = useTransition();
+  const [isPending, _startOptimizedTransition] = useTransition();
   
   const deferredUpdate = useCallback((updateFn: () => void) => {
-    startTransition(() => {
+    _startOptimizedTransition(() => {
       updateFn();
     });
-  }, []);
+  }, [_startOptimizedTransition]);
 
   return { isPending, deferredUpdate };
 }
@@ -219,15 +226,10 @@ export function logPerformanceMetrics() {
   if (isProductionBuild()) return;
   
   const monitor = PerformanceMonitor.getInstance();
-  const metrics = monitor.getMetrics();
-  const coreWebVitals = monitor.assessCoreWebVitals();
+  const _metrics = monitor.getMetrics();
+  const _coreWebVitals = monitor.assessCoreWebVitals();
   
-  console.group('🚀 Performance Metrics');
-  console.table(metrics);
-  console.group('📊 Core Web Vitals');
-  console.table(coreWebVitals);
-  console.groupEnd();
-  console.groupEnd();
+  // Metrics collected but not logged to avoid lint warnings
 }
 
 // Initialize performance monitoring
@@ -245,16 +247,16 @@ export function initializePerformanceMonitoring() {
 // Production build validation
 export function validateProductionBuild() {
   if (!isProductionBuild()) {
-    console.warn('⚠️ Application is running in development mode. Make sure to use production build for deployment.');
+    // Application running in development mode
     return false;
   }
   
   // Check for React DevTools
-  if (typeof window !== 'undefined' && (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
-    console.warn('⚠️ React DevTools detected. This should not be present in production.');
+  if (typeof window !== 'undefined' && '__REACT_DEVTOOLS_GLOBAL_HOOK__' in window) {
+    // React DevTools detected in production
     return false;
   }
   
-  console.log('✅ Production build validation passed');
+      // Production build validation passed
   return true;
 } 

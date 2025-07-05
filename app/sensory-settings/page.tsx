@@ -111,7 +111,7 @@ export default function SensorySettingsPage() {
               ].map((theme) => (
                 <button
                   key={theme.key}
-                  onClick={() => setSettings(prev => ({ ...prev, theme: theme.key as any }))}
+                  onClick={() => setSettings(prev => ({ ...prev, theme: theme.key as 'calm' | 'focus' | 'high-contrast' }))}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
                     settings.theme === theme.key
                       ? 'border-focus-blue bg-blue-50'
@@ -152,7 +152,7 @@ export default function SensorySettingsPage() {
               ].map((font) => (
                 <button
                   key={font.key}
-                  onClick={() => setSettings(prev => ({ ...prev, fontFamily: font.key as any }))}
+                  onClick={() => setSettings(prev => ({ ...prev, fontFamily: font.key as 'nunito' | 'opendyslexic' }))}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
                     settings.fontFamily === font.key
                       ? 'border-focus-blue bg-blue-50'

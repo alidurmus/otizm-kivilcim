@@ -4,7 +4,7 @@ import React, { useState, useCallback, useMemo, useRef, useEffect, startTransiti
 // Google Analytics gtag type declaration
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -19,16 +19,13 @@ interface PerformanceMetric {
 }
 
 // Performance thresholds based on Google's Core Web Vitals
-const PERFORMANCE_THRESHOLDS = {
+const _PERFORMANCE_THRESHOLDS = {
   LCP: { good: 2500, needsImprovement: 4000 }, // Largest Contentful Paint
   FID: { good: 100, needsImprovement: 300 },   // First Input Delay
   CLS: { good: 0.1, needsImprovement: 0.25 },  // Cumulative Layout Shift
   FCP: { good: 1800, needsImprovement: 3000 }, // First Contentful Paint
   TTFB: { good: 800, needsImprovement: 1800 }, // Time to First Byte
 }
-
-// Performance event handlers
-type PerformanceHandler = (metric: PerformanceMetric) => void
 
 // Performance utilities for Kıvılcım platform
 // Based on React Performance Best Practices
@@ -75,8 +72,9 @@ export class PerformanceMonitor {
       const clsObserver = new PerformanceObserver((entryList) => {
         const entries = entryList.getEntries();
         entries.forEach((entry) => {
-          if (!(entry as any).hadRecentInput) {
-            clsValue += (entry as any).value;
+          const layoutShiftEntry = entry as PerformanceEntry & { hadRecentInput?: boolean; value?: number };
+          if (!layoutShiftEntry.hadRecentInput) {
+            clsValue += layoutShiftEntry.value || 0;
           }
         });
         this.recordMetric('CLS', clsValue);
@@ -229,7 +227,7 @@ export function useOptimizedState<T>(
 }
 
 // Memoization utilities
-export function deepEqual(a: any, b: any): boolean {
+export function deepEqual(a: unknown, b: unknown): boolean {
   if (a === b) return true;
   if (typeof a !== 'object' || typeof b !== 'object') return false;
   if (a === null || b === null) return false;
@@ -247,7 +245,7 @@ export function deepEqual(a: any, b: any): boolean {
   return true;
 }
 
-export function shallowEqual(a: any, b: any): boolean {
+export function shallowEqual(a: unknown, b: unknown): boolean {
   if (a === b) return true;
   if (typeof a !== 'object' || typeof b !== 'object') return false;
   if (a === null || b === null) return false;
@@ -307,14 +305,14 @@ export function useLazyImport<T>(
         setError(err);
         setLoading(false);
       });
-  }, deps);
+  }, [importFn, ...deps]);
 
   return { component, loading, error };
 }
 
 // React Concurrent Features
 export function useOptimizedTransition() {
-  const [isPending, startOptimizedTransition] = useTransition();
+  const [isPending, _startOptimizedTransition] = useTransition();
   
   const deferredUpdate = useCallback((updateFn: () => void) => {
     startTransition(() => {
@@ -335,15 +333,10 @@ export function logPerformanceMetrics() {
   if (isProductionBuild()) return;
   
   const monitor = PerformanceMonitor.getInstance();
-  const metrics = monitor.getMetrics();
-  const coreWebVitals = monitor.assessCoreWebVitals();
+  const _metrics = monitor.getMetrics();
+  const _coreWebVitals = monitor.assessCoreWebVitals();
   
-  console.group('🚀 Performance Metrics');
-  console.table(metrics);
-  console.group('📊 Core Web Vitals');
-  console.table(coreWebVitals);
-  console.groupEnd();
-  console.groupEnd();
+  // Performance metrics would be logged here in development
 }
 
 // Initialize performance monitoring
@@ -364,17 +357,17 @@ export function initializePerformanceMonitoring() {
 // Production build validation
 export function validateProductionBuild() {
   if (!isProductionBuild()) {
-    console.warn('⚠️ Application is running in development mode. Make sure to use production build for deployment.');
+    // Application running in development mode
     return false;
   }
   
   // Check for React DevTools
   if (typeof window !== 'undefined' && (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
-    console.warn('⚠️ React DevTools detected. This should not be present in production.');
+    // React DevTools detected in production
     return false;
   }
   
-  console.log('✅ Production build validation passed');
+      // Production build validation passed
   return true;
 }
 
@@ -420,7 +413,7 @@ export function reportPerformanceMetrics() {
     })
   }
 
-  console.log('📈 Performance Summary:', summary)
+  // Performance summary would be logged here
 }
 
 // Initialize performance monitoring

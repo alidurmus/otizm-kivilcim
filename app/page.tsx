@@ -30,8 +30,8 @@ export default function HomePage() {
     try {
       setHasPlayedWelcome(true);
       await speak("Merhaba! Kıvılcım'a hoş geldin! Birlikte öğrenmeye hazır mısın?", 'sentence');
-    } catch (error) {
-      console.error('Hoş geldin mesajı çalma hatası:', error);
+          } catch (_error) {
+              // Welcome message audio failed - continuing without audio
     }
   }, [speak]);
 

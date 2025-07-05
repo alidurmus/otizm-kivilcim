@@ -1,46 +1,77 @@
 # Page snapshot
 
 ```yaml
+- heading "🎙️ ElevenLabs API Test Merkezi" [level=1]
+- paragraph: Resmi SDK ile gelişmiş ses testi ve analiz
+- link "📚 ElevenLabs API Referansı":
+  - /url: https://elevenlabs.io/docs/api-reference/introduction
+- heading "🎵 Ses Dosyası Kontrol Sistemi" [level=2]
+- paragraph: Kritik ses dosyalarının varlığını kontrol edin ve eksikleri otomatik oluşturun
+- button "🔽 Göster"
+- heading "📊 API Durumu" [level=2]
+- text: API Key ✅ Yapılandırılmış SDK ✅ Başlatılmış Son Test ✅ Başarılı 🎭
+- heading "5 Seçilmiş Türkçe Ses Sistemi" [level=2]
+- paragraph: Her ses için ayrı klasörlerde MP3 dosyaları oluşturuldu
+- text: "🎤 Ses Seçin:"
+- combobox:
+  - option "👩 Gülsu (female)" [selected]
+  - option "👩 Eda Atlas (female)"
+  - option "👩 Ayça (female)"
+  - option "👨 Yusuf Suratlı (male)"
+  - option "👩 Sermin (female)"
+- text: 👩
+- heading "Gülsu" [level=3]
+- paragraph: "Voice ID: jbJMQWv1eS4YjQ6PCcn6"
+- paragraph: Genç Türk kadını, enerjik ve samimi ses. Hikayeler ve kitaplar için mükemmel.
+- text: 📁 /voices/gulsu/ 🇹🇷 Turkish
+- button "🔤 Harf Testi \"A\" harfi"
+- button "🍎 Kelime Testi \"elma\""
+- button "💬 Cümle Testi Selamlama"
+- button "🎉 Kutlama Testi Başarı mesajı"
+- heading "📁 Dosya Yapısı:" [level=4]
+- text: 📂 /public/audio/voices/gulsu/ ├── 📂 letters/ (29 Türk harfi) ├── 📂 words/ (kelimeler ve heceler) ├── 📂 sentences/ (yönlendirmeler) └── 📂 celebrations/ (kutlama mesajları)
+- heading "🧪 Ses Testi" [level=2]
+- text: 📝 Test Türü
+- button "🔤 Harf Tek harf sesleri"
+- button "📝 Kelime Basit kelimeler"
+- button "💬 Cümle Tam cümleler"
+- button "🎉 Kutlama Tebrik mesajları"
+- text: ✏️ Test Metni (Türkçe Karakterler Desteklenir)
+- 'textbox "Örn: Ç, Ğ, Ş"'
+- text: "🚀 Hızlı Test Örnekleri:"
+- button "A"
+- button "E"
+- button "I"
+- button "İ"
+- button "O"
+- button "Ö"
+- button "U"
+- button "Ü"
+- heading "👥 Cinsiyet Filtresi (17 ses mevcut)" [level=3]
+- button "👥 Tümü (17)"
+- button "👨 Erkek (9)"
+- button "👩 Bayan (8)"
+- text: 🎤 Ses Seçimi (Türkçe Destekli)
+- combobox:
+  - option "Ses seçin..."
+  - option "👩 Bella - Nazik ve sakin bayan ses - harf öğrenme için ideal" [selected]
+  - option "👩 Rachel - Profesyonel ve güven verici bayan ses"
+  - option "👩 Domi - Genç ve arkadaş canlısı bayan ses"
+  - option "👩 Elli - Enerjik ve kutlayıcı bayan ses"
+  - option "👩 Sarah - Çok sakin ve rahatlatıcı bayan ses"
+  - option "👩 NewVoice1 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👩 Varsayılan Ses - Kullanıcı tarafından seçilen varsayılan Türkçe ses - tüm konuşmalar için"
+  - option "👩 NewVoice3 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👨 Adam - Sakin ve açık erkek ses - temel öğrenme için mükemmel"
+  - option "👨 Josh - Genç ve eğlenceli erkek ses - oyunlar için ideal"
+  - option "👨 Antoni - Derin ve güven verici erkek ses - hikayeler için"
+  - option "👨 Daniel - Profesyonel ve sakin erkek ses"
+  - option "👨 Ethan - Cesaret verici ve motive edici erkek ses"
+  - option "👨 NewVoice4 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👨 NewVoice5 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👨 NewVoice6 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👨 NewVoice7 - Yeni eklenen ses - detaylar güncellenecek"
+- text: "Toplam: 17 ses 👨 Erkek: 9 👩 Bayan: 8 🆕 Yeni: 0"
+- button "🎯 Test Et"
 - alert
-- button "Open Next.js Dev Tools":
-  - img
-- button "Open issues overlay": 1 Issue
-- button "Collapse issues badge":
-  - img
-- navigation:
-  - button "previous" [disabled]:
-    - img "previous"
-  - text: 1/1
-  - button "next" [disabled]:
-    - img "next"
-- img
-- link "Next.js 15.3.4 (stale) Webpack":
-  - /url: https://nextjs.org/docs/messages/version-staleness
-  - img
-  - text: Next.js 15.3.4 (stale) Webpack
-- img
-- dialog "Runtime Error":
-  - text: Runtime Error
-  - button "Copy Stack Trace":
-    - img
-  - button "No related documentation found" [disabled]:
-    - img
-  - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools":
-    - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
-    - img
-  - paragraph: "Error: Cannot find module './548.js' Require stack: - C:\\cursor\\otizm-kivilcim\\.next\\server\\webpack-runtime.js - C:\\cursor\\otizm-kivilcim\\.next\\server\\pages\\_document.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\require.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\load-components.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\build\\utils.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\build\\swc\\options.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\build\\swc\\index.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\build\\next-config-ts\\transpile-config.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\config.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\next.js - C:\\cursor\\otizm-kivilcim\\node_modules\\next\\dist\\server\\lib\\start-server.js"
-  - button "Show More"
-  - paragraph: Call Stack 50
-  - button "Show 42 ignore-listed frame(s)":
-    - text: Show 42 ignore-listed frame(s)
-    - img
-  - text: __webpack_require__.f.require .next\server\webpack-runtime.js (198:28) <unknown> .next\server\webpack-runtime.js (111:40) Array.reduce <anonymous> (0:0) __webpack_require__.e .next\server\webpack-runtime.js (110:67) Array.map <anonymous> (0:0) __webpack_require__.X .next\server\webpack-runtime.js (162:22) <unknown> .next\server\pages\_document.js (1:339) Object.<anonymous> .next\server\pages\_document.js (1:381)
-- contentinfo:
-  - paragraph: This error happened while generating the page. Any console logs will be displayed in the terminal window.
-  - region "Error feedback":
-    - paragraph:
-      - link "Was this helpful?":
-        - /url: https://nextjs.org/telemetry#error-feedback
-    - button "Mark as helpful"
-    - button "Mark as not helpful"
 ```

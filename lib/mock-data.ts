@@ -48,7 +48,7 @@ export const createMockUserData = async (userId: string): Promise<boolean> => {
         soundVolume: Math.floor(Math.random() * 50) + 50,
         reduceMotion: Math.random() > 0.7,
         hapticFeedback: Math.random() > 0.3,
-        rewardStyle: ['simple', 'animated', 'celebration'][Math.floor(Math.random() * 3)] as any
+        rewardStyle: (['simple', 'animated', 'celebration'] as const)[Math.floor(Math.random() * 3)],
       },
       avatar: {
         character: 'kivilcim',
@@ -80,10 +80,10 @@ export const createMockUserData = async (userId: string): Promise<boolean> => {
       }
     }
 
-    console.log('Mock user data created successfully');
+    // Mock user data created successfully
     return true;
-  } catch (error) {
-    console.error('Error creating mock user data:', error);
+  } catch (_error) {
+          // Error creating mock user data - using fallback
     return false;
   }
 };

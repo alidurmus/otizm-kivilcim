@@ -47,15 +47,31 @@
 - button "Ö"
 - button "U"
 - button "Ü"
-- heading "👥 Cinsiyet Filtresi (0 ses mevcut)" [level=3]
-- button "👥 Tümü (0)"
-- button "👨 Erkek (0)"
-- button "👩 Bayan (0)"
+- heading "👥 Cinsiyet Filtresi (17 ses mevcut)" [level=3]
+- button "👥 Tümü (17)"
+- button "👨 Erkek (9)"
+- button "👩 Bayan (8)"
 - text: 🎤 Ses Seçimi (Türkçe Destekli)
 - combobox:
-  - option "Ses seçin..." [selected]
-- paragraph: Seçilen filtrede ses bulunamadı.
-- text: "Toplam: 0 ses 👨 Erkek: 0 👩 Bayan: 0 🆕 Yeni: 0"
+  - option "Ses seçin..."
+  - option "👩 Bella - Nazik ve sakin bayan ses - harf öğrenme için ideal" [selected]
+  - option "👩 Rachel - Profesyonel ve güven verici bayan ses"
+  - option "👩 Domi - Genç ve arkadaş canlısı bayan ses"
+  - option "👩 Elli - Enerjik ve kutlayıcı bayan ses"
+  - option "👩 Sarah - Çok sakin ve rahatlatıcı bayan ses"
+  - option "👩 NewVoice1 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👩 Varsayılan Ses - Kullanıcı tarafından seçilen varsayılan Türkçe ses - tüm konuşmalar için"
+  - option "👩 NewVoice3 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👨 Adam - Sakin ve açık erkek ses - temel öğrenme için mükemmel"
+  - option "👨 Josh - Genç ve eğlenceli erkek ses - oyunlar için ideal"
+  - option "👨 Antoni - Derin ve güven verici erkek ses - hikayeler için"
+  - option "👨 Daniel - Profesyonel ve sakin erkek ses"
+  - option "👨 Ethan - Cesaret verici ve motive edici erkek ses"
+  - option "👨 NewVoice4 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👨 NewVoice5 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👨 NewVoice6 - Yeni eklenen ses - detaylar güncellenecek"
+  - option "👨 NewVoice7 - Yeni eklenen ses - detaylar güncellenecek"
+- text: "Toplam: 17 ses 👨 Erkek: 9 👩 Bayan: 8 🆕 Yeni: 0"
 - button "🎯 Test Et"
 - alert
 ```

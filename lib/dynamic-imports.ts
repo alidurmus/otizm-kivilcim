@@ -18,7 +18,7 @@ interface DynamicImportOptions {
  * @param importFn - Function that returns the dynamic import
  * @param options - Configuration options for loading behavior
  */
-export function createDynamicComponent<T = any>(
+export function createDynamicComponent<T = unknown>(
   importFn: () => Promise<{ default: ComponentType<T> }>,
   options: DynamicImportOptions = {}
 ) {
@@ -161,7 +161,7 @@ export function preloadComponents() {
  * Useful for link hover states
  */
 export function preloadComponentOnHover(
-  importFn: () => Promise<any>,
+  importFn: () => Promise<unknown>,
   delay: number = 100
 ) {
   let timeoutId: NodeJS.Timeout;
@@ -184,16 +184,16 @@ export function preloadComponentOnHover(
 }
 
 // Performance monitoring for dynamic imports
-export function trackComponentLoadTime(componentName: string) {
+export function trackComponentLoadTime(_componentName: string) {
   const startTime = performance.now();
   
   return () => {
     const endTime = performance.now();
-    const loadTime = endTime - startTime;
+    const _loadTime = endTime - startTime;
     
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🚀 ${componentName} loaded in ${loadTime.toFixed(2)}ms`);
+      // Component loaded successfully
     }
     
     // In production, you could send this to your analytics service

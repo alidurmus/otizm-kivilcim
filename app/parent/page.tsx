@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { User } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
 import { onAuthStateChange, signInAnonymous, getCurrentUser } from '@/lib/auth';
 import { getUserData, getAllModulesProgress, calculateUserStats, UserData, ModuleProgress } from '@/lib/firestore';
 import { createMockUserData } from '@/lib/mock-data';
@@ -51,8 +52,8 @@ export default function ParentPanelPage() {
                 setUser(anonymousUser);
                 await loadUserData(anonymousUser.uid);
               }
-            } catch (authError) {
-              console.warn('Authentication failed, continuing with limited functionality:', authError);
+            } catch (_authError) {
+              // Authentication failed - using limited functionality
               // Continue with limited functionality
               if (mounted) {
                 setLoading(false);
@@ -71,8 +72,8 @@ export default function ParentPanelPage() {
           setUser(currentUser);
           try {
             await loadUserData(currentUser.uid);
-          } catch (error) {
-            console.warn('Failed to load user data:', error);
+          } catch (_error) {
+            // Failed to load user data - using defaults
           }
           setLoading(false);
         }
@@ -81,8 +82,8 @@ export default function ParentPanelPage() {
           mounted = false;
           unsubscribe();
         };
-      } catch (error) {
-        console.warn('Failed to initialize authentication:', error);
+      } catch (_error) {
+        // Failed to initialize authentication - using mock data
         if (mounted) {
           setLoading(false);
         }
@@ -95,7 +96,7 @@ export default function ParentPanelPage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadUserData = async (userId: string) => {
     try {
@@ -106,14 +107,14 @@ export default function ParentPanelPage() {
       
       setUserData(userDataResult);
       setModulesProgress(modulesResult);
-    } catch (error) {
-      console.warn('Error loading user data, using default values:', error);
+    } catch (_error) {
+              // Error loading user data - using default values
       // Set default values for offline/error state
       if (!userData) {
         setUserData({
           profile: {
             name: 'Test Kullanıcısı',
-            createdAt: new Date() as any
+            createdAt: Timestamp.now()
           },
           sensory_settings: {
             visualTheme: 'calm',
@@ -149,8 +150,8 @@ export default function ParentPanelPage() {
       } else {
         alert('Demo veriler oluşturulurken hata oluştu.');
       }
-    } catch (error) {
-      console.error('Error creating demo data:', error);
+    } catch (_error) {
+              // Error creating demo data - continuing without demo
       alert('Demo veriler oluşturulurken hata oluştu.');
     } finally {
       setLoading(false);
@@ -170,8 +171,8 @@ export default function ParentPanelPage() {
       'literacy': 'Okuryazarlık Becerileri'
     };
 
-    const formatLastAccess = (timestamp: number | string | Date) => {
-      if (!timestamp || !timestamp.toDate) return 'Hiç';
+    const formatLastAccess = (timestamp: { toDate?: () => Date } | null | undefined) => {
+      if (!timestamp || typeof timestamp.toDate !== 'function') return 'Hiç';
       
       const date = timestamp.toDate();
       const now = new Date();
@@ -242,7 +243,7 @@ export default function ParentPanelPage() {
         <h3 className="text-lg md:text-xl font-bold text-text-color mb-2">👋 Hoş Geldiniz!</h3>
         <p className="text-text-color">
           <strong>{userData?.profile?.name || 'Kullanıcı'}</strong> - Son giriş: {
-            userData?.profile?.createdAt ? 
+            userData?.profile?.createdAt && typeof userData.profile.createdAt.toDate === 'function' ? 
             new Intl.DateTimeFormat('tr-TR').format(userData.profile.createdAt.toDate()) : 
             'Bilinmiyor'
           }

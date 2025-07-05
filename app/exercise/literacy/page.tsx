@@ -8,6 +8,38 @@ import KivilcimIcon from '@/components/KivilcimIcon';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useElevenLabs } from '@/lib/elevenlabs';
 
+// Speech Recognition types
+interface SpeechRecognitionEvent {
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+}
+
+interface SpeechRecognitionClass {
+  new(): SpeechRecognition;
+}
+
+interface SpeechRecognition {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: () => void;
+  start: () => void;
+}
+
+// Extend Window interface for Speech Recognition
+declare global {
+  interface Window {
+    webkitSpeechRecognition?: SpeechRecognitionClass;
+    SpeechRecognition?: SpeechRecognitionClass;
+  }
+}
+
 // --- DATA (Veri yapısı aynı kalıyor) ---
 interface SyllableExercise {
   id: number;
@@ -183,14 +215,19 @@ export default function LiteracyExercisePage() {
 
     dispatch({ type: 'SET_IS_LISTENING', payload: true });
     
-    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Bu tarayıcı ses tanıma özelliğini desteklemiyor.');
+      dispatch({ type: 'SET_IS_LISTENING', payload: false });
+      return;
+    }
     const recognition = new SpeechRecognition();
     
     recognition.lang = 'tr-TR';
     recognition.continuous = false;
     recognition.interimResults = false;
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript.toLowerCase().trim();
       dispatch({ type: 'SET_IS_LISTENING', payload: false });
       
@@ -217,8 +254,8 @@ export default function LiteracyExercisePage() {
     try {
       dispatch({ type: 'SET_IS_PLAYING', payload: true });
       await speak(exercise.audioText, 'word');
-    } catch (error) {
-      console.warn('Ses çalma hatası (sessizce atlanıyor):', error);
+    } catch (_error) {
+              // Audio playback failed - continuing silently
       // Hata durumunda Web Speech API fallback'i zaten çalışacak
       // Eğer o da başarısız olursa sessizce devam et
     } finally {
@@ -231,8 +268,8 @@ export default function LiteracyExercisePage() {
     try {
       dispatch({ type: 'SET_IS_PLAYING', payload: true });
       await speak(letter, 'letter');
-    } catch (error) {
-      console.warn('Harf ses hatası (sessizce atlanıyor):', error);
+    } catch (_error) {
+              // Letter audio failed - continuing silently
       // Hata durumunda Web Speech API fallback'i zaten çalışacak
       // Eğer o da başarısız olursa sessizce devam et
     } finally {
@@ -250,8 +287,8 @@ export default function LiteracyExercisePage() {
       ];
       const randomText = celebrationTexts[Math.floor(Math.random() * celebrationTexts.length)];
       await speak(randomText, 'celebration');
-    } catch (error) {
-      console.warn('Kutlama ses hatası (sessizce atlanıyor):', error);
+    } catch (_error) {
+              // Celebration audio failed - continuing silently
       // Hata durumunda Web Speech API fallback'i zaten çalışacak
       // Eğer o da başarısız olursa sessizce devam et
     }

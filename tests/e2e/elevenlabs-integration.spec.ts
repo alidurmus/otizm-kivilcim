@@ -65,9 +65,9 @@ test.describe('ElevenLabs Ses Entegrasyonu', () => {
         // En son çare - buton state değişikliği kontrolü
         const buttonText = await listenButton.textContent();
         if (buttonText && buttonText.includes('Oynatılıyor')) {
-          console.log('Loading state bulundu (text content ile)');
+          // Loading state found
         } else {
-          console.log('Loading state tespit edilemedi ama bu normal olabilir (hızlı fallback)');
+                      // Loading state not detected (fast fallback is normal)
         }
       }
     }
@@ -138,10 +138,10 @@ test.describe('ElevenLabs Ses Entegrasyonu', () => {
       // Alternatif success indicator'ları kontrol et
       const successFeedback = await page.locator('[data-testid="success-message"], .bg-success-green, :has-text("Harikasın!")').first();
       if (await successFeedback.isVisible()) {
-        console.log('Başarı mesajı alternatif selector ile bulundu');
+        // Success message found with alternative selector
       } else {
         // Manual completion simulation
-        console.log('Drag&drop çalışmadı, manual completion deneyin...');
+                  // Drag&drop failed, trying manual completion
         await page.evaluate(() => {
           // Try to trigger success manually for testing
           const event = new CustomEvent('exercise-complete', { detail: { correct: true } });

@@ -15,13 +15,6 @@ const TURKISH_ALPHABET = [
 // Sesli harfler
 const VOWELS = ['A', 'E', 'I', 'İ', 'O', 'Ö', 'U', 'Ü'];
 
-interface AlphabetStats {
-  totalLetters: number;
-  learnedLetters: number;
-  currentStreak: number;
-  score: number;
-}
-
 type GameMode = 'learn' | 'identify' | 'quiz';
 type LetterCase = 'upper' | 'lower' | 'mixed';
 
@@ -53,7 +46,6 @@ export default function AlphabetReadingPage() {
     const playWelcome = async () => {
       // Sayfa yüklenirken kısa bir delay
       timeoutId = setTimeout(async () => {
-        console.log('👋 Playing welcome message...');
         await speak("Alfabe okuma modülüne hoş geldin! Türk alfabesinin 29 harfini birlikte öğreneceğiz.", 'sentence');
       }, 1000);
     };
@@ -66,7 +58,7 @@ export default function AlphabetReadingPage() {
         clearTimeout(timeoutId);
       }
     };
-  }, []); // Dependency array boş - sadece mount'ta çal
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Letter pronunciation with additional safety
   const pronounceLetter = useCallback(async (letter: string) => {
@@ -74,10 +66,9 @@ export default function AlphabetReadingPage() {
       // Önceki sesi durdur
       stopCurrentAudio();
       
-      console.log(`🔤 Pronouncing letter: ${letter}`);
       await speak(letter.toLowerCase(), 'letter');
-    } catch (error) {
-      console.error('Letter pronunciation failed:', error);
+          } catch (_error) {
+              // Letter pronunciation failed - continuing silently
     }
   }, [speak, stopCurrentAudio]);
 
@@ -116,7 +107,6 @@ export default function AlphabetReadingPage() {
     
     // Quiz harfini daha geç çal - önceki sesler bitmesi için bekle
     setTimeout(() => {
-      console.log(`🎯 Starting new quiz with letter: ${letter}`);
       pronounceLetter(letter);
     }, 800); // 500ms → 800ms artırdım
   }, [generateQuizOptions, pronounceLetter, stopCurrentAudio]);
@@ -134,7 +124,6 @@ export default function AlphabetReadingPage() {
       setStreak(prev => prev + 1);
       setShowCelebration(true);
       
-      console.log('✅ Correct answer! Playing celebration...');
       await speak("Doğru! Harika iş çıkardın!", 'celebration');
       
       // Celebration tamamlandıktan sonra yeni quiz başlat
@@ -144,7 +133,6 @@ export default function AlphabetReadingPage() {
       }, 2500); // 2000ms → 2500ms (celebration'ın bitmesi için)
     } else {
       setStreak(0);
-      console.log('❌ Wrong answer! Playing feedback...');
       await speak(`Hayır, bu ${answer}. Doğru cevap ${correctAnswer}. Tekrar deneyelim.`, 'sentence');
       
       // Feedback tamamlandıktan sonra tekrar dene
@@ -171,7 +159,6 @@ export default function AlphabetReadingPage() {
     
     // Kısa bir delay ile yeni harfi seslendir
     setTimeout(() => {
-      console.log(`🔄 Navigating to letter: ${TURKISH_ALPHABET[newIndex]}`);
       pronounceLetter(TURKISH_ALPHABET[newIndex]);
     }, 200); // 200ms delay ekledim
   }, [currentLetterIndex, pronounceLetter, stopCurrentAudio]);

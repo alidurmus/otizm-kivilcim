@@ -48,6 +48,35 @@
 - **🧪 %95+ Test Coverage:** Kapsamlı Playwright E2E ve unit test coverage
 - **🇹🇷 Full Turkish Support:** 29 harflik Türk alfabesi desteği (ç, ğ, ı, ö, ş, ü dahil)
 
+## 🚀 Hızlı Başlangıç
+
+### 📋 Önkoşullar
+- Node.js 18+ sürümü gereklidir
+- npm veya yarn paket yöneticisi
+
+### ⚠️ Kritik: Environment Kurulumu
+**İlk yapmanız gereken:** [Environment Variable Kurulum Talimatları](docs/environment-setup.md) dosyasını okuyun.
+
+API key olmadan ses sistemi çalışmaz ve testler başarısız olur.
+
+### 📦 Kurulum
+
+```bash
+# Depoyu klonlayın
+git clone [repository-url]
+cd otizm-kivilcim
+
+# Bağımlılıkları yükleyin
+npm install
+
+# Environment dosyasını oluşturun
+# Detaylı talimatlar: docs/environment-setup.md
+cp .env.example .env.local  # (dosyayı manuel oluşturun)
+
+# Geliştirme sunucusunu başlatın
+npm run dev
+```
+
 ## 🚀 Başlarken (Geliştiriciler İçin)
 
 Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin.

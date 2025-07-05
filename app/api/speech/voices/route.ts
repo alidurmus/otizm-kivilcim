@@ -110,9 +110,9 @@ function detectGenderFromName(name: string): 'male' | 'female' | 'unknown' {
   return 'unknown';
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    console.log('🔍 Fetching new voices from ElevenLabs API...');
+    // Fetching new voices from ElevenLabs API
     
     const apiKey = process.env.ELEVENLABS_API_KEY;
     if (!apiKey) {
@@ -148,7 +148,6 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('📥 ElevenLabs API response:', data);
 
     if (!data.voices || !Array.isArray(data.voices)) {
       console.warn('⚠️ Invalid response format from ElevenLabs API');
@@ -194,8 +193,7 @@ export async function GET(request: NextRequest) {
         };
       });
 
-    console.log(`✅ Found ${newVoices.length} new voices from ${NEW_VOICE_IDS.length} requested IDs`);
-    console.log('📋 New voices:', newVoices.map((v: { id: string; name: string }) => ({ id: v.id, name: v.name })));
+    // Successfully processed new voices
 
     return NextResponse.json({
       success: true,
@@ -231,7 +229,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`🔍 Fetching details for voice: ${voiceId}`);
+    // Fetching voice details
     
     const apiKey = process.env.ELEVENLABS_API_KEY;
     if (!apiKey) {
@@ -257,7 +255,6 @@ export async function POST(request: NextRequest) {
     }
 
     const voiceData = await response.json();
-    console.log(`✅ Voice details for ${voiceId}:`, voiceData);
 
     // Format voice details with fallback name
     const formattedVoice = {

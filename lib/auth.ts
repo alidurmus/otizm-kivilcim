@@ -32,7 +32,7 @@ let isUsingMockAuth = false;
 // Check if Firebase is properly initialized and available
 const isFirebaseAvailable = () => {
   try {
-    return auth !== null && typeof auth.signInAnonymously === 'function';
+    return auth !== null && typeof signInAnonymously === 'function';
   } catch {
     return false;
   }
@@ -51,7 +51,7 @@ const testFirebaseConnectivity = async (): Promise<boolean> => {
     const connectivityTest = new Promise((resolve) => {
       try {
         // Test if we can access auth state
-        const unsubscribe = onAuthStateChanged(auth, () => {
+        const unsubscribe = onAuthStateChanged(auth as any, () => {
           unsubscribe();
           resolve(true);
         });
@@ -62,8 +62,7 @@ const testFirebaseConnectivity = async (): Promise<boolean> => {
     
     await Promise.race([connectivityTest, timeoutPromise]);
     return true;
-  } catch (error) {
-    console.warn('Firebase connectivity test failed:', error);
+  } catch (_error) {
     return false;
   }
 };
@@ -72,7 +71,6 @@ const testFirebaseConnectivity = async (): Promise<boolean> => {
 export const signInAnonymous = async (): Promise<User | null> => {
   // First check if Firebase is available
   if (!isFirebaseAvailable()) {
-    console.log('🔄 Firebase not available, using mock authentication');
     isUsingMockAuth = true;
     return mockUser;
   }
@@ -81,7 +79,6 @@ export const signInAnonymous = async (): Promise<User | null> => {
     // Test connectivity first
     const isConnected = await testFirebaseConnectivity();
     if (!isConnected) {
-      console.log('🔄 Firebase connectivity test failed, using mock authentication');
       isUsingMockAuth = true;
       return mockUser;
     }
@@ -95,7 +92,7 @@ export const signInAnonymous = async (): Promise<User | null> => {
     const result = await Promise.race([signInPromise, timeoutPromise]);
     
     if (result && 'user' in result) {
-      console.log('✅ Firebase authentication successful');
+      // Firebase authentication successful
       isUsingMockAuth = false;
       
       // Try to create user data (with fallback)
@@ -123,9 +120,9 @@ export const signInAnonymous = async (): Promise<User | null> => {
           };
           
           await createUserData(result.user.uid, initialUserData);
-          console.log('📝 User data created successfully');
+          // User data created successfully
         }
-      } catch (firestoreError) {
+              } catch (_firestoreError) {
         console.warn('⚠️ Firestore not available, continuing with authentication only');
       }
       
@@ -155,7 +152,6 @@ export const signInAnonymous = async (): Promise<User | null> => {
     }
     
     // Always fallback to mock user
-    console.log('🔄 Falling back to mock authentication');
     isUsingMockAuth = true;
     return mockUser;
   }
@@ -164,7 +160,7 @@ export const signInAnonymous = async (): Promise<User | null> => {
 // Monitor auth state with robust error handling
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
   if (!isFirebaseAvailable()) {
-    console.log('🔄 Using mock auth state listener');
+    console.warn('🔄 Using mock auth state listener');
     // Mock implementation with slight delay to simulate real behavior
     setTimeout(() => callback(mockUser), 100);
     return () => {};
@@ -173,27 +169,27 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
   try {
     return onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log('👤 Auth state changed: User signed in');
+        console.warn('👤 Auth state changed: User signed in');
         isUsingMockAuth = false;
         callback(user);
       } else if (isUsingMockAuth) {
-        console.log('👤 Auth state changed: Using mock user');
+        console.warn('👤 Auth state changed: Using mock user');
         callback(mockUser);
       } else {
-        console.log('👤 Auth state changed: No user');
+                  console.warn('👤 Auth state changed: No user');
         callback(null);
       }
     }, (error) => {
       console.warn('🔥 Auth state listener error:', error);
       // Fallback to mock user on error
-      console.log('🔄 Auth state error, using mock user');
+      console.warn('🔄 Auth state error, using mock user');
       isUsingMockAuth = true;
       callback(mockUser);
     });
   } catch (error) {
     console.error('🔥 Error setting up auth state listener:', error);
     // Fallback to mock
-    console.log('🔄 Using mock auth state listener due to setup error');
+    console.warn('🔄 Using mock auth state listener due to setup error');
     setTimeout(() => {
       isUsingMockAuth = true;
       callback(mockUser);
@@ -231,5 +227,5 @@ export const isUsingMockAuthentication = (): boolean => {
 // Reset authentication state (useful for development)
 export const resetAuthState = () => {
   isUsingMockAuth = false;
-  console.log('🔄 Authentication state reset');
+  console.warn('🔄 Authentication state reset');
 }; 

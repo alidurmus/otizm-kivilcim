@@ -106,68 +106,28 @@ export default function ModulesPage() {
   const upcomingModules = modules.filter(module => !module.isActive);
 
   const handleModuleClick = async (module: Module) => {
-    // eslint-disable-next-line no-console
-    console.log('=== MODULE CLICK DEBUG ===');
-    // eslint-disable-next-line no-console
-    console.log('Module clicked:', module);
-    // eslint-disable-next-line no-console
-    console.log('Module title:', module.title);
-    // eslint-disable-next-line no-console
-    console.log('Module route:', module.route);
-    // eslint-disable-next-line no-console
-    console.log('Module isActive:', module.isActive);
-    // eslint-disable-next-line no-console
-    console.log('Router object:', router);
-    // eslint-disable-next-line no-console
-    console.log('Current pathname:', window.location.pathname);
-    
     if (module.isActive && module.route) {
-      // eslint-disable-next-line no-console
-      console.log('✅ Conditions met, attempting navigation...');
-      // eslint-disable-next-line no-console
-      console.log('Navigating to:', module.route);
-      
       try {
-        // eslint-disable-next-line no-console
-        console.log('⏱️ Calling router.push...');
-        const startTime = Date.now();
-        
         await router.push(module.route);
-        
-        const endTime = Date.now();
-        // eslint-disable-next-line no-console
-        console.log(`✅ router.push completed in ${endTime - startTime}ms`);
         
         // Check if navigation actually happened
         setTimeout(() => {
-          // eslint-disable-next-line no-console
-          console.log('🔍 Post-navigation check:');
-          // eslint-disable-next-line no-console
-          console.log('  Current pathname:', window.location.pathname);
-          // eslint-disable-next-line no-console
-          console.log('  Expected route:', module.route);
           const navSuccess = window.location.pathname === module.route;
-          // eslint-disable-next-line no-console
-          console.log('  Navigation successful:', navSuccess);
           
           if (!navSuccess) {
-            console.warn('🔄 Router failed, trying hard navigation...');
+            // Fallback to hard navigation if router failed
             window.location.href = module.route!;
           }
         }, 100);
         
-      } catch (error) {
-        console.error('❌ Router.push failed:', error);
-        console.warn('🔄 Trying window.location.href instead...');
+      } catch (_error) {
+        // Router navigation failed - using fallback
+        // Fallback to hard navigation
         window.location.href = module.route!;
       }
     } else {
-      console.warn('❌ Conditions not met:');
-      console.warn('  - isActive:', module.isActive);
-      console.warn('  - route exists:', !!module.route);
+      // Module not active or route missing - ignoring click
     }
-    // eslint-disable-next-line no-console
-    console.log('=== END MODULE CLICK DEBUG ===');
   };
 
   const handleParentPanelClick = () => {

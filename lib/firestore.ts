@@ -12,15 +12,11 @@ import {
   orderBy, 
   limit,
   Timestamp,
-  deleteDoc,
-  writeBatch,
   Firestore
 } from 'firebase/firestore';
-// @ts-expect-error - Mock fallback support for development
 import { db } from './firebase';
 
 // Type assertion for db
-// @ts-expect-error - Firebase can be null during initialization
 const firestore = db as Firestore | null;
 
 // User Data Types
@@ -51,7 +47,7 @@ export interface ExerciseResult {
   score: number;
   completedAt: Timestamp;
   timeSpent: number;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export interface UserData {
@@ -108,7 +104,7 @@ const executeFirestoreOperation = async <T>(
   operationName: string
 ): Promise<T> => {
   if (!isFirestoreAvailable()) {
-    console.log(`🔄 Firestore not available for ${operationName}, using fallback`);
+    console.warn(`🔄 Firestore not available for ${operationName}, using fallback`);
     return fallbackValue;
   }
 
@@ -128,10 +124,10 @@ const executeFirestoreOperation = async <T>(
     );
     
     const result = await Promise.race([operation(), timeoutPromise]);
-    console.log(`✅ ${operationName} completed successfully`);
+    console.warn(`✅ ${operationName} completed successfully`);
     return result;
     
-  } catch (error: any) {
+  } catch (_error: unknown) {
     // Handle specific Firebase errors
     if (error?.code) {
       switch (error.code) {
@@ -257,7 +253,6 @@ export const addExerciseResult = async (
   exerciseResult: ExerciseResult
 ) => {
   if (!isFirestoreAvailable() || !firestore) {
-    console.log('Using mock Firestore for development');
     return true;
   }
 
@@ -278,7 +273,6 @@ export const getRecentExercises = async (
   limitCount: number = 10
 ): Promise<ExerciseResult[]> => {
   if (!isFirestoreAvailable() || !firestore) {
-    console.log('Using mock Firestore for development');
     return [];
   }
 

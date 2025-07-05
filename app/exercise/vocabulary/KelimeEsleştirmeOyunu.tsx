@@ -1,3 +1,0 @@
-export default function KelimeEsleştirmeOyunu({ _onBack }: { _onBack: () => void }) {
-  // ... existing code ...
-} 

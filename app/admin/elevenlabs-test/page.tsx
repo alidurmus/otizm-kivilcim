@@ -48,6 +48,17 @@ interface NewVoiceData {
   labels: { [key: string]: string };
 }
 
+interface _ApiVoiceData {
+  id: string;
+  name?: string;
+  voice_name?: string;
+  description?: string;
+  category?: string;
+  language?: string;
+  isVerified?: boolean;
+  labels?: { [key: string]: string };
+}
+
 export default function ElevenLabsTestPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [testText, setTestText] = useState('');
@@ -55,13 +66,13 @@ export default function ElevenLabsTestPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [testResults, setTestResults] = useState<VoiceTestResult[]>([]);
-  const [voices, setVoices] = useState<any[]>([]);
+  const [voices, setVoices] = useState<VoiceInfo[]>([]);
   const [genderFilter, setGenderFilter] = useState<'all' | 'male' | 'female'>('all');
   const [voiceId, setVoiceId] = useState('');
   const [apiStatus, setApiStatus] = useState<ElevenLabsStatus | null>(null);
-  const [newVoices, setNewVoices] = useState<NewVoiceData[]>([]);
-  const [loadingNewVoices, setLoadingNewVoices] = useState(false);
-  const [showNewVoices, setShowNewVoices] = useState(false);
+  const [_newVoices, _setNewVoices] = useState<NewVoiceData[]>([]);
+  const [_loadingNewVoices, _setLoadingNewVoices] = useState(false);
+  const [_showNewVoices, _setShowNewVoices] = useState(false);
   
   // YENİ: Ses dosyası kontrol sistemi state'leri
   const [audioFileStatus, setAudioFileStatus] = useState<{
@@ -140,12 +151,8 @@ export default function ElevenLabsTestPage() {
       if (!seenIds.has(voice.id)) {
         uniqueVoices.push(voice);
         seenIds.add(voice.id);
-      } else {
-        console.warn(`⚠️ Filtering duplicate voice: ${voice.name} (${voice.id})`);
       }
     }
-    
-    console.log(`🔍 Filtered voices: ${voices.length} → ${filtered.length} → ${uniqueVoices.length} (after duplicate removal)`);
     
     return uniqueVoices;
   }, [voices, genderFilter]);
@@ -188,13 +195,11 @@ export default function ElevenLabsTestPage() {
   useEffect(() => {
     loadVoices();
     loadApiStatus();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadVoices = useCallback(async () => {
     try {
-      console.log('🔄 Loading voices...');
       const voiceList = await getVoices();
-      console.log('📥 Raw voice data:', voiceList); // Debug log
       
       // getVoices now returns an array directly
       if (Array.isArray(voiceList) && voiceList.length > 0) {
@@ -207,118 +212,31 @@ export default function ElevenLabsTestPage() {
           isNew: voice.isNew || false
         }));
         
-        console.log('✅ Formatted voices:', formattedVoices);
-        console.log(`📊 Voice statistics:`, {
-          total: formattedVoices.length,
-          male: formattedVoices.filter(v => v.gender === 'male').length,
-          female: formattedVoices.filter(v => v.gender === 'female').length,
-          new: formattedVoices.filter(v => v.isNew).length
-        });
-        
         setVoices(formattedVoices);
         setVoiceId(formattedVoices[0].id);
-        console.log('🎯 Voice selection updated:', formattedVoices[0].name);
       } else {
-        console.warn('⚠️ No voices found in response:', voiceList);
         setVoices([]); // Fallback to empty array
         setError('Ses listesi boş. API anahtarını kontrol edin veya "Voice Bilgilerini Çek" butonunu kullanın.');
       }
-    } catch (err) {
-      console.error('❌ Voices loading error:', err);
+    } catch (_err) {
       setVoices([]); // Ensure voices is always an array
       setError('Ses listesi yüklenirken hata oluştu. API bağlantısını kontrol edin.');
     }
-  }, []);
+  }, [getVoices]);
 
   const loadApiStatus = useCallback(async () => {
     try {
       const status = await getApiStatus();
       setApiStatus(status);
-    } catch (err) {
-      console.error('API status loading error:', err);
+    } catch (_err) {
+      // API status loading failed - using fallback
     }
-  }, []);
+  }, [getApiStatus]);
 
-  // Yeni voice'ları ElevenLabs API'den çek
-  const fetchNewVoices = async () => {
-    setLoadingNewVoices(true);
-    setError('');
-    
-    try {
-      console.log('🔍 Fetching new voices from ElevenLabs API...');
-      const response = await fetch('/api/speech/voices');
-      
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status} - ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      console.log('📥 New voices API response:', data);
-      
-      if (data.success && data.newVoices && Array.isArray(data.newVoices)) {
-        // Voice isimlerini format et ve fallback ekle
-        const formattedNewVoices = data.newVoices.map((voice: any) => ({
-          id: voice.id,
-          name: voice.name || voice.voice_name || `NewVoice_${voice.id.slice(0, 8)}`, // Multiple fallbacks
-          description: voice.description || 'Yeni ElevenLabs voice',
-          category: voice.category || 'generated',
-          language: voice.language || 'tr',
-          isVerified: voice.isVerified || false,
-          labels: voice.labels || {},
-          isNew: true
-        }));
-        
-        console.log(`✅ Found ${formattedNewVoices.length} new voices:`, formattedNewVoices);
-        
-        setNewVoices(formattedNewVoices);
-        setShowNewVoices(true);
-        
-        // Yeni voice'ları main voice listesine de ekle
-        const updatedVoices = [...voices];
-        const existingIds = new Set(voices.map(v => v.id));
-        
-        formattedNewVoices.forEach((newVoice: any) => {
-          const exists = existingIds.has(newVoice.id);
-          if (!exists) {
-            updatedVoices.push({
-              id: newVoice.id,
-              name: newVoice.name,
-              description: newVoice.description,
-              language: newVoice.language,
-              gender: detectGenderFromName(newVoice.name),
-              category: newVoice.category,
-              isVerified: newVoice.isVerified,
-              isNew: true
-            });
-            existingIds.add(newVoice.id);
-            console.log(`➕ Added unique voice to main list: ${newVoice.name} (${newVoice.id})`);
-          } else {
-            console.log(`⚠️ Skipping duplicate voice in main list: ${newVoice.name} (${newVoice.id})`);
-          }
-        });
-        
-        setVoices(updatedVoices);
-        console.log(`🔄 Updated main voice list: ${voices.length} → ${updatedVoices.length} voices`);
-        
-      } else {
-        console.warn('⚠️ No new voices found or invalid response format');
-        setNewVoices([]);
-        setShowNewVoices(true);
-        setError('Yeni voice bulunamadı. Voice ID\'leri geçerli mi kontrol edin.');
-      }
-      
-    } catch (err) {
-      console.error('❌ Error fetching new voices:', err);
-      setError(`Yeni voice'lar yüklenirken hata: ${err instanceof Error ? err.message : 'Bilinmeyen hata'}`);
-      setNewVoices([]);
-      setShowNewVoices(true);
-    } finally {
-      setLoadingNewVoices(false);
-    }
-  };
+
 
   // Gender detection helper function (moved outside the main function)
-  const detectGenderFromName = (name: string): 'male' | 'female' | 'unknown' => {
+  const _detectGenderFromName = (name: string): 'male' | 'female' | 'unknown' => {
     const maleNames = ['adam', 'josh', 'antoni', 'daniel', 'ethan', 'marcus', 'david', 'mike', 'john'];
     const femaleNames = ['bella', 'rachel', 'domi', 'elli', 'sarah', 'alice', 'anna', 'emma', 'sophia'];
     
@@ -330,63 +248,7 @@ export default function ElevenLabsTestPage() {
     return 'unknown';
   };
 
-  // Belirli bir voice'u test et (yeni voice'lar için)
-  const testNewVoice = async (newVoice: NewVoiceData) => {
-    setLoading(true);
-    setError('');
-    setIsPlaying(true);
 
-    const testTexts = {
-      letter: 'A',
-      word: 'merhaba',
-      sentence: 'Bu yeni bir sestir.',
-      celebration: 'Harika! Çok güzel!'
-    };
-
-    const testText = testTexts[testType];
-
-    try {
-      console.log(`🧪 Testing new voice: ${newVoice.name} (${newVoice.id})`);
-      
-      // Ses çalma testi
-      await speak(testText, testType, newVoice.id);
-      
-      // Test sonucu kaydet
-      const formattedResult: VoiceTestResult = {
-        id: Date.now().toString(),
-        text: testText,
-        voiceId: newVoice.id,
-        voiceName: `${newVoice.name} (YENİ)`,
-        type: testType,
-        duration: 0,
-        success: true,
-        timestamp: new Date()
-      };
-      
-      setTestResults(prev => [formattedResult, ...prev.slice(0, 9)]);
-      
-    } catch (err) {
-      console.error('New voice test error:', err);
-      setError(`Yeni voice test hatası: ${err instanceof Error ? err.message : 'Bilinmeyen hata'}`);
-      
-      const failedResult: VoiceTestResult = {
-        id: Date.now().toString(),
-        text: testText,
-        voiceId: newVoice.id,
-        voiceName: `${newVoice.name} (YENİ)`,
-        type: testType,
-        duration: 0,
-        success: false,
-        error: err instanceof Error ? err.message : 'Bilinmeyen hata',
-        timestamp: new Date()
-      };
-      
-      setTestResults(prev => [failedResult, ...prev.slice(0, 9)]);
-    } finally {
-      setLoading(false);
-      setIsPlaying(false);
-    }
-  };
 
   // Geliştirilmiş test fonksiyonu - seçilen ses ile
   const handleTestVoice = async (text: string, contentType: string = 'sentence') => {
@@ -396,11 +258,8 @@ export default function ElevenLabsTestPage() {
     
     try {
       setCurrentlyPlaying(testKey);
-      console.log(`🎤 Testing voice: ${selectedVoice.name} (${selectedVoice.gender})`);
-      console.log(`📝 Text: "${text}"`);
-      console.log(`🎯 Content Type: ${contentType}`);
       
-      const result = await testVoice(
+      await testVoice(
         text,
         selectedVoice.id,
         contentType as 'letter' | 'word' | 'sentence' | 'celebration',
@@ -412,11 +271,6 @@ export default function ElevenLabsTestPage() {
         }
       );
       
-      if (result.success) {
-        console.log(`✅ Successfully played with ${selectedVoice.name}`);
-      } else {
-        console.error(`❌ Error with ${selectedVoice.name}:`, result.error);
-      }
     } catch (error) {
       console.error(`💥 Test failed for ${selectedVoice.name}:`, error);
     } finally {
@@ -492,7 +346,7 @@ export default function ElevenLabsTestPage() {
     }
   };
 
-  const testTexts = getTestTexts();
+  const _testTexts = getTestTexts();
 
   // YENİ: Ses dosyası varlık kontrolü fonksiyonları
   const checkAudioFiles = async () => {
@@ -551,7 +405,7 @@ export default function ElevenLabsTestPage() {
           } else {
             missingFiles.push(filePath);
           }
-        } catch (error) {
+        } catch (_error) {
           missingFiles.push(filePath);
         }
       }
@@ -564,12 +418,7 @@ export default function ElevenLabsTestPage() {
         lastCheck: new Date()
       });
       
-      console.log('📊 Audio File Status:', {
-        total: criticalAudioFiles.length,
-        existing: existingFiles.length,
-        missing: missingFiles.length,
-        missingList: missingFiles
-      });
+      // Audio file status checked successfully
       
     } catch (error) {
       console.error('Error checking audio files:', error);
@@ -586,7 +435,7 @@ export default function ElevenLabsTestPage() {
     setCreatingMissingFiles(true);
     
     try {
-      console.log(`🔄 ${audioFileStatus.missingFiles.length} eksik dosya için sıralı oluşturma başlatılıyor...`);
+      // Creating missing audio files sequentially
       
       const results = [];
       
@@ -631,7 +480,7 @@ export default function ElevenLabsTestPage() {
           text = sentenceMappings[filename] || filename.replace(/-/g, ' ');
         }
         
-        console.log(`🔄 [${i+1}/${audioFileStatus.missingFiles.length}] Creating: ${text} (${contentType}) -> ${filePath}`);
+        // Creating audio file silently
         
         try {
           // ElevenLabs API ile ses oluştur
@@ -647,7 +496,6 @@ export default function ElevenLabsTestPage() {
           });
           
           if (response.ok) {
-            console.log(`✅ [${i+1}/${audioFileStatus.missingFiles.length}] Created: ${filePath}`);
             results.push({ filePath, success: true });
           } else {
             const errorText = await response.text();
@@ -661,7 +509,6 @@ export default function ElevenLabsTestPage() {
         
         // Rate limiting için bekleme (son dosya değilse)
         if (i < audioFileStatus.missingFiles.length - 1) {
-          console.log(`⏳ Rate limiting için 3 saniye bekleniyor...`);
           await new Promise(resolve => setTimeout(resolve, 3000));
         }
       }
@@ -682,42 +529,7 @@ export default function ElevenLabsTestPage() {
     }
   };
 
-  const testAudioQuality = async (filePath: string) => {
-    try {
-      const audio = new Audio(filePath);
-      
-      return new Promise((resolve) => {
-        audio.oncanplaythrough = () => {
-          resolve({
-            filePath,
-            duration: audio.duration,
-            canPlay: true,
-            quality: audio.duration > 0 ? 'good' : 'poor'
-          });
-        };
-        
-        audio.onerror = () => {
-          resolve({
-            filePath,
-            duration: 0,
-            canPlay: false,
-            quality: 'error'
-          });
-        };
-        
-        audio.load();
-      });
-      
-    } catch (error) {
-      return {
-        filePath,
-        duration: 0,
-        canPlay: false,
-        quality: 'error',
-        error: error
-      };
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6">
@@ -1072,7 +884,7 @@ export default function ElevenLabsTestPage() {
                 ].map(({ value, label, icon, desc }) => (
                   <button
                     key={value}
-                    onClick={() => setTestType(value as any)}
+                    onClick={() => setTestType(value as 'letter' | 'word' | 'sentence' | 'celebration')}
                     className={`p-3 text-center rounded-lg text-sm font-medium transition-all duration-200 ${
                       testType === value
                         ? 'bg-green-500 text-white shadow-md scale-105'
@@ -1138,7 +950,7 @@ export default function ElevenLabsTestPage() {
                   return (
                     <button
                       key={value}
-                      onClick={() => setGenderFilter(value as any)}
+                      onClick={() => setGenderFilter(value as 'all' | 'male' | 'female')}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         genderFilter === value
                           ? 'bg-blue-500 text-white shadow-md scale-105'

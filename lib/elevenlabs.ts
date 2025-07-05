@@ -276,12 +276,11 @@ const SELECTED_TURKISH_VOICES = {
 // Ses tipi için en uygun Türkçe bayan sesini öner
 export function getRecommendedTurkishVoice(
   type: 'letter' | 'word' | 'sentence' | 'celebration',
-  gender: 'male' | 'female' | 'mixed' = 'mixed'
+  _gender: 'male' | 'female' | 'mixed' = 'mixed'
 ): string {
   // 🎯 Kullanıcının tercih ettiği varsayılan ses - tüm konuşmalar için
   const userPreferredVoice = 'xyqF3vGMQlPk3e7yA4DI';
   
-  console.log(`🔊 Using user's preferred voice: ${userPreferredVoice} for ${type}`);
   return userPreferredVoice;
   
   // Eski gender-balanced logic - şimdilik devre dışı
@@ -323,7 +322,7 @@ class ElevenLabsClient {
   private readonly CACHE_DURATION = 30 * 60 * 1000; // 30 minutes cache duration
 
   constructor() {
-    console.log('🎙️ ElevenLabs client initialized');
+    // ElevenLabs client initialized
   }
 
   /**
@@ -331,8 +330,6 @@ class ElevenLabsClient {
    */
   stopCurrentAudio(): void {
     if (this.currentAudio) {
-      console.log('🛑 Stopping current audio');
-      
       try {
         // Ses çalarken durdurma
         if (!this.currentAudio.paused) {
@@ -349,8 +346,8 @@ class ElevenLabsClient {
         this.currentAudio.oncanplay = null;
         this.currentAudio.onloadstart = null;
         
-      } catch (error) {
-        console.warn('Error stopping audio (ignored):', error);
+      } catch (_error) {
+        // Error stopping audio - ignored
       } finally {
         // Reference'ı her durumda temizle
         this.currentAudio = null;
@@ -393,14 +390,13 @@ class ElevenLabsClient {
     // Updated Turkish character validation - includes apostrophes, numbers and common punctuation
     const turkishPattern = /^[a-zA-Z0-9çğıöşüÇĞIİÖŞÜ\s.,!?'\"'-]+$/;
     if (!turkishPattern.test(text)) {
-      console.warn('Text contains non-Turkish characters:', text);
+      // Text contains non-Turkish characters
       // Don't block - just warn and continue
     }
 
     // 1. ÖNCE: Statik ses dosyasını kontrol et
     const staticAudioPath = getStaticAudioPath(text, type);
     if (staticAudioPath) {
-      console.log(`📁 Using static audio file for "${text}":`, staticAudioPath);
       return staticAudioPath;
     }
 
@@ -410,14 +406,12 @@ class ElevenLabsClient {
     const cachedData = this.cache.get(cacheKey);
     
     if (cachedData && this.isCacheValid(cachedData.timestamp)) {
-      console.log(`💾 Using cached audio for "${text}"`);
       // Create a new blob URL each time to avoid revocation issues
       return URL.createObjectURL(cachedData.blob);
     }
 
     // 3. SERVER-SIDE API route kullan (ElevenLabs SDK proxy)
     try {
-      console.log(`🤖 Generating audio via ElevenLabs for Turkish text: "${text}"`);
       const response = await fetch('/api/speech', {
         method: 'POST',
         headers: {
@@ -452,11 +446,10 @@ class ElevenLabsClient {
       // Create URL for immediate use
       const audioUrl = URL.createObjectURL(audioBlob);
       
-      console.log(`✅ Turkish audio generated successfully for: "${text}"`);
       return audioUrl;
 
     } catch (error) {
-      console.error('ElevenLabs API error for Turkish text:', error);
+      // ElevenLabs API error - falling back
       throw error;
     }
   }
@@ -477,13 +470,11 @@ class ElevenLabsClient {
       // Browser'ın audio state'ini stabilize etmesi için daha uzun delay
       await new Promise(resolve => setTimeout(resolve, 150));
       
-      console.log(`🔊 Speaking: "${text}" (type: ${type})`);
-      
       const audioUrl = await this.textToSpeech(text, type, voiceId);
       
       // Check if we got a valid audio URL
       if (!audioUrl || audioUrl === '') {
-        console.warn('No audio URL returned, falling back to Web Speech API');
+        // No audio URL returned - using Web Speech fallback
         return this.fallbackToWebSpeech(text);
       }
       
@@ -495,7 +486,6 @@ class ElevenLabsClient {
       return new Promise((resolve, reject) => {
         // Null check - audio durdurulmuşsa promise'i resolve et
         if (!this.currentAudio) {
-          console.log('🚫 Audio was stopped before playback');
           if (audioUrl.startsWith('blob:')) {
             URL.revokeObjectURL(audioUrl);
           }
@@ -504,7 +494,6 @@ class ElevenLabsClient {
         }
         
         audio.onended = () => {
-          console.log('✅ Audio playback completed');
           // Cleanup blob URL to prevent memory leaks
           if (audioUrl.startsWith('blob:')) {
             URL.revokeObjectURL(audioUrl);
@@ -517,8 +506,8 @@ class ElevenLabsClient {
           resolve();
         };
         
-        audio.onerror = (error) => {
-          console.warn('🔊 Audio playback failed, falling back to Web Speech API:', error);
+        audio.onerror = (_error) => {
+          // Audio playback failed - using Web Speech fallback
           if (audioUrl.startsWith('blob:')) {
             URL.revokeObjectURL(audioUrl);
           }
@@ -533,7 +522,7 @@ class ElevenLabsClient {
         };
         
         audio.onabort = () => {
-          console.warn('🔊 Audio playback aborted');
+                      // Audio playback aborted
           if (audioUrl.startsWith('blob:')) {
             URL.revokeObjectURL(audioUrl);
           }
@@ -548,8 +537,8 @@ class ElevenLabsClient {
         };
         
         // Audio çalmaya başla - error handling ile
-        audio.play().catch((playError) => {
-          console.warn('🔄 Audio play was interrupted, retrying with Web Speech API', playError);
+        audio.play().catch((_playError) => {
+          // Audio interrupted - retrying with Web Speech fallback
           
           // Cleanup
           if (audioUrl.startsWith('blob:')) {
@@ -565,8 +554,8 @@ class ElevenLabsClient {
         });
       });
       
-    } catch (error) {
-      console.error('ElevenLabs speak error:', error);
+    } catch (_error) {
+      // ElevenLabs speak error - using fallback
       // Fallback to Web Speech API on any error
       return this.fallbackToWebSpeech(text);
     }
@@ -576,7 +565,7 @@ class ElevenLabsClient {
    * Web Speech API fallback function
    */
   private async fallbackToWebSpeech(text: string): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       if ('speechSynthesis' in window) {
         // Önceki konuşmaları durdur
         speechSynthesis.cancel();
@@ -588,26 +577,25 @@ class ElevenLabsClient {
         utterance.volume = 0.8;
         
         utterance.onend = () => {
-          console.log('✅ Web Speech API playback completed');
           resolve();
         };
         
         utterance.onerror = (error) => {
           // Handle empty or malformed error objects gracefully
-          let errorMsg = 'Unknown error';
+          let _errorMsg = 'Unknown error';
           
           try {
             // SpeechSynthesisErrorEvent has an 'error' property with the error type
             if (error && typeof error === 'object' && 'error' in error) {
-              errorMsg = error.error || 'Speech synthesis failed';
+              _errorMsg = error.error || 'Speech synthesis failed';
             } else if (typeof error === 'string') {
-              errorMsg = error;
+              _errorMsg = error;
             }
-          } catch (e) {
-            errorMsg = 'Speech synthesis error (malformed error object)';
+          } catch (_e) {
+            _errorMsg = 'Speech synthesis error (malformed error object)';
           }
           
-          console.warn(`🔊 Web Speech API fallback failed: ${errorMsg}`);
+          // Web Speech API fallback failed
           
           // Don't reject, just resolve silently to avoid breaking the UI
           resolve();
@@ -615,7 +603,7 @@ class ElevenLabsClient {
         
         speechSynthesis.speak(utterance);
       } else {
-        console.warn('Speech synthesis not supported, playing silently');
+        // Speech synthesis not supported - playing silently
         // Resolve after a short delay to simulate speech duration
         setTimeout(resolve, Math.max(500, text.length * 100));
       }
@@ -643,7 +631,7 @@ class ElevenLabsClient {
         const newVoicesResponse = await fetch('/api/speech/voices');
         if (newVoicesResponse.ok) {
           const newVoicesData = await newVoicesResponse.json();
-          const newVoices = (newVoicesData.newVoices || []).map((voice: any) => ({
+          const newVoices = (newVoicesData.newVoices || []).map((voice: { id: string; name: string; description?: string; language?: string; category?: string; isVerified?: boolean }) => ({
             id: voice.id,
             name: voice.name,
             description: voice.description,
@@ -656,35 +644,28 @@ class ElevenLabsClient {
             bestFor: ['general']
           }));
 
-          console.log(`🆕 Found ${newVoices.length} new voices`);
-          
           // Duplicate voice'ları filtrele - unique ID'leri kullan
           const allVoices = [...builtInVoices];
-          const existingIds = new Set(builtInVoices.map((v: any) => v.id));
+          const existingIds = new Set(builtInVoices.map((v: { id: string }) => v.id));
           
-          newVoices.forEach((newVoice: any) => {
+          newVoices.forEach((newVoice: { id: string; name: string }) => {
             if (!existingIds.has(newVoice.id)) {
               allVoices.push(newVoice);
               existingIds.add(newVoice.id);
-              console.log(`➕ Added unique new voice: ${newVoice.name} (${newVoice.id})`);
-            } else {
-              console.log(`⚠️ Skipping duplicate voice: ${newVoice.name} (${newVoice.id})`);
             }
           });
           
-          console.log(`📊 Final voice count: ${allVoices.length} (${builtInVoices.length} built-in + ${allVoices.length - builtInVoices.length} new)`);
-          
           return allVoices;
         }
-      } catch (newVoicesError) {
-        console.warn('New voices could not be fetched:', newVoicesError);
+      } catch (_newVoicesError) {
+        // New voices could not be fetched
       }
 
       // Sadece yerleşik voice'ları döndür
       return builtInVoices;
       
-    } catch (error) {
-      console.error('Voices API error:', error);
+    } catch (_error) {
+      // Voices API error - returning empty list
       // Fallback: En azından yerleşik voice'ları döndür
       return getAllTurkishVoices();
     }
@@ -721,7 +702,6 @@ class ElevenLabsClient {
     }
   ) {
     try {
-      console.log(`🧪 Testing Turkish voice for: "${text}"`);
       const startTime = Date.now();
       
       // Use the main /api/speech endpoint instead of /api/speech/test
@@ -829,7 +809,6 @@ class ElevenLabsClient {
   clearCache() {
     // Clear all cached blob data (no need to revoke URLs since we create them on-demand)
     this.cache.clear();
-    console.log('🧹 ElevenLabs cache cleared');
   }
 }
 

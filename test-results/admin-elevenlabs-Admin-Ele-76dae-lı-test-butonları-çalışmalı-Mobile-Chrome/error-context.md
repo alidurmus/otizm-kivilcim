@@ -47,15 +47,23 @@
 - button "Ö"
 - button "U"
 - button "Ü"
-- heading "👥 Cinsiyet Filtresi (0 ses mevcut)" [level=3]
-- button "👥 Tümü (0)"
-- button "👨 Erkek (0)"
-- button "👩 Bayan (0)"
+- heading "👥 Cinsiyet Filtresi (9 ses mevcut)" [level=3]
+- button "👥 Tümü (9)"
+- button "👨 Erkek (1)"
+- button "👩 Bayan (1)"
 - text: 🎤 Ses Seçimi (Türkçe Destekli)
 - combobox:
-  - option "Ses seçin..." [selected]
-- paragraph: Seçilen filtrede ses bulunamadı.
-- text: "Toplam: 0 ses 👨 Erkek: 0 👩 Bayan: 0 🆕 Yeni: 0"
+  - option "Ses seçin..."
+  - option "👩 Bella - Nazik ve sakin bayan ses" [selected]
+  - option "👨 Adam - Sakin ve açık erkek ses"
+  - option "🆕 🎤 Sermin - Hello, use this voice for original, fluent, accented expressions."
+  - option "🆕 🎤 Yusuf Suratlı - Bright, young, adult, middle-aged voice. Perfect for narrator, speaker, book voice-over. Character voice-overs, voice acting. Children's voice-over."
+  - option "🆕 🎤 Ayça - Young female with a dynamic voice, suitable for narrators and motivational speeches, also works well for English."
+  - option "🆕 🎤 Gülsu - A young Turkish female energetic and sincere voice. Perfect for stories and books."
+  - option "🆕 🎤 Eda Atlas - Young, bright Turkish female voice. The perfect choice for corporate, radio and TV commercials."
+  - option "🆕 🎤 Gokce - This voice captivates with its warm, deep tone and smooth, natural flow. It is perfectly suited for professional projects including advertising, audiobooks, fairy tale narrations, podcasts, and documentaries. With its versatile and engaging delivery, it creates a lasting connection with audiences, ensuring a memorable and impactful experience across various formats."
+  - option "🆕 🎤 Ahu - The Clone That Speaks Like You - Ahu is the conversational version of the renowned \"Mahidevran\" clone, crafted to deliver a truly human-like voice with impeccable fluency and authenticity. Every word she speaks resonates with warmth and emotion, fostering a natural connection with listeners. Whether it’s podcasts, commercials, Instagram, TikTok reels, or beyond, Ahu seamlessly adapts to elevate every project. Her unmatched ability to sound authentically human makes her the perfect choice for any content."
+- text: "Toplam: 9 ses 👨 Erkek: 1 👩 Bayan: 1 🆕 Yeni: 7"
 - button "🎯 Test Et"
 - alert
 ```

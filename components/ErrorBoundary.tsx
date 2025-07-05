@@ -41,7 +41,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Enhanced error logging
-    console.group('🔥 Error Boundary Caught Error');
+    console.error('🔥 Error Boundary Caught Error');
     console.error('Error:', error);
     console.error('Error Info:', errorInfo);
     console.error('Stack:', error.stack);
@@ -49,15 +49,15 @@ export class ErrorBoundary extends Component<Props, State> {
     // Check for specific Firebase/Network errors
     if (error.message.includes('auth/network-request-failed')) {
       console.warn('🌐 Firebase Authentication network error detected');
-      console.info('💡 The app will continue with mock authentication');
+      console.warn('💡 The app will continue with mock authentication');
     }
     
     if (error.message.includes('Firebase')) {
       console.warn('🔥 Firebase service error detected');
-      console.info('💡 The app will continue with mock services');
+      console.warn('💡 The app will continue with mock services');
     }
     
-    console.groupEnd();
+    // console.groupEnd() - moved to error logging
 
     this.setState({
       errorInfo,
@@ -171,11 +171,11 @@ export class ExerciseErrorBoundary extends Component<ExerciseErrorBoundaryProps,
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.group(`🎯 Exercise Error Boundary: ${this.props.exerciseName}`);
+    console.error(`🎯 Exercise Error Boundary: ${this.props.exerciseName}`);
     console.error('Error:', error);
     console.error('Error Info:', errorInfo);
     console.error('Stack:', error.stack);
-    console.groupEnd();
+    // console.groupEnd() - moved to error logging
 
     this.setState({
       errorInfo

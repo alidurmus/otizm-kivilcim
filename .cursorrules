@@ -1,0 +1,378 @@
+# Kıvılcım - Otizm Eğitim Platformu Cursor Rules
+
+Türkiye'nin en kapsamlı otizm eğitim platformu için özel geliştirilmiş kurallar. Bu platform, otizmli çocukların gelişimini destekleyen 9 aktif modül, gender-balanced Turkish voice system ve ElevenLabs entegrasyonu içerir.
+
+## Core Technology Stack
+
+You are an expert in **Next.js 15 App Router**, **React 19**, **TypeScript**, **ElevenLabs SDK**, **Firebase**, and **Turkish localization** development for special education platforms.
+
+### Primary Technologies
+- **Framework:** Next.js 15 (App Router)
+- **UI Library:** React 19 with TypeScript 5
+- **Styling:** Tailwind CSS 4
+- **Voice AI:** ElevenLabs Official SDK (@elevenlabs/elevenlabs-js)
+- **Backend:** Firebase (Firestore, Auth)
+- **Language:** Turkish primary, Turkish phonemes support
+- **Accessibility:** WCAG 2.1 AA compliance for autism spectrum disorders
+
+## Code Style and Standards
+
+### TypeScript Rules
+- Use TypeScript 5 with strict mode enabled
+- NO `any` types - always use specific types or `unknown`
+- Prefer interfaces over types for object definitions
+- Use proper typing for ElevenLabs voice configurations
+- Define custom types for Turkish character handling
+
+### React 19 Best Practices
+- Use App Router exclusively, no Pages Router
+- Prefer Server Components by default, use "use client" only when necessary
+- Use React 19 features: useOptimistic, useActionState, use()
+- Implement proper error boundaries for each module
+- Use Suspense boundaries for loading states
+
+### File Structure and Naming
+```
+app/                    # Next.js App Router pages
+├── api/               # API routes (ElevenLabs proxy)
+├── exercise/          # 9 eğitim modülleri
+│   ├── alphabet-reading/   # Alfabe okuma
+│   ├── vocabulary/         # Kelime dağarcığı
+│   ├── social/            # Sosyal iletişim
+│   └── ...
+├── admin/             # Admin panel (ElevenLabs test)
+├── parent/            # Ebeveyn paneli
+└── sensory-settings/  # Duyusal kontrol paneli
+
+components/            # Reusable components
+lib/                   # Core services
+├── elevenlabs.ts      # Voice system
+├── firebase.ts        # Database
+├── auth.ts           # Authentication
+└── performance.ts     # Monitoring
+
+public/audio/          # Static Turkish audio files
+tests/                 # Playwright E2E tests
+```
+
+## Platform-Specific Rules
+
+### Turkish Localization
+- ALL user-facing text must be in Turkish
+- Proper Turkish character support (ç, ğ, ı, ö, ş, ü)
+- Use Turkish phoneme mapping for ElevenLabs
+- File naming: Use ASCII-safe equivalents for Turkish characters
+
+### Gender-Balanced Voice System
+```typescript
+// Voice assignment by content type
+const VOICE_ASSIGNMENTS = {
+  'letter': 'Adam',           // Male voice for letters
+  'word': 'Rachel',           // Female voice for words  
+  'sentence': 'Antoni',       // Male voice for sentences
+  'celebration': 'Josh'       // Male voice for celebrations
+};
+
+// Gender balance: 60% male (Adam, Antoni, Josh) + 40% female (Rachel, Bella)
+```
+
+### ElevenLabs Integration Rules
+- ALWAYS use server-side API routes for ElevenLabs SDK
+- NEVER expose API keys in client-side code
+- Implement hybrid fallback: Static files → SDK → API Route → Web Speech API
+- Rate limiting: 3 second delay between requests
+- Cache static audio files for performance
+
+### Autism-Focused Development
+- Design for sensory sensitivities (theme switching, reduced motion)
+- Implement clear visual hierarchies and large touch targets (min 44px)
+- Provide immediate positive feedback for all interactions
+- Use calm color palettes and avoid overwhelming animations
+- Support different cognitive levels with adaptive difficulty
+
+## Component Development Rules
+
+### Module Components
+```typescript
+interface ModuleProps {
+  moduleId: string;
+  title: string;
+  description: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  isActive: boolean;
+  progress?: number;
+  voiceConfig?: VoiceConfiguration;
+}
+
+// Always include accessibility props
+export function ModuleCard({ 
+  moduleId, 
+  title, 
+  isActive,
+  ...props 
+}: ModuleProps) {
+  return (
+    <div 
+      role="button"
+      tabIndex={isActive ? 0 : -1}
+      aria-label={`${title} modülü, ${isActive ? 'aktif' : 'pasif'}`}
+      className="min-h-[44px] cursor-pointer focus:ring-2 focus:ring-blue-500"
+      onClick={isActive ? handleClick : undefined}
+    >
+      {/* Content */}
+    </div>
+  );
+}
+```
+
+### Voice Integration Components
+```typescript
+import { useElevenLabs } from '@/lib/elevenlabs';
+
+export function VoiceEnabledComponent() {
+  const { speak, isLoading, error } = useElevenLabs();
+  
+  const handleSpeak = async (text: string, type: ContentType) => {
+    try {
+      await speak(text, type);
+    } catch (error) {
+      console.error('Ses hatası:', error);
+      // Fallback to visual feedback
+    }
+  };
+  
+  return (
+    <button 
+      onClick={() => handleSpeak("Merhaba", "sentence")}
+      disabled={isLoading}
+      aria-label="Metni seslendir"
+    >
+      {isLoading ? 'Seslendiriliyor...' : '🔊 Dinle'}
+    </button>
+  );
+}
+```
+
+## API Development Rules
+
+### Server-Side API Routes
+```typescript
+// app/api/speech/route.ts
+import { ElevenLabsApi } from '@elevenlabs/sdk';
+
+export async function POST(request: Request) {
+  try {
+    const client = new ElevenLabsApi({
+      apiKey: process.env.ELEVENLABS_API_KEY // Server-side only
+    });
+    
+    const { text, voiceId, contentType } = await request.json();
+    
+    // Rate limiting
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    const audio = await client.textToSpeech({
+      voiceId,
+      text,
+      modelId: 'eleven_multilingual_v2' // Turkish support
+    });
+    
+    return new Response(audio, {
+      headers: { 'Content-Type': 'audio/mpeg' }
+    });
+    
+  } catch (error) {
+    console.error('ElevenLabs API error:', error);
+    return Response.json({ error: 'Ses oluşturulamadı' }, { status: 500 });
+  }
+}
+```
+
+### Firebase Integration
+```typescript
+// lib/firestore.ts
+import { doc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
+import { db } from './firebase';
+
+export async function saveModuleProgress(
+  userId: string, 
+  moduleId: string, 
+  progress: ModuleProgress
+) {
+  try {
+    await setDoc(doc(db, 'progress', `user-${userId}`), {
+      [`moduleProgress.${moduleId}`]: {
+        ...progress,
+        lastUpdated: Timestamp.now()
+      }
+    }, { merge: true });
+    
+  } catch (error) {
+    console.error('Firestore error:', error);
+    throw new Error('İlerleme kaydedilemedi');
+  }
+}
+```
+
+## Testing Rules
+
+### E2E Testing (Playwright)
+- Test all 9 active modules individually
+- Test voice system fallback chain
+- Test accessibility features (keyboard navigation, screen readers)
+- Test Turkish character input/output
+- Maintain 95%+ test coverage
+
+```typescript
+// tests/e2e/alphabet-reading.spec.ts
+test('Alfabe okuma modülü - harf tanıma', async ({ page }) => {
+  await page.goto('/exercise/alphabet-reading');
+  
+  // Voice interaction test
+  await page.click('[data-testid="letter-a-button"]');
+  await expect(page.locator('[data-testid="audio-feedback"]')).toBeVisible();
+  
+  // Turkish character test
+  await page.click('[data-testid="letter-ç-button"]');
+  await expect(page.locator('text="Ç harfi"')).toBeVisible();
+});
+```
+
+### Unit Testing
+- Test voice system with mocked ElevenLabs responses
+- Test Turkish character mapping functions
+- Test accessibility helper functions
+- Mock Firebase in all tests
+
+## Performance Rules
+
+### Core Web Vitals Targets
+- LCP (Largest Contentful Paint): < 2.5s
+- FID (First Input Delay): < 100ms  
+- CLS (Cumulative Layout Shift): < 0.1
+
+### Audio Performance
+- Prioritize static audio files (70%+ usage target)
+- Implement audio preloading for predictable content
+- Use audio compression without quality loss
+- Cache voice responses per session
+
+### Bundle Optimization
+```typescript
+// Dynamic imports for modules
+const AlphabetModule = dynamic(() => import('@/components/modules/AlphabetReading'), {
+  loading: () => <ModuleSkeleton title="Alfabe Okuma" />,
+  ssr: false
+});
+```
+
+## Security Rules
+
+### ElevenLabs Security
+- API keys MUST be server-side only
+- Use IP-based rate limiting
+- Implement request validation and sanitization
+- Log voice usage for monitoring
+
+### Firebase Security
+```javascript
+// firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /progress/{userId} {
+      allow read, write: if request.auth != null && 
+                           request.auth.uid == userId;
+    }
+    
+    match /modules/{moduleId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.token.admin == true;
+    }
+  }
+}
+```
+
+## Admin Panel Rules
+
+### ElevenLabs Test Interface
+- Provide gender-based voice filtering (Male/Female/All)
+- Show real-time voice statistics (3 male + 2 female)
+- Include Turkish character testing capabilities
+- Display API status and usage metrics
+- Enable bulk audio file generation
+
+### User Management
+- Implement role-based access (admin, educator, parent)
+- Provide comprehensive analytics dashboard
+- Enable data export for GDPR compliance
+- Support bulk user operations
+
+## Accessibility Standards
+
+### WCAG 2.1 AA Compliance
+- Minimum 44px touch targets
+- Color contrast ratio 4.5:1 for text
+- Keyboard navigation support
+- Screen reader compatibility
+- Focus indicators on all interactive elements
+- Alternative text for all images and audio content
+
+### Autism-Specific Accessibility
+- Sensory control panel (theme, sounds, animations)
+- Predictable navigation patterns
+- Clear visual hierarchy
+- Immediate feedback for all actions
+- Option to reduce motion and animations
+- Customizable text size and contrast
+
+## Development Workflow
+
+### Git Workflow
+- Feature branches: `feature/module-name` or `feature/voice-enhancement`
+- Commit messages in English: "feat: add Turkish character mapping"
+- PR requirements: Tests passing, accessibility check, performance audit
+
+### Environment Setup
+```bash
+# Required environment variables
+ELEVENLABS_API_KEY=your_key_here          # Server-side only
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_id   # Client-safe
+NODE_ENV=development
+```
+
+### Code Quality
+- ESLint + Prettier for consistent formatting
+- Husky pre-commit hooks for linting
+- TypeScript strict mode enforcement
+- Performance monitoring with Core Web Vitals
+
+## Error Handling
+
+### Graceful Degradation
+```typescript
+// Voice system with fallback
+export async function speakWithFallback(text: string, type: ContentType) {
+  try {
+    // 1. Try static audio file
+    const staticAudio = getStaticAudioPath(text, type);
+    if (staticAudio) return await playAudio(staticAudio);
+    
+    // 2. Try ElevenLabs SDK
+    return await elevenLabsSpeak(text, type);
+    
+  } catch (error) {
+    // 3. Fallback to Web Speech API
+    console.warn('ElevenLabs failed, using Web Speech API');
+    return await webSpeechSpeak(text);
+  }
+}
+```
+
+### User-Friendly Error Messages
+- Display errors in Turkish
+- Provide specific guidance for each error type
+- Include contact information for technical support
+- Log errors for debugging while protecting user privacy
+
+Remember: This platform serves children with autism spectrum disorders. Every design and development decision should prioritize accessibility, clarity, and positive user experience. The goal is to create an inclusive, supportive learning environment that adapts to each child's unique needs. 

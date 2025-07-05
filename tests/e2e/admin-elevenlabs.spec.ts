@@ -47,7 +47,7 @@ test.describe('Admin ElevenLabs Test Sayfası', () => {
       if (!window.speechSynthesis) {
         Object.defineProperty(window, 'speechSynthesis', {
           value: {
-            speak: (utterance: any) => {
+            speak: (utterance: SpeechSynthesisUtterance) => {
               setTimeout(() => {
                 if (utterance.onend) utterance.onend();
               }, 100);

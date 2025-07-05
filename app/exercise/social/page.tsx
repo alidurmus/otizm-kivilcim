@@ -110,14 +110,14 @@ export default function SocialPage() {
     
     if (isCorrect) {
       setScore(prev => prev + 1);
-      speak('Mükemmel! ' + selectedOption.explanation, 'celebration');
+      speak('Mükemmel! ' + (selectedOption?.explanation || ''), 'celebration');
       setShowCelebration(true);
       
       setTimeout(() => {
         handleNext();
       }, 4000);
     } else {
-      speak(selectedOption?.explanation + ' Tekrar deneyelim!', 'sentence');
+      speak((selectedOption?.explanation || '') + ' Tekrar deneyelim!', 'sentence');
       setTimeout(() => {
         setShowFeedback(false);
         setSelectedAnswer(null);

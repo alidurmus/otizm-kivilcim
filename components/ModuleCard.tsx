@@ -19,15 +19,8 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   className = ''
 }) => {
   const handleClick = () => {
-    console.log('ModuleCard handleClick called for:', title);
-    console.log('isActive:', isActive);
-    console.log('onClick function exists:', !!onClick);
-    
     if (isActive && onClick) {
-      console.log('Calling onClick function...');
       onClick();
-    } else {
-      console.log('Not calling onClick - isActive:', isActive, 'onClick exists:', !!onClick);
     }
   };
 
