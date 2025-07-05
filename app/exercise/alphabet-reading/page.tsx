@@ -28,7 +28,7 @@ type LetterCase = 'upper' | 'lower' | 'mixed';
 
 export default function AlphabetReadingPage() {
   const router = useRouter();
-  const { speak } = useElevenLabs();
+  const { speak, stopCurrentAudio } = useElevenLabs();
 
   // Game state
   const [gameMode, setGameMode] = useState<GameMode>('learn');
@@ -52,23 +52,40 @@ export default function AlphabetReadingPage() {
 
   const currentLetter = TURKISH_ALPHABET[currentLetterIndex];
 
-  // Welcome message
+  // Welcome message - sadece bir kez çal
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
     const playWelcome = async () => {
-      await speak("Alfabe okuma modülüne hoş geldin! Türk alfabesinin 29 harfini birlikte öğreneceğiz.", 'sentence');
+      // Sayfa yüklenirken kısa bir delay
+      timeoutId = setTimeout(async () => {
+        console.log('👋 Playing welcome message...');
+        await speak("Alfabe okuma modülüne hoş geldin! Türk alfabesinin 29 harfini birlikte öğreneceğiz.", 'sentence');
+      }, 1000);
     };
     
     playWelcome();
-  }, [speak]);
+    
+    // Cleanup function
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []); // Dependency array boş - sadece mount'ta çal
 
-  // Letter pronunciation
+  // Letter pronunciation with additional safety
   const pronounceLetter = useCallback(async (letter: string) => {
     try {
+      // Önceki sesi durdur
+      stopCurrentAudio();
+      
+      console.log(`🔤 Pronouncing letter: ${letter}`);
       await speak(letter.toLowerCase(), 'letter');
     } catch (error) {
       console.error('Letter pronunciation failed:', error);
     }
-  }, [speak]);
+  }, [speak, stopCurrentAudio]);
 
   // Generate quiz options
   const generateQuizOptions = useCallback((correctLetter: string) => {
@@ -89,6 +106,9 @@ export default function AlphabetReadingPage() {
 
   // Start quiz mode
   const startQuiz = useCallback(() => {
+    // 🛑 Önce önceki sesleri durdur
+    stopCurrentAudio();
+    
     const randomIndex = Math.floor(Math.random() * TURKISH_ALPHABET.length);
     const letter = TURKISH_ALPHABET[randomIndex];
     const options = generateQuizOptions(letter);
@@ -100,14 +120,18 @@ export default function AlphabetReadingPage() {
     setShowFeedback(false);
     setGameMode('quiz');
     
-    // Pronounce the letter for quiz
+    // Quiz harfini daha geç çal - önceki sesler bitmesi için bekle
     setTimeout(() => {
+      console.log(`🎯 Starting new quiz with letter: ${letter}`);
       pronounceLetter(letter);
-    }, 500);
-  }, [generateQuizOptions, pronounceLetter]);
+    }, 800); // 500ms → 800ms artırdım
+  }, [generateQuizOptions, pronounceLetter, stopCurrentAudio]);
 
   // Handle quiz answer
   const handleQuizAnswer = useCallback(async (answer: string) => {
+    // 🛑 Önce önceki sesleri durdur  
+    stopCurrentAudio();
+    
     setSelectedAnswer(answer);
     setShowFeedback(true);
     
@@ -116,25 +140,32 @@ export default function AlphabetReadingPage() {
       setStreak(prev => prev + 1);
       setShowCelebration(true);
       
+      console.log('✅ Correct answer! Playing celebration...');
       await speak("Doğru! Harika iş çıkardın!", 'celebration');
       
+      // Celebration tamamlandıktan sonra yeni quiz başlat
       setTimeout(() => {
         setShowCelebration(false);
-        startQuiz(); // Next question
-      }, 2000);
+        startQuiz(); // Yeni quiz sorusu
+      }, 2500); // 2000ms → 2500ms (celebration'ın bitmesi için)
     } else {
       setStreak(0);
+      console.log('❌ Wrong answer! Playing feedback...');
       await speak(`Hayır, bu ${answer}. Doğru cevap ${correctAnswer}. Tekrar deneyelim.`, 'sentence');
       
+      // Feedback tamamlandıktan sonra tekrar dene
       setTimeout(() => {
         setShowFeedback(false);
-        startQuiz(); // Try again
-      }, 3000);
+        startQuiz(); // Aynı soruyu tekrar sor
+      }, 3500); // 3000ms → 3500ms (feedback'in bitmesi için)
     }
-  }, [correctAnswer, speak, startQuiz]);
+  }, [correctAnswer, speak, startQuiz, stopCurrentAudio]);
 
   // Navigate letters in learn mode
   const navigateToLetter = useCallback(async (direction: 'prev' | 'next') => {
+    // 🛑 Önce önceki sesleri durdur
+    stopCurrentAudio();
+    
     let newIndex;
     if (direction === 'next') {
       newIndex = currentLetterIndex < TURKISH_ALPHABET.length - 1 ? currentLetterIndex + 1 : 0;
@@ -144,9 +175,12 @@ export default function AlphabetReadingPage() {
     
     setCurrentLetterIndex(newIndex);
     
-    // Pronounce the new letter
-    await pronounceLetter(TURKISH_ALPHABET[newIndex]);
-  }, [currentLetterIndex, pronounceLetter]);
+    // Kısa bir delay ile yeni harfi seslendir
+    setTimeout(() => {
+      console.log(`🔄 Navigating to letter: ${TURKISH_ALPHABET[newIndex]}`);
+      pronounceLetter(TURKISH_ALPHABET[newIndex]);
+    }, 200); // 200ms delay ekledim
+  }, [currentLetterIndex, pronounceLetter, stopCurrentAudio]);
 
   // Letter case display helper
   const getDisplayLetter = (letter: string) => {

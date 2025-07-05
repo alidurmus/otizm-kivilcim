@@ -8,27 +8,27 @@ require('dotenv').config({ path: '.env.local' });
 // ElevenLabs API configuration
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
-// Turkish Voice Configuration (hem erkek hem bayan - cinsiyet dengeleyici)
+// Turkish Voice Configuration - Kullanıcının seçtiği tek bayan ses (tüm konuşmalar için)
 const TURKISH_VOICE_CONFIGS = {
   letters: {
-    voiceId: 'pNInz6obpgDQGcFmaJgB',     // Adam - sakin erkek ses (harfler için)
-    gender: 'male',
-    name: 'Adam'
+    voiceId: 'xyqF3vGMQlPk3e7yA4DI',     // Kullanıcının seçtiği varsayılan bayan ses
+    gender: 'female',
+    name: 'Varsayılan Bayan Ses'
   },
   words: {
-    voiceId: '21m00Tcm4TlvDq8ikWAM',     // Rachel - profesyonel bayan ses (kelimeler için)  
+    voiceId: 'xyqF3vGMQlPk3e7yA4DI',     // Aynı bayan ses (tutarlılık için)
     gender: 'female',
-    name: 'Rachel'
+    name: 'Varsayılan Bayan Ses'
   },
   sentences: {
-    voiceId: 'ErXwobaYiN019PkySvjV',     // Antoni - derin erkek ses (cümleler için)
-    gender: 'male', 
-    name: 'Antoni'
+    voiceId: 'xyqF3vGMQlPk3e7yA4DI',     // Aynı bayan ses (tutarlılık için)
+    gender: 'female', 
+    name: 'Varsayılan Bayan Ses'
   },
   celebrations: {
-    voiceId: 'VR6AewLTigWG4xSOukaG',     // Josh - eğlenceli erkek ses (kutlamalar için)
-    gender: 'male',
-    name: 'Josh'
+    voiceId: 'xyqF3vGMQlPk3e7yA4DI',     // Aynı bayan ses (tutarlılık için)
+    gender: 'female',
+    name: 'Varsayılan Bayan Ses'
   }
 };
 
@@ -249,7 +249,7 @@ async function generateAllAudioFiles() {
   console.log(`   ❌ Errors: ${errorCount}`);
   console.log(`   ⏱️  Duration: ${duration} seconds`);
   console.log(`   📁 Files saved to: public/audio/`);
-  console.log(`   🇹🇷 Turkish voice mix: 2 male + 1 female (gender balanced)`);
+  console.log(`   🇹🇷 Turkish voice: Single female voice (consistent experience)`);
   console.log(`   👥 Voice assignment:`);
   console.log(`      - Letters: ${TURKISH_VOICE_CONFIGS.letters.name} (${TURKISH_VOICE_CONFIGS.letters.gender})`);
   console.log(`      - Words: ${TURKISH_VOICE_CONFIGS.words.name} (${TURKISH_VOICE_CONFIGS.words.gender})`);
@@ -264,7 +264,7 @@ async function generateAllAudioFiles() {
     console.log('   - ElevenLabs service issues');
   } else {
     console.log('\n🎉 All Turkish audio files generated successfully!');
-    console.log('   Ready for use in Kıvılcım platform with gender-balanced Turkish voices');
+    console.log('   Ready for use in Kıvılcım platform with consistent female Turkish voice');
   }
 }
 

@@ -70,6 +70,37 @@ export const TURKISH_FEMALE_VOICES = {
     age: 'adult',
     traits: ['very_calm', 'soothing', 'therapeutic'],
     bestFor: ['relaxation', 'sensitive_content', 'therapy']
+  },
+  // Yeni eklenen sesler - detaylar API'den alınacak
+  newVoice1: {
+    id: 'tMlsw9ihFf5L7S43dohH',
+    name: 'NewVoice1',
+    description: 'Yeni eklenen ses - detaylar güncellenecek',
+    language: 'tr',
+    gender: 'female', // API'den güncellenecek
+    age: 'adult',
+    traits: ['unknown'],
+    bestFor: ['general']
+  },
+  newVoice2: {
+    id: 'xyqF3vGMQlPk3e7yA4DI',
+    name: 'Varsayılan Ses', // Kullanıcının tercih ettiği ses
+    description: 'Kullanıcı tarafından seçilen varsayılan Türkçe ses - tüm konuşmalar için',
+    language: 'tr',
+    gender: 'female', // API'den güncellenecek
+    age: 'adult',
+    traits: ['preferred', 'default', 'clear'],
+    bestFor: ['letters', 'words', 'sentences', 'celebrations', 'all_content']
+  },
+  newVoice3: {
+    id: '9GYMX9eMWSq1yjiwXb7B',
+    name: 'NewVoice3',
+    description: 'Yeni eklenen ses - detaylar güncellenecek',
+    language: 'tr',
+    gender: 'female', // API'den güncellenecek
+    age: 'adult',
+    traits: ['unknown'],
+    bestFor: ['general']
   }
 };
 
@@ -124,6 +155,121 @@ export const TURKISH_MALE_VOICES = {
     age: 'adult',
     traits: ['encouraging', 'motivating', 'supportive'],
     bestFor: ['encouragement', 'motivation', 'challenges']
+  },
+  // Yeni eklenen sesler - detaylar API'den alınacak
+  newVoice4: {
+    id: 'V6TFTAE0gaN8LtBwl70x',
+    name: 'NewVoice4',
+    description: 'Yeni eklenen ses - detaylar güncellenecek',
+    language: 'tr',
+    gender: 'male', // API'den güncellenecek
+    age: 'adult',
+    traits: ['unknown'],
+    bestFor: ['general']
+  },
+  newVoice5: {
+    id: 'eUUtjbi66JcWz3T4Gvvo',
+    name: 'NewVoice5',
+    description: 'Yeni eklenen ses - detaylar güncellenecek',
+    language: 'tr',
+    gender: 'male', // API'den güncellenecek
+    age: 'adult',
+    traits: ['unknown'],
+    bestFor: ['general']
+  },
+  newVoice6: {
+    id: 'mBUB5zYuPwfVE6DTcEjf',
+    name: 'NewVoice6',
+    description: 'Yeni eklenen ses - detaylar güncellenecek',
+    language: 'tr',
+    gender: 'male', // API'den güncellenecek
+    age: 'adult',
+    traits: ['unknown'],
+    bestFor: ['general']
+  },
+  newVoice7: {
+    id: 'jbJMQWv1eS4YjQ6PCcn6',
+    name: 'NewVoice7',
+    description: 'Yeni eklenen ses - detaylar güncellenecek',
+    language: 'tr',
+    gender: 'male', // API'den güncellenecek
+    age: 'adult',
+    traits: ['unknown'],
+    bestFor: ['general']
+  }
+};
+
+// 5 Seçilmiş Türkçe Ses Sistemi (Multi-Voice Support)
+const SELECTED_TURKISH_VOICES = {
+  gulsu: {
+    id: 'jbJMQWv1eS4YjQ6PCcn6',
+    name: 'Gülsu',
+    description: 'Genç Türk kadını, enerjik ve samimi ses. Hikayeler ve kitaplar için mükemmel.',
+    language: 'tr',
+    gender: 'female',
+    age: 'young_adult',
+    traits: ['energetic', 'sincere', 'clear'],
+    bestFor: ['stories', 'books', 'children_content', 'alphabet_learning']
+  },
+  edaAtlas: {
+    id: 'mBUB5zYuPwfVE6DTcEjf',
+    name: 'Eda Atlas',
+    description: 'Genç, parlak Türk kadını sesi. Kurumsal, radyo ve TV reklamları için mükemmel seçim.',
+    language: 'tr',
+    gender: 'female',
+    age: 'young_adult',
+    traits: ['bright', 'professional', 'corporate'],
+    bestFor: ['corporate', 'radio', 'tv_commercials', 'word_learning']
+  },
+  ayca: {
+    id: 'eUUtjbi66JcWz3T4Gvvo',
+    name: 'Ayça',
+    description: 'Dinamik genç kadın sesi. Anlatıcılar ve motivasyonel konuşmalar için uygun.',
+    language: 'tr',
+    gender: 'female',
+    age: 'young_adult',
+    traits: ['dynamic', 'motivational', 'narrator'],
+    bestFor: ['narrator', 'motivational_speech', 'sentence_reading']
+  },
+  yusufSuratli: {
+    id: 'V6TFTAE0gaN8LtBwl70x',
+    name: 'Yusuf Suratlı',
+    description: 'Parlak, genç yetişkin erkek sesi. Anlatıcı, konuşmacı, kitap seslendirme için mükemmel.',
+    language: 'tr',
+    gender: 'male',
+    age: 'young_adult',
+    traits: ['bright', 'narrator', 'speaker'],
+    bestFor: ['narrator', 'speaker', 'book_voiceover', 'celebrations']
+  },
+  sermin: {
+    id: '9GYMX9eMWSq1yjiwXb7B',
+    name: 'Sermin',
+    description: 'Orijinal, akıcı ve vurgulu Türkçe kadın sesi.',
+    language: 'tr',
+    gender: 'female',
+    age: 'adult',
+    traits: ['original', 'fluent', 'accented'],
+    bestFor: ['fluent_expressions', 'accented_content', 'natural_speech']
+  },
+  cavit: {
+    id: 'Y2T2O1csKPgWgyuKcU0a',
+    name: 'Cavit',
+    description: 'Güçlü ve net erkek sesi. Profesyonel anlatım ve eğitici içerikler için ideal.',
+    language: 'tr',
+    gender: 'male',
+    age: 'adult',
+    traits: ['strong', 'clear', 'professional'],
+    bestFor: ['educational_content', 'professional_narration', 'announcements', 'instructions']
+  },
+  mehmet: {
+    id: 'fg8pljYEn5ahwjyOQaro',
+    name: 'Mehmet',
+    description: 'Samimi ve sıcak erkek sesi. Günlük konuşmalar ve çocuk eğitimi için uygun.',
+    language: 'tr',
+    gender: 'male',
+    age: 'adult',
+    traits: ['friendly', 'warm', 'child_friendly'],
+    bestFor: ['daily_conversations', 'child_education', 'friendly_narration', 'encouragement']
   }
 };
 
@@ -132,31 +278,23 @@ export function getRecommendedTurkishVoice(
   type: 'letter' | 'word' | 'sentence' | 'celebration',
   gender: 'male' | 'female' | 'mixed' = 'mixed'
 ): string {
-  const recommendations = {
-    letter: {
-      male: TURKISH_MALE_VOICES.adam.id,     // Sakin ve açık
-      female: TURKISH_FEMALE_VOICES.bella.id // Nazik ve sakin
-    },
-    word: {
-      male: TURKISH_MALE_VOICES.daniel.id,   // Profesyonel
-      female: TURKISH_FEMALE_VOICES.rachel.id // Profesyonel
-    },
-    sentence: {
-      male: TURKISH_MALE_VOICES.antoni.id,   // Derin ve anlatıcı
-      female: TURKISH_FEMALE_VOICES.domi.id   // Arkadaş canlısı
-    },
-    celebration: {
-      male: TURKISH_MALE_VOICES.josh.id,     // Eğlenceli
-      female: TURKISH_FEMALE_VOICES.elli.id   // Enerjik
-    }
+  // 🎯 Kullanıcının tercih ettiği varsayılan ses - tüm konuşmalar için
+  const userPreferredVoice = 'xyqF3vGMQlPk3e7yA4DI';
+  
+  console.log(`🔊 Using user's preferred voice: ${userPreferredVoice} for ${type}`);
+  return userPreferredVoice;
+  
+  // Eski gender-balanced logic - şimdilik devre dışı
+  /*
+  const voiceAssignments = {
+    'letter': gender === 'female' ? TURKISH_FEMALE_VOICES.bella.id : TURKISH_MALE_VOICES.adam.id,
+    'word': TURKISH_FEMALE_VOICES.rachel.id,
+    'sentence': TURKISH_MALE_VOICES.antoni.id,
+    'celebration': TURKISH_MALE_VOICES.josh.id
   };
-
-  if (gender === 'mixed') {
-    // Karışık modda, türe göre en uygun sesi seç (varsayılan olarak bayan)
-    return recommendations[type].female;
-  }
-
-  return recommendations[type][gender];
+  
+  return voiceAssignments[type];
+  */
 }
 
 // Tüm Türkçe bayan seslerini listele
@@ -179,8 +317,31 @@ export function getAllTurkishVoices() {
 
 // Client-side ElevenLabs integration using server proxy
 class ElevenLabsClient {
-  private defaultVoiceId: string = 'EXAVITQu4vr4xnSDxMaL'; // Bella - Turkish-capable female voice
+  private defaultVoiceId: string = 'xyqF3vGMQlPk3e7yA4DI'; // Kullanıcının seçtiği varsayılan ses
   private cache: Map<string, string> = new Map();
+  private currentAudio: HTMLAudioElement | null = null; // Aktif ses instance'ını takip et
+
+  constructor() {
+    console.log('🎙️ ElevenLabs client initialized');
+  }
+
+  /**
+   * Aktif sesi durdur ve temizle
+   */
+  stopCurrentAudio(): void {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+      
+      // Event listener'ları temizle
+      this.currentAudio.onended = null;
+      this.currentAudio.onerror = null;
+      this.currentAudio.onabort = null;
+      
+      this.currentAudio = null;
+      console.log('🛑 Previous audio stopped');
+    }
+  }
 
   /**
    * Metni sese çevirir ve audio URL döndürür
@@ -272,65 +433,233 @@ class ElevenLabsClient {
     voiceId?: string
   ): Promise<void> {
     try {
+      // 🛑 Önceki sesi durdur - ses karışıklığını önle
+      this.stopCurrentAudio();
+      
+      console.log(`🔊 Speaking: "${text}" (type: ${type})`);
+      
       const audioUrl = await this.textToSpeech(text, type, voiceId);
       
-      // Audio element oluştur ve çal
+      // Check if we got a valid audio URL
+      if (!audioUrl || audioUrl === '') {
+        console.warn('No audio URL returned, falling back to Web Speech API');
+        return this.fallbackToWebSpeech(text);
+      }
+      
+      // Audio element oluştur ve aktif instance olarak kaydet
       const audio = new Audio(audioUrl);
       audio.volume = 0.8;
+      this.currentAudio = audio;
       
       return new Promise((resolve, reject) => {
-        audio.onended = () => {
-          // Cleanup blob URL to prevent memory leaks
+        // Null check - audio durdurulmuşsa promise'i resolve et
+        if (!this.currentAudio) {
+          console.log('🚫 Audio was stopped before playback');
           if (audioUrl.startsWith('blob:')) {
             URL.revokeObjectURL(audioUrl);
           }
           resolve();
-        };
+          return;
+        }
         
-        audio.onerror = () => {
+        audio.onended = () => {
+          console.log('✅ Audio playback completed');
+          // Cleanup blob URL to prevent memory leaks
           if (audioUrl.startsWith('blob:')) {
             URL.revokeObjectURL(audioUrl);
           }
-          reject(new ElevenLabsPlaybackError(
-            `Ses çalınamadı: "${text}"`,
-            audioUrl
-          ));
+          
+          // Sadece bu audio hala aktifse temizle
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          resolve();
         };
         
-        audio.play().catch(reject);
+        audio.onerror = (error) => {
+          console.warn('Audio playback failed, falling back to Web Speech API:', error);
+          if (audioUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(audioUrl);
+          }
+          
+          // Sadece bu audio hala aktifse temizle
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          
+          // Fallback to Web Speech API instead of rejecting
+          this.fallbackToWebSpeech(text).then(resolve).catch(reject);
+        };
+        
+        audio.onabort = () => {
+          console.warn('Audio playback aborted');
+          if (audioUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(audioUrl);
+          }
+          
+          // Sadece bu audio hala aktifse temizle
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          
+          resolve(); // Abort edildiğinde fallback yapmaya gerek yok
+        };
+        
+        // Play promise'ini handle et
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.warn('Audio play promise rejected, falling back to Web Speech API:', error);
+            if (audioUrl.startsWith('blob:')) {
+              URL.revokeObjectURL(audioUrl);
+            }
+            
+            // Sadece bu audio hala aktifse temizle
+            if (this.currentAudio === audio) {
+              this.currentAudio = null;
+            }
+            
+            this.fallbackToWebSpeech(text).then(resolve).catch(reject);
+          });
+        }
       });
     } catch (error) {
-      throw new ElevenLabsPlaybackError(
-        `Türkçe metin seslendirilirken hata: "${text}"`,
-        undefined
-      );
+      console.warn('ElevenLabs failed, falling back to Web Speech API:', error);
+      return this.fallbackToWebSpeech(text);
     }
   }
 
   /**
-   * Mevcut sesleri listeler
+   * Web Speech API fallback function
+   */
+  private async fallbackToWebSpeech(text: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if ('speechSynthesis' in window) {
+        // Önceki konuşmaları durdur
+        speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'tr-TR';
+        utterance.rate = 0.8;
+        utterance.pitch = 1.0;
+        utterance.volume = 0.8;
+        
+        utterance.onend = () => {
+          console.log('✅ Web Speech API playback completed');
+          resolve();
+        };
+        
+        utterance.onerror = (error) => {
+          // Handle empty or malformed error objects gracefully
+          let errorMsg = 'Unknown error';
+          
+          try {
+            // Safely extract error information
+            if (error && typeof error === 'object') {
+              errorMsg = error.error || error.message || 'Speech synthesis failed';
+            } else if (typeof error === 'string') {
+              errorMsg = error;
+            }
+          } catch (e) {
+            errorMsg = 'Speech synthesis error (malformed error object)';
+          }
+          
+          console.warn(`🔊 Web Speech API fallback failed: ${errorMsg}`);
+          
+          // Don't reject, just resolve silently to avoid breaking the UI
+          resolve();
+        };
+        
+        speechSynthesis.speak(utterance);
+      } else {
+        console.warn('Speech synthesis not supported, playing silently');
+        // Resolve after a short delay to simulate speech duration
+        setTimeout(resolve, Math.max(500, text.length * 100));
+      }
+    });
+  }
+
+  /**
+   * Mevcut sesleri listeler - hem yerleşik hem de yeni eklenen sesler
    */
   async getVoices() {
     try {
+      // Önce yerleşik voice'ları al
       const response = await fetch('/api/speech', {
         method: 'GET',
       });
 
-      if (!response.ok) {
-        throw new ElevenLabsAPIError(
-          'Sesler yüklenemedi',
-          response.status
-        );
+      let builtInVoices = [];
+      if (response.ok) {
+        const data = await response.json();
+        builtInVoices = data.voices || [];
       }
 
-      const data = await response.json();
+      // Sonra yeni voice'ları da çekmeye çalış
+      try {
+        const newVoicesResponse = await fetch('/api/speech/voices');
+        if (newVoicesResponse.ok) {
+          const newVoicesData = await newVoicesResponse.json();
+          const newVoices = (newVoicesData.newVoices || []).map((voice: any) => ({
+            id: voice.id,
+            name: voice.name,
+            description: voice.description,
+            language: voice.language || 'tr',
+            gender: this.detectGenderFromName(voice.name) || 'unknown',
+            category: voice.category || 'unknown',
+            isVerified: voice.isVerified || false,
+            isNew: true, // Yeni voice'ları işaretle
+            traits: ['new_voice'],
+            bestFor: ['general']
+          }));
+
+          console.log(`🆕 Found ${newVoices.length} new voices`);
+          
+          // Duplicate voice'ları filtrele - unique ID'leri kullan
+          const allVoices = [...builtInVoices];
+          const existingIds = new Set(builtInVoices.map((v: any) => v.id));
+          
+          newVoices.forEach((newVoice: any) => {
+            if (!existingIds.has(newVoice.id)) {
+              allVoices.push(newVoice);
+              existingIds.add(newVoice.id);
+              console.log(`➕ Added unique new voice: ${newVoice.name} (${newVoice.id})`);
+            } else {
+              console.log(`⚠️ Skipping duplicate voice: ${newVoice.name} (${newVoice.id})`);
+            }
+          });
+          
+          console.log(`📊 Final voice count: ${allVoices.length} (${builtInVoices.length} built-in + ${allVoices.length - builtInVoices.length} new)`);
+          
+          return allVoices;
+        }
+      } catch (newVoicesError) {
+        console.warn('New voices could not be fetched:', newVoicesError);
+      }
+
+      // Sadece yerleşik voice'ları döndür
+      return builtInVoices;
       
-      // Extract voices array from the API response
-      return data.voices || [];
     } catch (error) {
       console.error('Voices API error:', error);
-      throw error;
+      // Fallback: En azından yerleşik voice'ları döndür
+      return getAllTurkishVoices();
     }
+  }
+
+  /**
+   * Voice isminden cinsiyet tahmin et (yardımcı fonksiyon)
+   */
+  private detectGenderFromName(name: string): 'male' | 'female' | 'unknown' {
+    const maleNames = ['adam', 'josh', 'antoni', 'daniel', 'ethan', 'marcus', 'david', 'mike', 'john'];
+    const femaleNames = ['bella', 'rachel', 'domi', 'elli', 'sarah', 'alice', 'anna', 'emma', 'sophia'];
+    
+    const lowerName = name.toLowerCase();
+    
+    if (maleNames.some(male => lowerName.includes(male))) return 'male';
+    if (femaleNames.some(female => lowerName.includes(female))) return 'female';
+    
+    return 'unknown';
   }
 
   /**
@@ -473,15 +802,45 @@ const elevenLabsClient = new ElevenLabsClient();
 export default elevenLabsClient;
 export { ElevenLabsAPIError, ElevenLabsPlaybackError };
 
-// React Hook for easy component integration
+// Multi-voice selection function
+export function getSelectedTurkishVoices() {
+  return Object.values(SELECTED_TURKISH_VOICES);
+}
+
+export function getVoiceBySlug(slug: string) {
+  const voiceKey = Object.keys(SELECTED_TURKISH_VOICES).find(key => 
+    SELECTED_TURKISH_VOICES[key as keyof typeof SELECTED_TURKISH_VOICES].name.toLowerCase().replace(/\s/g, '-') === slug
+  );
+  return voiceKey ? SELECTED_TURKISH_VOICES[voiceKey as keyof typeof SELECTED_TURKISH_VOICES] : null;
+}
+
+export function getVoiceById(voiceId: string) {
+  return Object.values(SELECTED_TURKISH_VOICES).find(voice => voice.id === voiceId) || null;
+}
+
+// Enhanced speak function with voice selection
+export async function speakWithVoice(
+  text: string, 
+  voiceId: string,
+  type: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence'
+): Promise<void> {
+  return elevenLabsClient.speak(text, type, voiceId);
+}
+
+// React Hook for easy component integration with multi-voice support
 export function useElevenLabs() {
   return {
     speak: elevenLabsClient.speak.bind(elevenLabsClient),
+    speakWithVoice: speakWithVoice,
     textToSpeech: elevenLabsClient.textToSpeech.bind(elevenLabsClient),
     getVoices: elevenLabsClient.getVoices.bind(elevenLabsClient),
+    getSelectedTurkishVoices: getSelectedTurkishVoices,
+    getVoiceBySlug: getVoiceBySlug,
+    getVoiceById: getVoiceById,
     testVoice: elevenLabsClient.testVoice.bind(elevenLabsClient),
     getApiStatus: elevenLabsClient.getApiStatus.bind(elevenLabsClient),
     clearCache: elevenLabsClient.clearCache.bind(elevenLabsClient),
+    stopCurrentAudio: elevenLabsClient.stopCurrentAudio.bind(elevenLabsClient),
     getTestTexts: getTestTexts
   };
 }

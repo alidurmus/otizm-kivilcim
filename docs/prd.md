@@ -2,7 +2,7 @@
 
 ## 1. Giriş ve Vizyon
 
-Kıvılcım, otizmli çocukların bilişsel, sosyal ve iletişimsel gelişimini destekleyen, web tabanlı, modüler bir eğitim platformudur. Next.js ile modern web standartlarına uygun, erişilebilir ve ölçeklenebilir bir yapı hedeflenmektedir.
+Kıvılcım, otizmli çocukların bireysel gelişim yolculuklarında onlara ve ailelerine eşlik eden, kanıta dayalı, kişiselleştirilebilir ve en etkili dijital yoldaştır. Next.js ile modern web standartlarına uygun, erişilebilir ve ölçeklenebilir bir yapı hedeflenmektedir.
 
 ## 2. Hedef Kitle
 - Otizmli çocuklar (birincil kullanıcı)
@@ -66,7 +66,7 @@ Kıvılcım, otizmli çocukların bilişsel, sosyal ve iletişimsel gelişimini 
 
 ### 5.1 Kullanıcı Akışları
 - **Ana Sayfa:** Karşılama + platform tanıtımı
-- **Modül Seçimi:** Aktif/pasif modüllerin listesi (7 aktif modül)
+- **Modül Seçimi:** Aktif/pasif modüllerin listesi (9 aktif modül)
 - **Egzersiz Akışı:** Modül bazlı interaktif öğrenme
 - **Ebeveyn Paneli:** İlerleme takibi + duyusal ayarlar
 - **Admin Paneli:** Sistem yönetimi + analytics + ElevenLabs test arayüzü

@@ -33,30 +33,68 @@ export default function ParentPanelPage() {
 
   // Initialize authentication and load data
   useEffect(() => {
-    const unsubscribe = onAuthStateChange(async (user) => {
-      if (user) {
-        setUser(user);
-        await loadUserData(user.uid);
-      } else {
-        // Auto sign in anonymously for demo
-        const anonymousUser = await signInAnonymous();
-        if (anonymousUser) {
-          setUser(anonymousUser);
-          await loadUserData(anonymousUser.uid);
+    let mounted = true;
+    
+    const initializeAuth = async () => {
+      try {
+        const unsubscribe = onAuthStateChange(async (user) => {
+          if (!mounted) return;
+          
+          if (user) {
+            setUser(user);
+            await loadUserData(user.uid);
+          } else {
+            // Auto sign in anonymously for demo
+            try {
+              const anonymousUser = await signInAnonymous();
+              if (anonymousUser && mounted) {
+                setUser(anonymousUser);
+                await loadUserData(anonymousUser.uid);
+              }
+            } catch (authError) {
+              console.warn('Authentication failed, continuing with limited functionality:', authError);
+              // Continue with limited functionality
+              if (mounted) {
+                setLoading(false);
+              }
+            }
+          }
+          
+          if (mounted) {
+            setLoading(false);
+          }
+        });
+
+        // Check if already authenticated
+        const currentUser = getCurrentUser();
+        if (currentUser && mounted) {
+          setUser(currentUser);
+          try {
+            await loadUserData(currentUser.uid);
+          } catch (error) {
+            console.warn('Failed to load user data:', error);
+          }
+          setLoading(false);
+        }
+
+        return () => {
+          mounted = false;
+          unsubscribe();
+        };
+      } catch (error) {
+        console.warn('Failed to initialize authentication:', error);
+        if (mounted) {
+          setLoading(false);
         }
       }
-      setLoading(false);
-    });
+    };
 
-    // Check if already authenticated
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
-      loadUserData(currentUser.uid);
-      setLoading(false);
-    }
-
-    return () => unsubscribe();
+    initializeAuth();
+    
+    // Cleanup function
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const loadUserData = async (userId: string) => {
@@ -69,7 +107,28 @@ export default function ParentPanelPage() {
       setUserData(userDataResult);
       setModulesProgress(modulesResult);
     } catch (error) {
-      console.error('Error loading user data:', error);
+      console.warn('Error loading user data, using default values:', error);
+      // Set default values for offline/error state
+      if (!userData) {
+        setUserData({
+          profile: {
+            name: 'Test Kullanıcısı',
+            createdAt: new Date() as any
+          },
+          sensory_settings: {
+            visualTheme: 'calm',
+            soundVolume: 50,
+            reduceMotion: false,
+            hapticFeedback: true,
+            rewardStyle: 'animated'
+          },
+          avatar: {
+            character: 'kivilcim',
+            color: 'blue',
+            accessories: []
+          }
+        });
+      }
     }
   };
 

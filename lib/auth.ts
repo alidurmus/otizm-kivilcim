@@ -7,95 +7,229 @@ import { auth } from './firebase';
 import { createUserData, getUserData, UserData } from './firestore';
 import { Timestamp } from 'firebase/firestore';
 
-// Mock user for development
+// Mock user for development and network failures
 const mockUser = {
   uid: 'mock-user-id',
   email: null,
   displayName: 'Test User',
-  isAnonymous: true
+  isAnonymous: true,
+  // Add additional properties to match User interface
+  emailVerified: false,
+  phoneNumber: null,
+  photoURL: null,
+  providerId: 'anonymous',
+  refreshToken: '',
+  tenantId: null,
+  metadata: {
+    creationTime: new Date().toISOString(),
+    lastSignInTime: new Date().toISOString()
+  }
 } as User;
 
-// Check if Firebase is properly initialized
+// Track authentication mode
+let isUsingMockAuth = false;
+
+// Check if Firebase is properly initialized and available
 const isFirebaseAvailable = () => {
-  return auth !== null;
+  try {
+    return auth !== null && typeof auth.signInAnonymously === 'function';
+  } catch {
+    return false;
+  }
 };
 
-// Anonymous sign in for demo purposes
+// Test Firebase connectivity
+const testFirebaseConnectivity = async (): Promise<boolean> => {
+  if (!isFirebaseAvailable()) return false;
+  
+  try {
+    // Try a simple auth check with timeout
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Connection timeout')), 3000)
+    );
+    
+    const connectivityTest = new Promise((resolve) => {
+      try {
+        // Test if we can access auth state
+        const unsubscribe = onAuthStateChanged(auth, () => {
+          unsubscribe();
+          resolve(true);
+        });
+      } catch {
+        resolve(false);
+      }
+    });
+    
+    await Promise.race([connectivityTest, timeoutPromise]);
+    return true;
+  } catch (error) {
+    console.warn('Firebase connectivity test failed:', error);
+    return false;
+  }
+};
+
+// Anonymous sign in with robust error handling
 export const signInAnonymous = async (): Promise<User | null> => {
-  if (!isFirebaseAvailable() || !auth) {
-    console.log('Using mock authentication for development');
+  // First check if Firebase is available
+  if (!isFirebaseAvailable()) {
+    console.log('🔄 Firebase not available, using mock authentication');
+    isUsingMockAuth = true;
     return mockUser;
   }
 
   try {
-    const result = await signInAnonymously(auth);
+    // Test connectivity first
+    const isConnected = await testFirebaseConnectivity();
+    if (!isConnected) {
+      console.log('🔄 Firebase connectivity test failed, using mock authentication');
+      isUsingMockAuth = true;
+      return mockUser;
+    }
+
+    // Try to sign in anonymously with timeout
+    const signInPromise = signInAnonymously(auth);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Sign in timeout')), 5000)
+    );
     
-    // Check if user data exists, if not create initial data
-    try {
-      const userData = await getUserData(result.user.uid);
+    const result = await Promise.race([signInPromise, timeoutPromise]);
+    
+    if (result && 'user' in result) {
+      console.log('✅ Firebase authentication successful');
+      isUsingMockAuth = false;
       
-      if (!userData) {
-        const initialUserData: UserData = {
-          profile: {
-            name: `Çocuk ${Math.floor(Math.random() * 1000)}`,
-            createdAt: Timestamp.now()
-          },
-          sensory_settings: {
-            visualTheme: 'calm',
-            soundVolume: 50,
-            reduceMotion: false,
-            hapticFeedback: true,
-            rewardStyle: 'animated'
-          },
-          avatar: {
-            character: 'kivilcim',
-            color: 'blue',
-            accessories: []
-          }
-        };
+      // Try to create user data (with fallback)
+      try {
+        const userData = await getUserData(result.user.uid);
         
-        await createUserData(result.user.uid, initialUserData);
+        if (!userData) {
+          const initialUserData: UserData = {
+            profile: {
+              name: `Çocuk ${Math.floor(Math.random() * 1000)}`,
+              createdAt: Timestamp.now()
+            },
+            sensory_settings: {
+              visualTheme: 'calm',
+              soundVolume: 50,
+              reduceMotion: false,
+              hapticFeedback: true,
+              rewardStyle: 'animated'
+            },
+            avatar: {
+              character: 'kivilcim',
+              color: 'blue',
+              accessories: []
+            }
+          };
+          
+          await createUserData(result.user.uid, initialUserData);
+          console.log('📝 User data created successfully');
+        }
+      } catch (firestoreError) {
+        console.warn('⚠️ Firestore not available, continuing with authentication only');
       }
-    } catch (firestoreError) {
-      console.warn('Firestore not available, using mock data');
+      
+      return result.user;
     }
     
-    return result.user;
-  } catch (error) {
-    console.error('Error signing in anonymously:', error);
-    // Fallback to mock user
+    throw new Error('Invalid sign in result');
+    
+  } catch (error: any) {
+    // Handle specific Firebase errors
+    if (error?.code) {
+      switch (error.code) {
+        case 'auth/network-request-failed':
+          console.warn('🌐 Network request failed, using mock authentication');
+          break;
+        case 'auth/timeout':
+          console.warn('⏱️ Authentication timeout, using mock authentication');
+          break;
+        case 'auth/too-many-requests':
+          console.warn('🚫 Too many requests, using mock authentication');
+          break;
+        default:
+          console.warn(`🔥 Firebase auth error (${error.code}):`, error.message);
+      }
+    } else {
+      console.warn('🔥 Firebase authentication failed:', error.message || error);
+    }
+    
+    // Always fallback to mock user
+    console.log('🔄 Falling back to mock authentication');
+    isUsingMockAuth = true;
     return mockUser;
   }
 };
 
-// Monitor auth state
+// Monitor auth state with robust error handling
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
-  if (!isFirebaseAvailable() || !auth) {
-    // Mock implementation
+  if (!isFirebaseAvailable()) {
+    console.log('🔄 Using mock auth state listener');
+    // Mock implementation with slight delay to simulate real behavior
     setTimeout(() => callback(mockUser), 100);
     return () => {};
   }
 
   try {
-    return onAuthStateChanged(auth, callback);
+    return onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log('👤 Auth state changed: User signed in');
+        isUsingMockAuth = false;
+        callback(user);
+      } else if (isUsingMockAuth) {
+        console.log('👤 Auth state changed: Using mock user');
+        callback(mockUser);
+      } else {
+        console.log('👤 Auth state changed: No user');
+        callback(null);
+      }
+    }, (error) => {
+      console.warn('🔥 Auth state listener error:', error);
+      // Fallback to mock user on error
+      console.log('🔄 Auth state error, using mock user');
+      isUsingMockAuth = true;
+      callback(mockUser);
+    });
   } catch (error) {
-    console.error('Error setting up auth state listener:', error);
+    console.error('🔥 Error setting up auth state listener:', error);
     // Fallback to mock
-    setTimeout(() => callback(mockUser), 100);
+    console.log('🔄 Using mock auth state listener due to setup error');
+    setTimeout(() => {
+      isUsingMockAuth = true;
+      callback(mockUser);
+    }, 100);
     return () => {};
   }
 };
 
-// Get current user
+// Get current user with error handling
 export const getCurrentUser = (): User | null => {
-  if (!isFirebaseAvailable() || !auth) {
+  if (!isFirebaseAvailable()) {
     return mockUser;
   }
 
   try {
-    return auth.currentUser;
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      return currentUser;
+    } else if (isUsingMockAuth) {
+      return mockUser;
+    } else {
+      return null;
+    }
   } catch (error) {
-    console.error('Error getting current user:', error);
+    console.error('🔥 Error getting current user:', error);
     return mockUser;
   }
+};
+
+// Helper to check if using mock authentication
+export const isUsingMockAuthentication = (): boolean => {
+  return isUsingMockAuth || !isFirebaseAvailable();
+};
+
+// Reset authentication state (useful for development)
+export const resetAuthState = () => {
+  isUsingMockAuth = false;
+  console.log('🔄 Authentication state reset');
 }; 

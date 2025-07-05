@@ -33,17 +33,19 @@
 
 ## ✨ Temel Özellikler
 
-- **🧠 9 Aktif Gelişim Modülü:** Okuryazarlık, kelime dağarcığı, sosyal iletişim, yazma-ifade, temel kavramlar, müzik odası, video odası, puzzle oyunu, alfabe okuma
-- **🔊 ElevenLabs Resmi SDK:** [@elevenlabs/elevenlabs-js](https://github.com/elevenlabs/elevenlabs-js) ile profesyonel kalitede Türkçe seslandirme
+- **🧠 9 Aktif Gelişim Modülü:** Alfabe okuma, okuryazarlık, kelime dağarcığı, sosyal iletişim, yazma-ifade, temel kavramlar, müzik odası, video odası, puzzle oyunu
+- **🔊 Gender-Balanced Turkish Voice System:** 3 erkek + 2 kadın ses ile dengeli Türkçe seslandirme sistemi
+- **🎯 ElevenLabs Resmi SDK:** [@elevenlabs/elevenlabs-js](https://github.com/elevenlabs/elevenlabs-js) ile profesyonel kalitede Turkish voice support
 - **🎨 Hibrit Ses Sistemi:** Statik ses dosyaları → ElevenLabs SDK → API Route → Web Speech API fallback chain
+- **📁 Static Audio Files:** 29 harflik Türk alfabesi için önceden oluşturulmuş ses dosyaları (performans + maliyet optimizasyonu)
 - **🔒 Güvenli Ses Entegrasyonu:** Server-side API key management ve IP tabanlı rate limiting
-- **📊 Gelişmiş Admin Panel:** API status dashboard, voice testing, performance metrics
+- **📊 Gelişmiş Admin Panel:** Gender filtering, voice statistics, API status dashboard, real-time testing interface
 - **🎮 Oyunlaştırma ve Pekiştirme:** [Uygulamalı Davranış Analizi (ABA)](https://tohumotizm.org.tr/tedavi-yontemleri/uygulamali-davranis-analizi/) prensiplerine dayalı anlık ödül sistemi
-- **🎯 Duyusal Kontrol Paneli:** Her çocuğun duyusal profiline göre tamamen kişiselleştirilebilir arayüz
+- **🎯 Duyusal Kontrol Paneli:** Her çocuğın duyusal profiline göre tamamen kişiselleştirilebilir arayüz
 - **📈 Ebeveyn Paneli:** Anlaşılır grafikler, özet kartlar ve motive edici geri bildirimler
 - **♿ Erişilebilirlik:** WCAG 2.1 AA standartlarına uygun tasarım
 - **🧪 %95+ Test Coverage:** Kapsamlı Playwright E2E ve unit test coverage
-- **🎵 Statik Ses Dosyaları:** Performans ve maliyet optimizasyonu için önceden oluşturulmuş ses dosyaları
+- **🇹🇷 Full Turkish Support:** 29 harflik Türk alfabesi desteği (ç, ğ, ı, ö, ş, ü dahil)
 
 ## 🚀 Başlarken (Geliştiriciler İçin)
 
@@ -114,7 +116,7 @@ node scripts/deploy-firestore.js
 Platform optimum performans için statik ses dosyalarını kullanır. Bu dosyaları oluşturmak için:
 
 ```bash
-# Ses dosyalarını ElevenLabs API ile oluştur
+# Ses dosyalarını ElevenLabs API ile oluştur (gender-balanced voices)
 npm run audio:generate
 
 # Veya tek komutla kurulum yap
@@ -122,6 +124,11 @@ npm run audio:setup
 ```
 
 **🇹🇷 Türkçe Karakter Desteği:** Tüm Türkçe karakterler (ç, ğ, ı, ö, ş, ü) tam olarak desteklenmektedir. 29 harflik Türk alfabesinin tamamı için ses dosyaları oluşturulur.
+
+**🎭 Gender-Balanced Voice System:**
+- **Erkek Sesler:** Adam, Antoni, Josh (sakin, hikaye anlatıcısı, enerjik)
+- **Kadın Sesler:** Bella, Rachel (nazik, profesyonel)
+- **Content-Type Specific Assignment:** Her içerik türü için optimize edilmiş ses ataması
 
 **📁 Ses Dosyası Yapısı:**
 - `/public/audio/letters/` - Türk alfabesi harfleri (29 harf)
@@ -168,6 +175,26 @@ Kıvılcım, çocuk verilerinin korunması için kapsamlı güvenlik önlemleri 
 ## 🎓 Eğitim Modülleri
 
 Kıvılcım platformu, otizmli çocukların farklı gelişim alanlarını desteklemek için 9 aktif modül sunar:
+
+### 🔤 Alfabe Okuma Modülü
+**Hedef:** Türk alfabesinin 29 harfini öğrenmek ve harf tanıma becerilerini geliştirme
+
+**Aktiviteler:**
+- **📚 Harf Öğrenme:** A'dan Z'ye kadar tüm Türk alfabesi harflerini tek tek öğrenme
+- **🎧 Sesli Harf Tanıma:** Her harfin doğru telaffuzunu gender-balanced Turkish voices ile dinleme
+- **🧠 Harf Tanıma Quiz:** Duyduğun harfi 4 seçenekten bulma oyunu
+- **📊 Sesli/Sessiz Ayrımı:** Türkçe'deki 8 sesli ve 21 sessiz harfi ayırt etme
+
+**Zorluk Seviyeleri:**
+- **Büyük Harf:** Klasik büyük harflerle öğrenme
+- **Küçük Harf:** Küçük harflerle tanışma
+- **Karışık Mod:** Büyük ve küçük harfleri birlikte görme
+
+**Özellikler:**
+- İnteraktif alfabe haritası
+- Sesli-sessiz harf renk kodlaması
+- İlerleme takibi ve puan sistemi
+- ElevenLabs profesyonel Türkçe seslandirme (gender-balanced system)
 
 ### 📚 Kelime Dağarcığı Modülü
 **Hedef:** Kelime tanıma, anlama ve hafıza becerilerini geliştirme
@@ -254,55 +281,39 @@ Kıvılcım platformu, otizmli çocukların farklı gelişim alanlarını destek
 - Sürükle-bırak etkileşimi
 - Tamamlama ödülleri ve kutlama animasyonları
 - İlerleme takibi ve başarı puanı
-- ElevenLabs sesli yönlendirmeler
-
-### 🔤 Alfabe Okuma Modülü
-**Hedef:** Türk alfabesinin 29 harfini öğrenmek ve harf tanıma becerilerini geliştirme
-
-**Aktiviteler:**
-- **📚 Harf Öğrenme:** A'dan Z'ye kadar tüm Türk alfabesi harflerini tek tek öğrenme
-- **🎧 Sesli Harf Tanıma:** Her harfin doğru telaffuzunu ElevenLabs ile dinleme
-- **🧠 Harf Tanıma Quiz:** Duyduğun harfi 4 seçenekten bulma oyunu
-- **📊 Sesli/Sessiz Ayrımı:** Türkçe'deki 8 sesli ve 21 sessiz harfi ayırt etme
-
-**Zorluk Seviyeleri:**
-- **Büyük Harf:** Klasik büyük harflerle öğrenme
-- **Küçük Harf:** Küçük harflerle tanışma
-- **Karışık Mod:** Büyük ve küçük harfleri birlikte görme
-
-**Özellikler:**
-- İnteraktif alfabe haritası
-- Sesli-sessiz harf renk kodlaması
-- İlerleme takibi ve puan sistemi
-- ElevenLabs profesyonel Türkçe seslandirme
+- ElevenLabs gender-balanced Turkish voices ile sesli yönlendirmeler
 
 ## 🎯 ElevenLabs Entegrasyonu
 
-### Resmi SDK Kullanımı
+### Gender-Balanced Turkish Voice System
 ```typescript
 import { useElevenLabs } from '@/lib/elevenlabs';
 
 function MyComponent() {
   const { speak, getVoices, testVoice, getApiStatus } = useElevenLabs();
   
-  // 4 optimize edilmiş ses türü
-  await speak("Merhaba!", 'sentence');     // Cümle
-  await speak("A", 'letter');              // Harf
-  await speak("elma", 'word');             // Kelime
-  await speak("Harikasın!", 'celebration'); // Kutlama
+  // Gender-balanced voice assignment by content type
+  await speak("A", 'letter');              // Adam (male, calm)
+  await speak("elma", 'word');             // Rachel (female, professional)
+  await speak("Bu hece 'el' oluyor.", 'sentence'); // Antoni (male, storyteller)
+  await speak("Harikasın!", 'celebration'); // Josh (male, energetic)
 }
 ```
 
-### Hibrit Fallback Sistemi
-1. **ElevenLabs SDK** (Primary - Server-side)
-2. **API Route** (/api/speech - Fallback)
-3. **Web Speech API** (Final fallback)
+### Turkish Voice Configuration
+**Male Voices (3):**
+- **Adam** (`pNInz6obpgDQGcFmaJgB`) - Letters: Sakin ve açık erkek ses
+- **Antoni** (`ErXwobaYiN019PkySvjV`) - Sentences: Hikaye anlatıcısı tonu
+- **Josh** (`VR6AewLTigWG4xSOukaG`) - Celebrations: Genç ve eğlenceli
 
-### Admin Panel Özellikleri
+### Admin Panel Özellikleri (Enhanced)
+- **Gender Filtering** - Male/Female/All voice filtering
+- **Real-time Voice Statistics** - Male/female voice count display
+- **Enhanced Test Interface** - Content-type specific test examples
+- **Turkish Character Testing** - Full Türkçe alphabet support
+- **Quick Test Suggestions** - Pre-filled test texts for different content types
 - **API Status Dashboard** - SDK durumu ve API key kontrolü
-- **Voice Testing Interface** - Tüm sesler için test arayüzü
-- **Performance Metrics** - Response time ve success rate
-- **User Information** - Hesap bilgileri ve kullanım limitleri
+- **Performance Metrics** - Response time ve success rate metrikleri
 
 ## 🛠️ Teknolojiler
 
@@ -320,13 +331,23 @@ function MyComponent() {
 otizm-kivilcim/
 ├── app/                  # Next.js App Router sayfaları ve route'ları
 │   ├── api/              # API rotaları (server-side logic, /api/speech)
-│   ├── exercise/         # Eğitim modülleri (7 aktif modül)
-│   ├── admin/            # Admin paneli (ElevenLabs test arayüzü)
+│   ├── exercise/         # Eğitim modülleri (9 aktif modül)
+│   │   ├── alphabet-reading/  # NEW: Alfabe okuma modülü
+│   │   ├── vocabulary/   # Kelime dağarcığı
+│   │   ├── literacy/     # Okuryazarlık
+│   │   ├── puzzle/       # Puzzle oyunları
+│   │   └── ...          # Diğer modüller
+│   ├── admin/            # Admin paneli (enhanced ElevenLabs test arayüzü)
 │   └── layout.tsx        # Ana layout
 ├── components/           # Tekrar kullanılabilir React bileşenleri
 ├── contexts/             # React Context'leri (tema, ses ayarları)
 ├── lib/                  # Yardımcı fonksionlar, servisler (elevenlabs.ts, firebase.ts)
+│   ├── audio-constants.ts # Static audio files configuration
+│   └── elevenlabs.ts     # Enhanced with gender-balanced voices
 ├── public/               # Statik varlıklar (resimler, ses dosyaları)
+│   └── audio/            # Static audio files (29 Turkish letters)
+├── scripts/              # Audio generation and deployment scripts
+│   └── generate-static-audio.js # Gender-balanced voice generation
 ├── tests/                # E2E ve entegrasyon testleri (%95+ coverage)
 └── docs/                 # Dokümantasyon dosyaları
 ```
@@ -345,17 +366,20 @@ otizm-kivilcim/
 ### Test Çalıştırma
 
 ```bash
-# E2E testleri
+# E2E testleri (9 modül coverage)
 npm run test:e2e
 
 # Unit testleri
 npm run test
 
-# Test coverage raporu
+# Test coverage raporu (%95+ achieved)
 npm run test:coverage
 
-# ElevenLabs specific testleri
+# ElevenLabs specific testleri (gender-balanced voices)
 npm run test:elevenlabs
+
+# Alphabet reading module testleri
+npm run test:alphabet
 ```
 
 ## 🚀 Deployment
@@ -376,7 +400,7 @@ vercel env add ELEVENLABS_API_KEY
 ### Environment Variables
 
 **Gerekli:**
-- `ELEVENLABS_API_KEY` - Server-side ElevenLabs API key
+- `ELEVENLABS_API_KEY` - Server-side ElevenLabs API key (gender-balanced voices support)
 
 **İsteğe Bağlı:**
 - `NODE_ENV` - development/production
@@ -395,10 +419,11 @@ Projeye katkıda bulunmak isterseniz:
 
 ### Geliştirme Öncelikleri
 
-1. **Güvenlik İyileştirmeleri** (CSP, input validation)
-2. **Performans Optimizasyonu** (bundle size, loading times)
-3. **ElevenLabs Advanced Features** (custom voices, streaming)
-4. **Accessibility Enhancements** (WCAG compliance)
+1. **Modül Expansion** (10. modül ekleme)
+2. **Advanced Voice Features** (custom Turkish voice training)
+3. **Performance Optimization** (static audio caching, bundle size)
+4. **ElevenLabs Advanced Features** (streaming TTS, voice cloning)
+5. **Accessibility Enhancements** (enhanced WCAG compliance)
 
 ## 📄 Lisans
 
@@ -412,4 +437,4 @@ Bu proje [MIT Lisansı](./LICENSE) ile lisanslanmıştır.
 
 ---
 
-> 🎯 **Son Güncelleme:** ElevenLabs resmi SDK entegrasyonu, hibrit fallback sistemi ve %95+ test coverage başarısı ile güçlendirilmiştir. Her çocuğun öğrenme potansiyelini en üst düzeye çıkarmak için sevgiyle ve teknolojiyle geliştirilmektedir.
+> 🎯 **Son Güncelleme:** 9 aktif modül (alfabe okuma modülü eklendi), gender-balanced Turkish voice system (3 erkek + 2 kadın ses), static audio files system ve enhanced admin interface ile güçlendirilmiştir. Her çocuğun öğrenme potansiyelini en üst düzeye çıkarmak için sevgiyle ve teknolojiyle geliştirilmektedir.

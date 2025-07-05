@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useElevenLabs } from '@/lib/elevenlabs';
 
 // Types for ElevenLabs admin test page
@@ -9,6 +9,10 @@ interface VoiceInfo {
   name: string;
   description: string;
   language?: string;
+  gender?: 'male' | 'female' | 'unknown';
+  category?: string;
+  isVerified?: boolean;
+  isNew?: boolean; // Yeni eklenen voice'ları işaretle
 }
 
 interface VoiceTestResult {
@@ -34,6 +38,16 @@ interface ElevenLabsStatus {
   };
 }
 
+interface NewVoiceData {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  language: string;
+  isVerified: boolean;
+  labels: { [key: string]: string };
+}
+
 export default function ElevenLabsTestPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [testText, setTestText] = useState('');
@@ -45,14 +59,99 @@ export default function ElevenLabsTestPage() {
   const [genderFilter, setGenderFilter] = useState<'all' | 'male' | 'female'>('all');
   const [voiceId, setVoiceId] = useState('');
   const [apiStatus, setApiStatus] = useState<ElevenLabsStatus | null>(null);
+  const [newVoices, setNewVoices] = useState<NewVoiceData[]>([]);
+  const [loadingNewVoices, setLoadingNewVoices] = useState(false);
+  const [showNewVoices, setShowNewVoices] = useState(false);
 
   const { speak, getVoices, testVoice, getApiStatus, getTestTexts } = useElevenLabs();
 
-  // Filter voices by gender
-  const filteredVoices = voices.filter(voice => {
-    if (genderFilter === 'all') return true;
-    return voice.gender === genderFilter;
-  });
+  // 5 Seçilmiş Türkçe Ses Sistemi
+  const SELECTED_TURKISH_VOICES = [
+    {
+      id: 'jbJMQWv1eS4YjQ6PCcn6',
+      name: 'Gülsu',
+      slug: 'gulsu',
+      gender: 'female',
+      description: 'Genç Türk kadını, enerjik ve samimi ses. Hikayeler ve kitaplar için mükemmel.'
+    },
+    {
+      id: 'mBUB5zYuPwfVE6DTcEjf', 
+      name: 'Eda Atlas',
+      slug: 'eda-atlas',
+      gender: 'female',
+      description: 'Genç, parlak Türk kadını sesi. Kurumsal, radyo ve TV reklamları için mükemmel seçim.'
+    },
+    {
+      id: 'eUUtjbi66JcWz3T4Gvvo',
+      name: 'Ayça',
+      slug: 'ayca', 
+      gender: 'female',
+      description: 'Dinamik genç kadın sesi. Anlatıcılar ve motivasyonel konuşmalar için uygun.'
+    },
+    {
+      id: 'V6TFTAE0gaN8LtBwl70x',
+      name: 'Yusuf Suratlı',
+      slug: 'yusuf-suratli',
+      gender: 'male', 
+      description: 'Parlak, genç yetişkin erkek sesi. Anlatıcı, konuşmacı, kitap seslendirme için mükemmel.'
+    },
+    {
+      id: '9GYMX9eMWSq1yjiwXb7B',
+      name: 'Sermin',
+      slug: 'sermin',
+      gender: 'female',
+      description: 'Orijinal, akıcı ve vurgulu Türkçe kadın sesi.'
+    }
+  ];
+
+  const [selectedVoice, setSelectedVoice] = useState(SELECTED_TURKISH_VOICES[0]);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+
+  // Sesler filtreleme logic'i - duplicate'ları da filtrele
+  const filteredVoices = useMemo(() => {
+    let filtered = voices;
+    
+    // Gender filter uygula
+    if (genderFilter !== 'all') {
+      filtered = filtered.filter(voice => voice.gender === genderFilter);
+    }
+    
+    // Duplicate voice'ları filtrele - unique ID kontrolü
+    const uniqueVoices = [];
+    const seenIds = new Set();
+    
+    for (const voice of filtered) {
+      if (!seenIds.has(voice.id)) {
+        uniqueVoices.push(voice);
+        seenIds.add(voice.id);
+      } else {
+        console.warn(`⚠️ Filtering duplicate voice: ${voice.name} (${voice.id})`);
+      }
+    }
+    
+    console.log(`🔍 Filtered voices: ${voices.length} → ${filtered.length} → ${uniqueVoices.length} (after duplicate removal)`);
+    
+    return uniqueVoices;
+  }, [voices, genderFilter]);
+
+  // Voice dropdown rendering with unique keys
+  const renderVoiceOption = (voice: VoiceInfo, index: number) => {
+    // Voice ismini format et - fallback kullan
+    const voiceName = voice.name || `Voice_${voice.id.slice(0, 8)}`;
+    const isNewVoice = voice.isNew || false;
+    const genderIcon = voice.gender === 'male' ? '👨' : voice.gender === 'female' ? '👩' : '🎤';
+    const newIndicator = isNewVoice ? '🆕 ' : '';
+    const description = voice.description || 'Ses açıklaması mevcut değil';
+    
+    // Unique key generator for extra safety
+    const uniqueKey = `${voice.id}-${index}`;
+    
+    return (
+      <option key={uniqueKey} value={voice.id}>
+        {newIndicator}{genderIcon} {voiceName} - {description}
+      </option>
+    );
+  };
 
   // Get test text suggestions based on type
   const getTestSuggestions = () => {
@@ -77,21 +176,39 @@ export default function ElevenLabsTestPage() {
 
   const loadVoices = async () => {
     try {
+      console.log('🔄 Loading voices...');
       const voiceList = await getVoices();
-      console.log('Loaded voices:', voiceList); // Debug log
+      console.log('📥 Raw voice data:', voiceList); // Debug log
       
       // getVoices now returns an array directly
       if (Array.isArray(voiceList) && voiceList.length > 0) {
-        setVoices(voiceList);
-        setVoiceId(voiceList[0].id);
-        console.log('Voice selection updated:', voiceList[0].id);
+        // Voice isimlerini kontrol et ve format et
+        const formattedVoices = voiceList.map(voice => ({
+          ...voice,
+          name: voice.name || `Voice_${voice.id.slice(0, 8)}`, // Fallback name
+          description: voice.description || 'Ses açıklaması mevcut değil',
+          gender: voice.gender || 'unknown',
+          isNew: voice.isNew || false
+        }));
+        
+        console.log('✅ Formatted voices:', formattedVoices);
+        console.log(`📊 Voice statistics:`, {
+          total: formattedVoices.length,
+          male: formattedVoices.filter(v => v.gender === 'male').length,
+          female: formattedVoices.filter(v => v.gender === 'female').length,
+          new: formattedVoices.filter(v => v.isNew).length
+        });
+        
+        setVoices(formattedVoices);
+        setVoiceId(formattedVoices[0].id);
+        console.log('🎯 Voice selection updated:', formattedVoices[0].name);
       } else {
-        console.warn('No voices found in response:', voiceList);
+        console.warn('⚠️ No voices found in response:', voiceList);
         setVoices([]); // Fallback to empty array
-        setError('Ses listesi boş. API anahtarını kontrol edin.');
+        setError('Ses listesi boş. API anahtarını kontrol edin veya "Voice Bilgilerini Çek" butonunu kullanın.');
       }
     } catch (err) {
-      console.error('Voices loading error:', err);
+      console.error('❌ Voices loading error:', err);
       setVoices([]); // Ensure voices is always an array
       setError('Ses listesi yüklenirken hata oluştu. API bağlantısını kontrol edin.');
     }
@@ -103,6 +220,191 @@ export default function ElevenLabsTestPage() {
       setApiStatus(status);
     } catch (err) {
       console.error('API status loading error:', err);
+    }
+  };
+
+  // Yeni voice'ları ElevenLabs API'den çek
+  const fetchNewVoices = async () => {
+    setLoadingNewVoices(true);
+    setError('');
+    
+    try {
+      console.log('🔍 Fetching new voices from ElevenLabs API...');
+      const response = await fetch('/api/speech/voices');
+      
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('📥 New voices API response:', data);
+      
+      if (data.success && data.newVoices && Array.isArray(data.newVoices)) {
+        // Voice isimlerini format et ve fallback ekle
+        const formattedNewVoices = data.newVoices.map((voice: any) => ({
+          id: voice.id,
+          name: voice.name || voice.voice_name || `NewVoice_${voice.id.slice(0, 8)}`, // Multiple fallbacks
+          description: voice.description || 'Yeni ElevenLabs voice',
+          category: voice.category || 'generated',
+          language: voice.language || 'tr',
+          isVerified: voice.isVerified || false,
+          labels: voice.labels || {},
+          isNew: true
+        }));
+        
+        console.log(`✅ Found ${formattedNewVoices.length} new voices:`, formattedNewVoices);
+        
+        setNewVoices(formattedNewVoices);
+        setShowNewVoices(true);
+        
+        // Yeni voice'ları main voice listesine de ekle
+        const updatedVoices = [...voices];
+        const existingIds = new Set(voices.map(v => v.id));
+        
+        formattedNewVoices.forEach((newVoice: any) => {
+          const exists = existingIds.has(newVoice.id);
+          if (!exists) {
+            updatedVoices.push({
+              id: newVoice.id,
+              name: newVoice.name,
+              description: newVoice.description,
+              language: newVoice.language,
+              gender: detectGenderFromName(newVoice.name),
+              category: newVoice.category,
+              isVerified: newVoice.isVerified,
+              isNew: true
+            });
+            existingIds.add(newVoice.id);
+            console.log(`➕ Added unique voice to main list: ${newVoice.name} (${newVoice.id})`);
+          } else {
+            console.log(`⚠️ Skipping duplicate voice in main list: ${newVoice.name} (${newVoice.id})`);
+          }
+        });
+        
+        setVoices(updatedVoices);
+        console.log(`🔄 Updated main voice list: ${voices.length} → ${updatedVoices.length} voices`);
+        
+      } else {
+        console.warn('⚠️ No new voices found or invalid response format');
+        setNewVoices([]);
+        setShowNewVoices(true);
+        setError('Yeni voice bulunamadı. Voice ID\'leri geçerli mi kontrol edin.');
+      }
+      
+    } catch (err) {
+      console.error('❌ Error fetching new voices:', err);
+      setError(`Yeni voice'lar yüklenirken hata: ${err instanceof Error ? err.message : 'Bilinmeyen hata'}`);
+      setNewVoices([]);
+      setShowNewVoices(true);
+    } finally {
+      setLoadingNewVoices(false);
+    }
+  };
+
+  // Gender detection helper function (moved outside the main function)
+  const detectGenderFromName = (name: string): 'male' | 'female' | 'unknown' => {
+    const maleNames = ['adam', 'josh', 'antoni', 'daniel', 'ethan', 'marcus', 'david', 'mike', 'john'];
+    const femaleNames = ['bella', 'rachel', 'domi', 'elli', 'sarah', 'alice', 'anna', 'emma', 'sophia'];
+    
+    const lowerName = name.toLowerCase();
+    
+    if (maleNames.some(male => lowerName.includes(male))) return 'male';
+    if (femaleNames.some(female => lowerName.includes(female))) return 'female';
+    
+    return 'unknown';
+  };
+
+  // Belirli bir voice'u test et (yeni voice'lar için)
+  const testNewVoice = async (newVoice: NewVoiceData) => {
+    setLoading(true);
+    setError('');
+    setIsPlaying(true);
+
+    const testTexts = {
+      letter: 'A',
+      word: 'merhaba',
+      sentence: 'Bu yeni bir sestir.',
+      celebration: 'Harika! Çok güzel!'
+    };
+
+    const testText = testTexts[testType];
+
+    try {
+      console.log(`🧪 Testing new voice: ${newVoice.name} (${newVoice.id})`);
+      
+      // Ses çalma testi
+      await speak(testText, testType, newVoice.id);
+      
+      // Test sonucu kaydet
+      const formattedResult: VoiceTestResult = {
+        id: Date.now().toString(),
+        text: testText,
+        voiceId: newVoice.id,
+        voiceName: `${newVoice.name} (YENİ)`,
+        type: testType,
+        duration: 0,
+        success: true,
+        timestamp: new Date()
+      };
+      
+      setTestResults(prev => [formattedResult, ...prev.slice(0, 9)]);
+      
+    } catch (err) {
+      console.error('New voice test error:', err);
+      setError(`Yeni voice test hatası: ${err instanceof Error ? err.message : 'Bilinmeyen hata'}`);
+      
+      const failedResult: VoiceTestResult = {
+        id: Date.now().toString(),
+        text: testText,
+        voiceId: newVoice.id,
+        voiceName: `${newVoice.name} (YENİ)`,
+        type: testType,
+        duration: 0,
+        success: false,
+        error: err instanceof Error ? err.message : 'Bilinmeyen hata',
+        timestamp: new Date()
+      };
+      
+      setTestResults(prev => [failedResult, ...prev.slice(0, 9)]);
+    } finally {
+      setLoading(false);
+      setIsPlaying(false);
+    }
+  };
+
+  // Geliştirilmiş test fonksiyonu - seçilen ses ile
+  const handleTestVoice = async (text: string, contentType: string = 'sentence') => {
+    if (!selectedVoice) return;
+    
+    const testKey = `${selectedVoice.id}-${contentType}`;
+    
+    try {
+      setCurrentlyPlaying(testKey);
+      console.log(`🎤 Testing voice: ${selectedVoice.name} (${selectedVoice.gender})`);
+      console.log(`📝 Text: "${text}"`);
+      console.log(`🎯 Content Type: ${contentType}`);
+      
+      const result = await testVoice(
+        text,
+        selectedVoice.id,
+        contentType as 'letter' | 'word' | 'sentence' | 'celebration',
+        {
+          stability: contentType === 'letter' ? 0.9 : 0.7,
+          similarityBoost: contentType === 'letter' ? 0.9 : 0.8,
+          style: contentType === 'celebration' ? 0.7 : 0.4,
+          useSpeakerBoost: true
+        }
+      );
+      
+      if (result.success) {
+        console.log(`✅ Successfully played with ${selectedVoice.name}`);
+      } else {
+        console.error(`❌ Error with ${selectedVoice.name}:`, result.error);
+      }
+    } catch (error) {
+      console.error(`💥 Test failed for ${selectedVoice.name}:`, error);
+    } finally {
+      setCurrentlyPlaying(null);
     }
   };
 
@@ -123,12 +425,18 @@ export default function ElevenLabsTestPage() {
       // Detaylı test sonucu
       const testResult = await testVoice(testText, voiceId, testType);
       
+      // Voice ismini düzgün format et
+      const selectedVoice = voices.find(v => v.id === voiceId);
+      const voiceName = selectedVoice?.name || `Voice_${voiceId.slice(0, 8)}`;
+      const isNewVoice = selectedVoice?.isNew || false;
+      const formattedVoiceName = isNewVoice ? `🆕 ${voiceName}` : voiceName;
+      
       // Create a properly formatted test result
       const formattedResult: VoiceTestResult = {
         id: Date.now().toString(),
         text: testText,
         voiceId: voiceId,
-        voiceName: voices.find(v => v.id === voiceId)?.name || 'Unknown Voice',
+        voiceName: formattedVoiceName,
         type: testType,
         duration: testResult.duration || 0,
         success: testResult.success,
@@ -142,12 +450,18 @@ export default function ElevenLabsTestPage() {
       setError(`Test hatası: ${err instanceof Error ? err.message : 'Bilinmeyen hata'}`);
       console.error('Test error:', err);
       
+      // Voice ismini düzgün format et (hata durumu için)
+      const selectedVoice = voices.find(v => v.id === voiceId);
+      const voiceName = selectedVoice?.name || `Voice_${voiceId.slice(0, 8)}`;
+      const isNewVoice = selectedVoice?.isNew || false;
+      const formattedVoiceName = isNewVoice ? `🆕 ${voiceName}` : voiceName;
+      
       // Add failed test result
       const failedResult: VoiceTestResult = {
         id: Date.now().toString(),
         text: testText,
         voiceId: voiceId,
-        voiceName: voices.find(v => v.id === voiceId)?.name || 'Unknown Voice',
+        voiceName: formattedVoiceName,
         type: testType,
         duration: 0,
         success: false,
@@ -185,6 +499,95 @@ export default function ElevenLabsTestPage() {
               📚 ElevenLabs API Referansı
             </a>
           </div>
+        </div>
+
+        {/* Yeni Voice'ları Çek Butonu */}
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-lg shadow-lg p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+                🆕 Yeni Voice'ları Keşfet
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                ElevenLabs API'den yeni eklenen voice'ların bilgilerini çekin ve test edin
+              </p>
+            </div>
+            <button
+              onClick={fetchNewVoices}
+              disabled={loadingNewVoices}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+            >
+              {loadingNewVoices ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  Yükleniyor...
+                </>
+              ) : (
+                <>
+                  🔄 Voice Bilgilerini Çek
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Yeni Voice'lar Listesi */}
+          {showNewVoices && (
+            <div className="mt-6">
+              <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
+                📋 Bulunan Yeni Voice'lar ({newVoices.length})
+              </h3>
+              {newVoices.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {newVoices.map((newVoice, index) => (
+                    <div key={`new-voice-${newVoice.id}-${index}`} className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-purple-200 dark:border-purple-700">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h4 className="font-semibold text-gray-800 dark:text-white">
+                            🎤 {newVoice.name}
+                          </h4>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                            {newVoice.id}
+                          </p>
+                        </div>
+                        {newVoice.isVerified && (
+                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                            ✅ Verified
+                          </span>
+                        )}
+                      </div>
+                      
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                        {newVoice.description}
+                      </p>
+                      
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                          {newVoice.language}
+                        </span>
+                        <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                          {newVoice.category}
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={() => testNewVoice(newVoice)}
+                        disabled={loading || isPlaying}
+                        className="w-full bg-purple-500 hover:bg-purple-600 disabled:bg-purple-300 text-white text-sm px-3 py-2 rounded transition-colors duration-200"
+                      >
+                        {loading && isPlaying ? '🔊 Test Ediliyor...' : '🧪 Test Et'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400">
+                    ❌ Yeni voice bulunamadı. Voice ID'leri kontrol edin.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* API Status Panel */}
@@ -227,6 +630,139 @@ export default function ElevenLabsTestPage() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* 🎙️ Seçilmiş Türkçe Sesler - Yeni Bölüm */}
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-700 rounded-xl p-6 mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-purple-100 dark:bg-purple-800 rounded-lg">
+              🎭
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-purple-900 dark:text-purple-100">
+                5 Seçilmiş Türkçe Ses Sistemi
+              </h2>
+              <p className="text-purple-600 dark:text-purple-300 text-sm">
+                Her ses için ayrı klasörlerde MP3 dosyaları oluşturuldu
+              </p>
+            </div>
+          </div>
+
+          {/* Ses Seçici Dropdown */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">
+              🎤 Ses Seçin:
+            </label>
+            <select
+              value={selectedVoice.id}
+              onChange={(e) => {
+                const voice = SELECTED_TURKISH_VOICES.find(v => v.id === e.target.value);
+                if (voice) setSelectedVoice(voice);
+              }}
+              className="w-full p-3 border border-purple-200 dark:border-purple-600 rounded-lg bg-white dark:bg-gray-800 text-purple-900 dark:text-purple-100 focus:ring-2 focus:ring-purple-500"
+            >
+              {SELECTED_TURKISH_VOICES.map((voice) => (
+                <option key={voice.id} value={voice.id}>
+                  {voice.gender === 'male' ? '👨' : '👩'} {voice.name} ({voice.gender})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Seçilen Ses Bilgileri */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-6 border border-purple-100 dark:border-purple-700">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-2xl">{selectedVoice.gender === 'male' ? '👨' : '👩'}</span>
+              <div>
+                <h3 className="font-bold text-purple-900 dark:text-purple-100">
+                  {selectedVoice.name}
+                </h3>
+                <p className="text-purple-600 dark:text-purple-300 text-sm">
+                  Voice ID: {selectedVoice.id}
+                </p>
+              </div>
+            </div>
+            <p className="text-purple-700 dark:text-purple-200 text-sm">
+              {selectedVoice.description}
+            </p>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200 rounded text-xs">
+                📁 /voices/{selectedVoice.slug}/
+              </span>
+              <span className="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200 rounded text-xs">
+                🇹🇷 Turkish
+              </span>
+            </div>
+          </div>
+
+          {/* Türkçe Test Butonları */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button
+              onClick={() => handleTestVoice('A', 'letter')}
+              disabled={currentlyPlaying === `${selectedVoice.id}-letter`}
+              className="p-4 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors flex flex-col items-center gap-2 disabled:opacity-50"
+            >
+              <span className="text-2xl">🔤</span>
+              <span className="font-medium">Harf Testi</span>
+              <span className="text-xs">"A" harfi</span>
+              {currentlyPlaying === `${selectedVoice.id}-letter` && (
+                <div className="animate-pulse text-xs">▶️ Çalıyor...</div>
+              )}
+            </button>
+
+            <button
+              onClick={() => handleTestVoice('elma', 'word')}
+              disabled={currentlyPlaying === `${selectedVoice.id}-word`}
+              className="p-4 bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200 rounded-lg hover:bg-green-200 dark:hover:bg-green-700 transition-colors flex flex-col items-center gap-2 disabled:opacity-50"
+            >
+              <span className="text-2xl">🍎</span>
+              <span className="font-medium">Kelime Testi</span>
+              <span className="text-xs">"elma"</span>
+              {currentlyPlaying === `${selectedVoice.id}-word` && (
+                <div className="animate-pulse text-xs">▶️ Çalıyor...</div>
+              )}
+            </button>
+
+            <button
+              onClick={() => handleTestVoice('Merhaba, nasılsın?', 'sentence')}
+              disabled={currentlyPlaying === `${selectedVoice.id}-sentence`}
+              className="p-4 bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-200 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-700 transition-colors flex flex-col items-center gap-2 disabled:opacity-50"
+            >
+              <span className="text-2xl">💬</span>
+              <span className="font-medium">Cümle Testi</span>
+              <span className="text-xs">Selamlama</span>
+              {currentlyPlaying === `${selectedVoice.id}-sentence` && (
+                <div className="animate-pulse text-xs">▶️ Çalıyor...</div>
+              )}
+            </button>
+
+            <button
+              onClick={() => handleTestVoice('Harikasın! Çok güzel!', 'celebration')}
+              disabled={currentlyPlaying === `${selectedVoice.id}-celebration`}
+              className="p-4 bg-pink-100 dark:bg-pink-800 text-pink-700 dark:text-pink-200 rounded-lg hover:bg-pink-200 dark:hover:bg-pink-700 transition-colors flex flex-col items-center gap-2 disabled:opacity-50"
+            >
+              <span className="text-2xl">🎉</span>
+              <span className="font-medium">Kutlama Testi</span>
+              <span className="text-xs">Başarı mesajı</span>
+              {currentlyPlaying === `${selectedVoice.id}-celebration` && (
+                <div className="animate-pulse text-xs">▶️ Çalıyor...</div>
+              )}
+            </button>
+          </div>
+
+          {/* Dosya Yolu Bilgisi */}
+          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+              📁 Dosya Yapısı:
+            </h4>
+            <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+              <div>📂 /public/audio/voices/{selectedVoice.slug}/</div>
+              <div className="ml-4">├── 📂 letters/ (29 Türk harfi)</div>
+              <div className="ml-4">├── 📂 words/ (kelimeler ve heceler)</div>
+              <div className="ml-4">├── 📂 sentences/ (yönlendirmeler)</div>
+              <div className="ml-4">└── 📂 celebrations/ (kutlama mesajları)</div>
+            </div>
+          </div>
         </div>
 
         {/* Test Panel */}
@@ -341,17 +877,29 @@ export default function ElevenLabsTestPage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               >
                 <option value="">Ses seçin...</option>
-                {filteredVoices.map((voice) => (
-                  <option key={voice.id} value={voice.id}>
-                    {voice.gender === 'male' ? '👨' : '👩'} {voice.name} - {voice.description}
-                  </option>
-                ))}
+                {filteredVoices.map((voice, index) => renderVoiceOption(voice, index))}
               </select>
               {filteredVoices.length === 0 && (
                 <p className="text-sm text-gray-500 mt-1">
                   Seçilen filtrede ses bulunamadı.
                 </p>
               )}
+              
+              {/* Voice Statistics */}
+              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                  Toplam: {voices.length} ses
+                </span>
+                <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
+                  👨 Erkek: {voices.filter(v => v.gender === 'male').length}
+                </span>
+                <span className="bg-pink-100 text-pink-800 px-2 py-1 rounded">
+                  👩 Bayan: {voices.filter(v => v.gender === 'female').length}
+                </span>
+                <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                  🆕 Yeni: {voices.filter(v => v.isNew).length}
+                </span>
+              </div>
             </div>
 
             {/* Test Button */}
