@@ -399,15 +399,15 @@ export default function AdminPage() {
 
         {/* Navigation Tabs */}
         <div className="flex space-x-2 mb-8 bg-white rounded-xl p-2 shadow-lg">
-          {[
+          {([
             { id: 'dashboard', label: '📊 Panel', icon: '📊' },
             { id: 'users', label: '👥 Kullanıcılar', icon: '👥' },
             { id: 'settings', label: '⚙️ Ayarlar', icon: '⚙️' },
             { id: 'logs', label: '📋 Loglar', icon: '📋' }
-          ].map((tab) => (
+          ] as const).map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                 activeTab === tab.id
                   ? 'bg-focus-blue text-white shadow-lg'

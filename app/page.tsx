@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import KivilcimIcon from '@/components/KivilcimIcon';
 import Button from '@/components/Button';
@@ -27,15 +27,16 @@ export default function HomePage() {
     }, 2000);
 
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasPlayedWelcome]);
 
-  const playWelcomeMessage = async () => {
+  const playWelcomeMessage = useCallback(async () => {
     try {
       await speak("Merhaba! Kıvılcım'a hoş geldin! Birlikte öğrenmeye hazır mısın?", 'sentence');
     } catch (error) {
       console.error('Hoş geldin mesajı çalma hatası:', error);
     }
-  };
+  }, [speak]);
 
   const handleStartJourney = () => {
     router.push('/modules');

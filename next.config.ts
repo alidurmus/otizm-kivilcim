@@ -1,20 +1,25 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Development overlay'lerini test ortamında gizle
+  // Removed deprecated devIndicators options
   devIndicators: {
-    appIsrStatus: false,
-    buildActivity: false,
-    buildActivityPosition: 'bottom-right',
+    position: "bottom-left",
   },
   
-  // Test ortamında error overlay'leri gizle
+  // Güvenlik için
+  poweredByHeader: false,
+  
+  // Performance optimizasyonu
+  compress: true,
+  
+  // Test ortamında error overlay'leri gizle ve modern features
   experimental: {
     esmExternals: true,
     // Test ortamında dev overlay'lerini tamamen kapat
     ...(process.env.NODE_ENV === 'test' && {
       appDir: true,
     }),
+    optimizePackageImports: ['tailwindcss'],
   },
 
   // CSP ve güvenlik headers
@@ -79,12 +84,6 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Güvenlik için optimize edilmiş build ayarları
-  experimental: {
-    // Modern browser features
-    esmExternals: true,
-  },
-
   // Bundle analyzer ve performance optimizasyonu için
   webpack: (config, { dev, isServer }) => {
     // Production optimizasyonları
@@ -146,19 +145,13 @@ const nextConfig: NextConfig = {
 
   // Image optimization
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
-    minimumCacheTTL: 60 * 60 * 24 * 365, // 1 yıl cache
+    minimumCacheTTL: 300,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-
-  // Güvenlik için
-  poweredByHeader: false,
-  
-  // Performance optimizasyonu
-  compress: true,
   
   // Environment variables validation
   env: {

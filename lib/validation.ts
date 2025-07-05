@@ -1,77 +1,57 @@
 import { z } from 'zod';
 
-// Speech API validation schema
+/**
+ * Input validation schemas for API endpoints
+ * Uses Zod for runtime type checking and validation
+ */
+
+// Speech API request validation
 export const speechRequestSchema = z.object({
   text: z.string()
     .min(1, 'Text cannot be empty')
-    .max(5000, 'Text must be less than 5000 characters')
-    .regex(/^[\w\s\u00C0-\u017F\u0100-\u017F.,!?;:'"()-]+$/, 'Text contains invalid characters'),
+    .max(5000, 'Text cannot exceed 5000 characters')
+    .regex(/^[\p{L}\p{N}\p{P}\p{S}\p{Z}]+$/u, 'Text contains invalid characters'),
   
-  type: z.enum(['letter', 'word', 'sentence', 'celebration'])
-    .default('sentence')
-    .describe('Type of speech for different voice settings'),
+  type: z.enum(['letter', 'word', 'sentence', 'celebration'], {
+    errorMap: () => ({ message: 'Type must be letter, word, sentence, or celebration' })
+  }),
   
   voiceId: z.string()
+    .min(1, 'Voice ID cannot be empty')
+    .max(100, 'Voice ID too long')
     .optional()
-    .refine((id) => !id || /^[a-zA-Z0-9]+$/.test(id), 'Invalid voice ID format'),
-  
-  model: z.string()
-    .optional()
-    .default('eleven_multilingual_v2'),
-  
-  stability: z.number()
-    .min(0, 'Stability must be between 0 and 1')
-    .max(1, 'Stability must be between 0 and 1')
-    .optional()
-    .default(0.5),
-  
-  similarityBoost: z.number()
-    .min(0, 'Similarity boost must be between 0 and 1')
-    .max(1, 'Similarity boost must be between 0 and 1')
-    .optional()
-    .default(0.8),
-  
-  style: z.number()
-    .min(0, 'Style must be between 0 and 1')
-    .max(1, 'Style must be between 0 and 1')
-    .optional()
-    .default(0.5),
-  
-  useSpeakerBoost: z.boolean()
-    .optional()
-    .default(true),
 });
 
-// User input validation for exercises
-export const exerciseInputSchema = z.object({
-  exerciseId: z.string()
-    .min(1, 'Exercise ID is required')
-    .regex(/^[a-zA-Z0-9_-]+$/, 'Invalid exercise ID format'),
+// User feedback validation
+export const feedbackRequestSchema = z.object({
+  rating: z.number()
+    .min(1, 'Rating must be at least 1')
+    .max(5, 'Rating cannot exceed 5'),
   
-  moduleType: z.enum(['literacy', 'vocabulary', 'social', 'writing', 'concepts'])
-    .describe('Type of learning module'),
+  category: z.enum(['bug', 'feature', 'usability', 'content', 'other'], {
+    errorMap: () => ({ message: 'Invalid feedback category' })
+  }),
   
-  userAnswer: z.string()
-    .min(1, 'Answer cannot be empty')
-    .max(100, 'Answer too long')
-    .regex(/^[\w\s\u00C0-\u017F\u0100-\u017F.,!?-]+$/, 'Answer contains invalid characters'),
+  message: z.string()
+    .min(10, 'Feedback message must be at least 10 characters')
+    .max(2000, 'Feedback message cannot exceed 2000 characters'),
   
-  difficulty: z.number()
-    .int('Difficulty must be an integer')
-    .min(1, 'Difficulty must be at least 1')
-    .max(5, 'Difficulty must be at most 5'),
+  userType: z.enum(['parent', 'teacher', 'therapist', 'other']).optional(),
   
-  timeSpent: z.number()
-    .positive('Time spent must be positive')
-    .max(3600, 'Session too long - max 1 hour'), // 1 hour max per exercise
+  childAge: z.number()
+    .min(3, 'Child age must be at least 3')
+    .max(18, 'Child age cannot exceed 18')
+    .optional(),
+  
+  moduleUsed: z.string().optional(),
+  
+  email: z.string()
+    .email('Invalid email format')
+    .optional()
 });
 
-// User progress validation
+// Progress tracking validation
 export const progressUpdateSchema = z.object({
-  userId: z.string()
-    .min(1, 'User ID is required')
-    .regex(/^[a-zA-Z0-9_-]+$/, 'Invalid user ID format'),
-  
   moduleId: z.string()
     .min(1, 'Module ID is required'),
   
@@ -82,87 +62,105 @@ export const progressUpdateSchema = z.object({
     .min(0, 'Score cannot be negative')
     .max(100, 'Score cannot exceed 100'),
   
-  completed: z.boolean(),
+  timeSpent: z.number()
+    .min(0, 'Time spent cannot be negative')
+    .max(3600, 'Time spent cannot exceed 1 hour'), // in seconds
   
-  attempts: z.number()
-    .int('Attempts must be an integer')
-    .min(1, 'Must have at least 1 attempt')
-    .max(10, 'Too many attempts'),
+  attemptsCount: z.number()
+    .min(1, 'Attempts count must be at least 1')
+    .max(100, 'Too many attempts'),
   
-  timestamp: z.date()
-    .default(() => new Date()),
+  correctAnswers: z.number()
+    .min(0, 'Correct answers cannot be negative'),
+  
+  totalQuestions: z.number()
+    .min(1, 'Total questions must be at least 1'),
+  
+  completedAt: z.string()
+    .datetime('Invalid date format'),
+  
+  difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  
+  hints_used: z.number()
+    .min(0, 'Hints used cannot be negative')
+    .optional()
 });
 
 // Sensory settings validation
 export const sensorySettingsSchema = z.object({
-  soundEffects: z.boolean().default(true),
-  animations: z.boolean().default(true),
-  vibration: z.boolean().default(false),
-  
-  theme: z.enum(['light', 'dark', 'high-contrast'])
-    .default('light'),
-  
-  fontSize: z.enum(['small', 'medium', 'large'])
-    .default('medium'),
+  visualTheme: z.enum(['light', 'dark', 'auto'], {
+    errorMap: () => ({ message: 'Invalid visual theme' })
+  }).optional(),
   
   soundVolume: z.number()
-    .min(0, 'Volume cannot be negative')
-    .max(1, 'Volume cannot exceed 1')
-    .default(0.8),
-  
-  animationSpeed: z.enum(['slow', 'normal', 'fast'])
-    .default('normal'),
-  
-  reducedMotion: z.boolean().default(false),
-});
-
-// Feedback form validation
-export const feedbackSchema = z.object({
-  type: z.enum(['bug', 'feature', 'improvement', 'general'])
-    .describe('Type of feedback'),
-  
-  title: z.string()
-    .min(5, 'Title must be at least 5 characters')
-    .max(100, 'Title must be less than 100 characters'),
-  
-  description: z.string()
-    .min(10, 'Description must be at least 10 characters')
-    .max(1000, 'Description must be less than 1000 characters'),
-  
-  email: z.string()
-    .email('Invalid email format')
+    .min(0, 'Sound volume cannot be negative')
+    .max(1, 'Sound volume cannot exceed 1')
     .optional(),
   
-  userAgent: z.string().optional(),
-  url: z.string().url().optional(),
+  reduceMotion: z.boolean().optional(),
   
-  priority: z.enum(['low', 'medium', 'high'])
-    .default('medium'),
+  hapticFeedback: z.boolean().optional(),
+  
+  rewardStyle: z.enum(['minimal', 'standard', 'enhanced'], {
+    errorMap: () => ({ message: 'Invalid reward style' })
+  }).optional(),
+  
+  fontSize: z.enum(['small', 'medium', 'large'], {
+    errorMap: () => ({ message: 'Invalid font size' })
+  }).optional(),
+  
+  colorContrast: z.enum(['normal', 'high'], {
+    errorMap: () => ({ message: 'Invalid color contrast' })
+  }).optional()
 });
 
-// Helper function to safely validate data
-export function validateData<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; error: string } {
+// Generic validation function with detailed error handling
+export function validateData<T>(schema: z.ZodSchema<T>, data: unknown): {
+  success: boolean;
+  data?: T;
+  error?: string;
+  details?: z.ZodIssue[];
+} {
   try {
-    const result = schema.parse(data);
-    return { success: true, data: result };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const firstError = error.errors[0];
-      return { 
-        success: false, 
-        error: `${firstError.path.join('.')}: ${firstError.message}` 
+    const result = schema.safeParse(data);
+    
+    if (result.success) {
+      return {
+        success: true,
+        data: result.data
+      };
+    } else {
+      // Create user-friendly error message
+      const firstError = result.error.issues[0];
+      const errorMessage = firstError?.message || 'Validation failed';
+      
+      return {
+        success: false,
+        error: errorMessage,
+        details: result.error.issues
       };
     }
-    return { 
-      success: false, 
-      error: 'Validation failed' 
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown validation error'
     };
   }
 }
 
+// Utility function for API route error responses
+export function createValidationErrorResponse(
+  error: string, 
+  details?: z.ZodIssue[]
+): { error: string; details?: z.ZodIssue[] } {
+  return {
+    error: `Validation error: ${error}`,
+    ...(details && { details })
+  };
+}
+
 // Type exports for TypeScript
 export type SpeechRequest = z.infer<typeof speechRequestSchema>;
-export type ExerciseInput = z.infer<typeof exerciseInputSchema>;
+export type FeedbackRequest = z.infer<typeof feedbackRequestSchema>;
 export type ProgressUpdate = z.infer<typeof progressUpdateSchema>;
-export type SensorySettings = z.infer<typeof sensorySettingsSchema>;
-export type FeedbackData = z.infer<typeof feedbackSchema>; 
+export type SensorySettings = z.infer<typeof sensorySettingsSchema>; 

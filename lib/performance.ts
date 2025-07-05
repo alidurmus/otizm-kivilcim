@@ -1,5 +1,13 @@
 // Performance monitoring and Core Web Vitals tracking
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals'
+import { onCLS, onFID, onFCP, onLCP, onTTFB } from 'web-vitals'
+import React, { useState, useCallback, useMemo, useRef, useEffect, startTransition, useTransition } from 'react'
+
+// Google Analytics gtag type declaration
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
 
 // Performance metrics interface
 interface PerformanceMetric {
@@ -23,200 +31,349 @@ const PERFORMANCE_THRESHOLDS = {
 // Performance event handlers
 type PerformanceHandler = (metric: PerformanceMetric) => void
 
-class PerformanceMonitor {
-  private handlers: PerformanceHandler[] = []
-  private metrics: Map<string, PerformanceMetric> = new Map()
+// Performance utilities for Kıvılcım platform
+// Based on React Performance Best Practices
 
-  constructor() {
-    if (typeof window !== 'undefined') {
-      this.initializeWebVitals()
-      this.setupPerformanceObserver()
+// Performance monitoring utilities
+export class PerformanceMonitor {
+  private static instance: PerformanceMonitor;
+  private metrics: Map<string, number[]> = new Map();
+  private observers: PerformanceObserver[] = [];
+
+  static getInstance(): PerformanceMonitor {
+    if (!PerformanceMonitor.instance) {
+      PerformanceMonitor.instance = new PerformanceMonitor();
     }
+    return PerformanceMonitor.instance;
   }
 
-  // Add handler for performance metrics
-  onMetric(handler: PerformanceHandler) {
-    this.handlers.push(handler)
-  }
+  // Core Web Vitals monitoring
+  initCoreWebVitals() {
+    if (typeof window === 'undefined') return;
 
-  // Initialize Web Vitals tracking
-  private initializeWebVitals() {
-    getCLS(this.handleMetric.bind(this))
-    getFID(this.handleMetric.bind(this))
-    getFCP(this.handleMetric.bind(this))
-    getLCP(this.handleMetric.bind(this))
-    getTTFB(this.handleMetric.bind(this))
-  }
-
-  // Handle individual metrics
-  private handleMetric(metric: any) {
-    const rating = this.getRating(metric.name, metric.value)
-    
-    const performanceMetric: PerformanceMetric = {
-      name: metric.name,
-      value: metric.value,
-      delta: metric.delta,
-      id: metric.id,
-      rating,
-      timestamp: Date.now(),
-    }
-
-    this.metrics.set(metric.name, performanceMetric)
-    this.handlers.forEach(handler => handler(performanceMetric))
-    
-    // Log performance issues in development
-    if (process.env.NODE_ENV === 'development') {
-      this.logPerformanceIssue(performanceMetric)
-    }
-  }
-
-  // Determine performance rating
-  private getRating(name: string, value: number): 'good' | 'needs-improvement' | 'poor' {
-    const thresholds = PERFORMANCE_THRESHOLDS[name as keyof typeof PERFORMANCE_THRESHOLDS]
-    if (!thresholds) return 'good'
-    
-    if (value <= thresholds.good) return 'good'
-    if (value <= thresholds.needsImprovement) return 'needs-improvement'
-    return 'poor'
-  }
-
-  // Log performance issues for debugging
-  private logPerformanceIssue(metric: PerformanceMetric) {
-    if (metric.rating === 'poor') {
-      console.warn(`🚨 Performance Issue: ${metric.name}`, {
-        value: metric.value,
-        rating: metric.rating,
-        id: metric.id,
-        recommendations: this.getRecommendations(metric.name)
-      })
-    } else if (metric.rating === 'needs-improvement') {
-      console.log(`⚠️ Performance Warning: ${metric.name}`, {
-        value: metric.value,
-        rating: metric.rating,
-      })
-    }
-  }
-
-  // Get performance recommendations
-  private getRecommendations(metricName: string): string[] {
-    const recommendations: Record<string, string[]> = {
-      LCP: [
-        'Optimize images with next/image',
-        'Implement code splitting',
-        'Use CDN for static assets',
-        'Preload critical resources'
-      ],
-      FID: [
-        'Reduce JavaScript execution time',
-        'Code split large bundles',
-        'Use React.memo for expensive components',
-        'Defer non-critical JavaScript'
-      ],
-      CLS: [
-        'Set explicit dimensions for images',
-        'Reserve space for dynamic content',
-        'Use CSS transforms instead of changing layout properties',
-        'Preload fonts with font-display: swap'
-      ],
-      FCP: [
-        'Optimize critical rendering path',
-        'Reduce server response time',
-        'Eliminate render-blocking resources',
-        'Minify CSS and JavaScript'
-      ],
-      TTFB: [
-        'Optimize server response time',
-        'Use CDN',
-        'Enable HTTP/2',
-        'Optimize database queries'
-      ]
-    }
-
-    return recommendations[metricName] || []
-  }
-
-  // Setup Performance Observer for additional metrics
-  private setupPerformanceObserver() {
+    // LCP (Largest Contentful Paint)
     if ('PerformanceObserver' in window) {
-      // Monitor navigation timing
-      const navObserver = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          if (entry.entryType === 'navigation') {
-            this.trackNavigationTiming(entry as PerformanceNavigationTiming)
+      const lcpObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        this.recordMetric('LCP', lastEntry.startTime);
+      });
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+      this.observers.push(lcpObserver);
+
+      // FID (First Input Delay)
+      const fidObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach((entry) => {
+          this.recordMetric('FID', entry.processingStart - entry.startTime);
+        });
+      });
+      fidObserver.observe({ type: 'first-input', buffered: true });
+      this.observers.push(fidObserver);
+
+      // CLS (Cumulative Layout Shift)
+      let clsValue = 0;
+      const clsObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach((entry) => {
+          if (!(entry as any).hadRecentInput) {
+            clsValue += (entry as any).value;
           }
-        }
-      })
-      navObserver.observe({ type: 'navigation', buffered: true })
-
-      // Monitor resource timing for large resources
-      const resourceObserver = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          if (entry.entryType === 'resource') {
-            this.trackResourceTiming(entry as PerformanceResourceTiming)
-          }
-        }
-      })
-      resourceObserver.observe({ type: 'resource', buffered: true })
+        });
+        this.recordMetric('CLS', clsValue);
+      });
+      clsObserver.observe({ type: 'layout-shift', buffered: true });
+      this.observers.push(clsObserver);
     }
   }
 
-  // Track navigation timing
-  private trackNavigationTiming(entry: PerformanceNavigationTiming) {
-    const metrics = {
-      domContentLoaded: entry.domContentLoadedEventEnd - entry.domContentLoadedEventStart,
-      domComplete: entry.domComplete - entry.domInteractive,
-      loadComplete: entry.loadEventEnd - entry.loadEventStart,
-    }
+  // React-specific performance monitoring
+  measureComponentRender(componentName: string, renderFn: () => void) {
+    const startTime = performance.now();
+    renderFn();
+    const endTime = performance.now();
+    this.recordMetric(`${componentName}_render`, endTime - startTime);
+  }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('📊 Navigation Timing:', metrics)
+  // Audio performance monitoring (ElevenLabs specific)
+  async measureAudioGeneration(text: string, type: string, generateFn: () => Promise<void>) {
+    const startTime = performance.now();
+    try {
+      await generateFn();
+      const endTime = performance.now();
+      this.recordMetric(`audio_${type}`, endTime - startTime);
+      return { success: true, duration: endTime - startTime };
+    } catch (error) {
+      const endTime = performance.now();
+      this.recordMetric(`audio_${type}_error`, endTime - startTime);
+      return { success: false, duration: endTime - startTime, error };
     }
   }
 
-  // Track resource timing for optimization opportunities
-  private trackResourceTiming(entry: PerformanceResourceTiming) {
-    const duration = entry.duration
-    const size = entry.transferSize
-
-    // Flag slow resources (>1MB or >2 seconds)
-    if (size > 1024 * 1024 || duration > 2000) {
-      console.warn('🐌 Slow Resource Detected:', {
-        name: entry.name,
-        duration: Math.round(duration),
-        size: size ? Math.round(size / 1024) + 'KB' : 'unknown',
-        type: entry.initiatorType
-      })
+  private recordMetric(name: string, value: number) {
+    if (!this.metrics.has(name)) {
+      this.metrics.set(name, []);
     }
+    this.metrics.get(name)!.push(value);
   }
 
-  // Get current performance summary
-  getPerformanceSummary() {
-    const summary = {
-      metrics: Object.fromEntries(this.metrics),
-      overallScore: this.calculateOverallScore(),
-      timestamp: Date.now(),
-    }
+  getMetrics() {
+    const result: Record<string, {
+      average: number;
+      min: number;
+      max: number;
+      count: number;
+      latest: number;
+    }> = {};
 
-    return summary
-  }
-
-  // Calculate overall performance score
-  private calculateOverallScore(): number {
-    const coreMetrics = ['LCP', 'FID', 'CLS']
-    const scores = coreMetrics.map(name => {
-      const metric = this.metrics.get(name)
-      if (!metric) return 100 // Default good score if not measured yet
+    this.metrics.forEach((values, name) => {
+      const average = values.reduce((a, b) => a + b, 0) / values.length;
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const latest = values[values.length - 1];
       
-      switch (metric.rating) {
-        case 'good': return 100
-        case 'needs-improvement': return 70
-        case 'poor': return 30
-        default: return 100
-      }
-    })
+      result[name] = { average, min, max, count: values.length, latest };
+    });
 
-    return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
+    return result;
   }
+
+  // Core Web Vitals assessment
+  assessCoreWebVitals() {
+    const metrics = this.getMetrics();
+    return {
+      LCP: {
+        value: metrics.LCP?.latest || 0,
+        rating: this.getLCPRating(metrics.LCP?.latest || 0),
+        threshold: 2500 // Good: < 2.5s
+      },
+      FID: {
+        value: metrics.FID?.latest || 0,
+        rating: this.getFIDRating(metrics.FID?.latest || 0),
+        threshold: 100 // Good: < 100ms
+      },
+      CLS: {
+        value: metrics.CLS?.latest || 0,
+        rating: this.getCLSRating(metrics.CLS?.latest || 0),
+        threshold: 0.1 // Good: < 0.1
+      }
+    };
+  }
+
+  private getLCPRating(value: number): 'good' | 'needs-improvement' | 'poor' {
+    if (value <= 2500) return 'good';
+    if (value <= 4000) return 'needs-improvement';
+    return 'poor';
+  }
+
+  private getFIDRating(value: number): 'good' | 'needs-improvement' | 'poor' {
+    if (value <= 100) return 'good';
+    if (value <= 300) return 'needs-improvement';
+    return 'poor';
+  }
+
+  private getCLSRating(value: number): 'good' | 'needs-improvement' | 'poor' {
+    if (value <= 0.1) return 'good';
+    if (value <= 0.25) return 'needs-improvement';
+    return 'poor';
+  }
+
+  cleanup() {
+    this.observers.forEach(observer => observer.disconnect());
+    this.observers = [];
+  }
+}
+
+// React performance hooks
+export function usePerformanceTracker() {
+  const monitor = PerformanceMonitor.getInstance();
+  
+  const trackRender = useCallback((componentName: string, renderFn: () => void) => {
+    monitor.measureComponentRender(componentName, renderFn);
+  }, [monitor]);
+
+  const trackAudio = useCallback(async (text: string, type: string, generateFn: () => Promise<void>) => {
+    return monitor.measureAudioGeneration(text, type, generateFn);
+  }, [monitor]);
+
+  const getMetrics = useCallback(() => {
+    return monitor.getMetrics();
+  }, [monitor]);
+
+  const getCoreWebVitals = useCallback(() => {
+    return monitor.assessCoreWebVitals();
+  }, [monitor]);
+
+  return { trackRender, trackAudio, getMetrics, getCoreWebVitals };
+}
+
+// Optimization utilities based on React documentation
+export function useOptimizedState<T>(
+  initialValue: T,
+  isEqual: (a: T, b: T) => boolean = (a, b) => a === b
+) {
+  const [state, setState] = useState(initialValue);
+  const stateRef = useRef(state);
+
+  const optimizedSetState = useCallback((newValue: T | ((prev: T) => T)) => {
+    const nextValue = typeof newValue === 'function' 
+      ? (newValue as (prev: T) => T)(stateRef.current)
+      : newValue;
+
+    if (!isEqual(stateRef.current, nextValue)) {
+      stateRef.current = nextValue;
+      setState(nextValue);
+    }
+  }, [isEqual]);
+
+  return [state, optimizedSetState] as const;
+}
+
+// Memoization utilities
+export function deepEqual(a: any, b: any): boolean {
+  if (a === b) return true;
+  if (typeof a !== 'object' || typeof b !== 'object') return false;
+  if (a === null || b === null) return false;
+  
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  
+  if (keysA.length !== keysB.length) return false;
+  
+  for (const key of keysA) {
+    if (!keysB.includes(key)) return false;
+    if (!deepEqual(a[key], b[key])) return false;
+  }
+  
+  return true;
+}
+
+export function shallowEqual(a: any, b: any): boolean {
+  if (a === b) return true;
+  if (typeof a !== 'object' || typeof b !== 'object') return false;
+  if (a === null || b === null) return false;
+  
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  
+  if (keysA.length !== keysB.length) return false;
+  
+  for (const key of keysA) {
+    if (!keysB.includes(key) || a[key] !== b[key]) return false;
+  }
+  
+  return true;
+}
+
+// Performance-optimized component wrapper
+export function withPerformanceTracking<P extends object>(
+  Component: React.ComponentType<P>,
+  componentName: string
+) {
+  return React.memo((props: P) => {
+    const { trackRender } = usePerformanceTracker();
+    
+    return useMemo(() => {
+      let result: React.ReactElement;
+      trackRender(componentName, () => {
+        result = React.createElement(Component, props);
+      });
+      return result!;
+    }, [props, trackRender]);
+  }, shallowEqual);
+}
+
+// Bundle size optimization
+export function useLazyImport<T>(
+  importFn: () => Promise<{ default: T }>,
+  deps: React.DependencyList = []
+) {
+  const [component, setComponent] = useState<T | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    
+    importFn()
+      .then(module => {
+        setComponent(module.default);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err);
+        setLoading(false);
+      });
+  }, deps);
+
+  return { component, loading, error };
+}
+
+// React Concurrent Features
+export function useOptimizedTransition() {
+  const [isPending, startOptimizedTransition] = useTransition();
+  
+  const deferredUpdate = useCallback((updateFn: () => void) => {
+    startTransition(() => {
+      updateFn();
+    });
+  }, []);
+
+  return { isPending, deferredUpdate };
+}
+
+// Production build check
+export function isProductionBuild(): boolean {
+  return process.env.NODE_ENV === 'production';
+}
+
+// Performance debugging in development
+export function logPerformanceMetrics() {
+  if (isProductionBuild()) return;
+  
+  const monitor = PerformanceMonitor.getInstance();
+  const metrics = monitor.getMetrics();
+  const coreWebVitals = monitor.assessCoreWebVitals();
+  
+  console.group('🚀 Performance Metrics');
+  console.table(metrics);
+  console.group('📊 Core Web Vitals');
+  console.table(coreWebVitals);
+  console.groupEnd();
+  console.groupEnd();
+}
+
+// Initialize performance monitoring
+export function initializePerformanceMonitoring() {
+  if (typeof window === 'undefined') return;
+  
+  const monitor = PerformanceMonitor.getInstance();
+  monitor.initCoreWebVitals();
+  
+  // Log metrics every 30 seconds in development
+  if (!isProductionBuild()) {
+    setInterval(() => {
+      logPerformanceMetrics();
+    }, 30000);
+  }
+}
+
+// Production build validation
+export function validateProductionBuild() {
+  if (!isProductionBuild()) {
+    console.warn('⚠️ Application is running in development mode. Make sure to use production build for deployment.');
+    return false;
+  }
+  
+  // Check for React DevTools
+  if (typeof window !== 'undefined' && (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+    console.warn('⚠️ React DevTools detected. This should not be present in production.');
+    return false;
+  }
+  
+  console.log('✅ Production build validation passed');
+  return true;
 }
 
 // Create global performance monitor instance

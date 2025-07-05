@@ -47,9 +47,9 @@ test.describe('Kıvılcım Ana Sayfa', () => {
     // Butona tıkla
     await page.getByRole('button', { name: '👨‍👩‍👧‍👦 Ebeveyn Paneli' }).click();
     
-    // Ebeveyn paneline yönlendirildiğini kontrol et
-    await expect(page).toHaveURL('/parent');
-    await expect(page.getByRole('heading', { name: '👨‍👩‍👧‍👦 Ebeveyn Paneli' })).toBeVisible();
+    // Ebeveyn paneline yönlendirildiğini kontrol et - Firefox için daha uzun timeout
+    await expect(page).toHaveURL('/parent', { timeout: 10000 });
+    await expect(page.getByRole('heading', { name: '📊 Ebeveyn Paneli' })).toBeVisible({ timeout: 10000 });
   });
 
   test('özellik kartları görünür olmalı', async ({ page }) => {

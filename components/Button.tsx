@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react';
 
 interface ButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: () => void | Promise<void>;
   variant?: 'primary' | 'secondary' | 'success';
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;

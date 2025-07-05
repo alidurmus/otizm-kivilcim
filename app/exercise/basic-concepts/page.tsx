@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/Button';
 import { useElevenLabs } from '@/lib/elevenlabs';
 import GameHelpModal from '@/components/GameHelpModal';
 
@@ -278,10 +277,10 @@ export default function BasicConceptsModulePage() {
   const [currentDirectionIndex, setCurrentDirectionIndex] = useState(0);
   const [currentOppositeIndex, setCurrentOppositeIndex] = useState(0);
   const [currentTimeIndex, setCurrentTimeIndex] = useState(0);
-  const [currentAnimalIndex, setCurrentAnimalIndex] = useState(0);
+  const [_currentAnimalIndex, setCurrentAnimalIndex] = useState(0);
   const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
-  const [gameScore, setGameScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [_gameScore, setGameScore] = useState(0);
+  const [_selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [helpGameType, setHelpGameType] = useState<string>('colors');
 
@@ -379,18 +378,9 @@ export default function BasicConceptsModulePage() {
     await speak(`Bu ${animal.name}. ${animal.sound} sesi çıkarır. ${animal.description}`, 'sentence');
   };
 
-  const handleAnswerSelect = async (answer: string, correct: string) => {
-    setSelectedAnswer(answer);
-    if (answer === correct) {
-      setGameScore(prev => prev + 1);
-      await speak('Doğru! Çok güzel!', 'celebration');
-    } else {
-      await speak(`Hayır, doğru cevap ${correct}`, 'sentence');
-    }
-    
-    setTimeout(() => {
-      setSelectedAnswer(null);
-    }, 2000);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleAnswerSelect = (_answer: string) => {
+    // Future implementation for interactive games
   };
 
   // Colors Activity

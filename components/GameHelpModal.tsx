@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
 import { Button } from './Button';
 
 interface GameRule {
@@ -198,6 +198,26 @@ const gameRules: Record<string, GameRule[]> = {
       icon: '✅'
     }
   ],
+  'video-watching': [
+    {
+      step: 1,
+      title: 'Video Kategorisi Seç',
+      description: 'İstediğin türde videoları bulmak için kategori seç',
+      icon: '📂'
+    },
+    {
+      step: 2,
+      title: 'Video Seç ve İzle',
+      description: 'Beğendiğin videoyu seç ve izlemeye başla',
+      icon: '▶️'
+    },
+    {
+      step: 3,
+      title: 'Kontrolleri Kullan',
+      description: 'Videoyu duraklat, devam ettir veya kapat',
+      icon: '⏯️'
+    }
+  ],
   'story-writing': [
     {
       step: 1,
@@ -378,6 +398,26 @@ const gameRules: Record<string, GameRule[]> = {
       icon: '✅'
     }
   ],
+  'stories': [
+    {
+      step: 1,
+      title: 'Hikaye Seç',
+      description: 'Dinlemek istediğin hikayeyi kategoriden seç',
+      icon: '📚'
+    },
+    {
+      step: 2,
+      title: 'Sayfaları Takip Et',
+      description: 'Önceki/sonraki butonları ile sayfaları takip et',
+      icon: '📄'
+    },
+    {
+      step: 3,
+      title: 'Dinle ve Eğlen',
+      description: 'Ses butonuna basarak hikayeyi dinle veya otomatik oynat',
+      icon: '🔊'
+    }
+  ],
   'animals': [
     {
       step: 1,
@@ -396,6 +436,66 @@ const gameRules: Record<string, GameRule[]> = {
       title: 'Bilgileri Öğren',
       description: 'Hayvanın sesini, yaşam alanını ve özelliklerini öğren',
       icon: '📚'
+    }
+  ],
+  'music-listening': [
+    {
+      step: 1,
+      title: 'Müzik Kategorisi Seç',
+      description: 'Sakinleştirici, eğitici, klasik müzik veya doğa sesleri kategorilerinden birini seç',
+      icon: '🎵'
+    },
+    {
+      step: 2,
+      title: 'Müzik Seç ve Çal',
+      description: 'Beğendiğin müziği seç ve çalmaya başla',
+      icon: '▶️'
+    },
+    {
+      step: 3,
+      title: 'Müzik Kontrolü',
+      description: 'Sesini ayarla, durdur, devam ettir veya farklı müzik seç',
+      icon: '🎚️'
+    }
+  ],
+  'puzzle': [
+    {
+      step: 1,
+      title: '1. Kategori ve Zorluk Seç',
+      description: 'Hayvanlar, meyveler, araçlar veya şekiller kategorisinden birini seç. Sonra zorluk seviyeni belirle: Kolay (4 parça), Orta (9 parça) veya Zor (16 parça).',
+      icon: '🎯'
+    },
+    {
+      step: 2,
+      title: '2. Parçaları Sürükle',
+      description: 'Sağdaki puzzle parçalarını sol taraftaki yapboz tahtasına sürükle. Her parçayı doğru konumuna yerleştirmeye çalış.',
+      icon: '🧩'
+    },
+    {
+      step: 3,
+      title: '3. Tamamla ve Kutla',
+      description: 'Tüm parçaları doğru yerlere koyduğunda puzzle tamamlanır! Başarını kutla ve yeni bir puzzle dene.',
+      icon: '🎉'
+    }
+  ],
+  'alphabet-reading': [
+    {
+      step: 1,
+      title: '1. Öğrenme Modu',
+      description: 'Türk alfabesindeki 29 harfi tek tek öğren. Harfe tıklayarak sesini dinle. Büyük harf, küçük harf veya karışık modlarını seç.',
+      icon: '🔤'
+    },
+    {
+      step: 2,
+      title: '2. Harf Tanıma Quiz',
+      description: 'Quiz butonuna bas ve dinle butonuna tıklayarak harfi dinle. Aşağıdaki 4 seçenekten doğru harfi seç. Sesli ve sessiz harfleri ayırt etmeyi öğren.',
+      icon: '👂'
+    },
+    {
+      step: 3,
+      title: '3. Alfabe Haritası',
+      description: 'Alt taraftaki alfabe haritasından herhangi bir harfe tıklayarak o harfi öğren. İlerleme kaydet ve yeni harfleri keşfet.',
+      icon: '🗺️'
     }
   ]
 };
@@ -419,7 +519,11 @@ const gameNames: Record<string, string> = {
   'directions': 'Yönler',
   'opposites': 'Zıtlıklar',
   'time': 'Zaman',
-  'animals': 'Hayvanlar'
+  'animals': 'Hayvanlar',
+  'video-watching': 'Video İzleme Odası',
+  'music-listening': 'Müzik Dinleme Odası',
+  'puzzle': 'Puzzle Oyunu',
+  'alphabet-reading': 'Alfabe Okuma'
 };
 
 export function GameHelpModal({ isOpen, onClose, gameType, gameName }: GameHelpModalProps) {

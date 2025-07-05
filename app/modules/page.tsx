@@ -55,6 +55,46 @@ const modules: Module[] = [
     icon: '💡',
     isActive: true,
     route: '/exercise/basic-concepts'
+  },
+  {
+    id: 'music-room',
+    title: 'Müzik Dinleme Odası',
+    description: 'Sakinleştirici müzikler, eğitici şarkılar ve doğa sesleri',
+    icon: '🎵',
+    isActive: true,
+    route: '/exercise/music-room'
+  },
+  {
+    id: 'video-room',
+    title: 'Video İzleme Odası',
+    description: 'Eğitici videolar, sosyal öyküler ve sakinleştirici içerikler',
+    icon: '📺',
+    isActive: true,
+    route: '/exercise/video-room'
+  },
+  {
+    id: 'stories',
+    title: 'Hikaye Dinleme',
+    description: 'Görsel ve işitsel hikayeler, slide şeklinde hikaye okuma',
+    icon: '📚',
+    isActive: true,
+    route: '/exercise/stories'
+  },
+  {
+    id: 'puzzle',
+    title: 'Puzzle Oyunu',
+    description: 'Görsel-motor koordinasyon ve problem çözme',
+    icon: '🧩',
+    isActive: true,
+    route: '/exercise/puzzle'
+  },
+  {
+    id: 'alphabet-reading',
+    title: 'Alfabe Okuma',
+    description: 'Türk alfabesinin 29 harfini öğren, sesli-sessiz harf tanıma',
+    icon: '🔤',
+    isActive: true,
+    route: '/exercise/alphabet-reading'
   }
 ];
 
@@ -66,51 +106,67 @@ export default function ModulesPage() {
   const upcomingModules = modules.filter(module => !module.isActive);
 
   const handleModuleClick = async (module: Module) => {
+    // eslint-disable-next-line no-console
     console.log('=== MODULE CLICK DEBUG ===');
+    // eslint-disable-next-line no-console
     console.log('Module clicked:', module);
+    // eslint-disable-next-line no-console
     console.log('Module title:', module.title);
+    // eslint-disable-next-line no-console
     console.log('Module route:', module.route);
+    // eslint-disable-next-line no-console
     console.log('Module isActive:', module.isActive);
+    // eslint-disable-next-line no-console
     console.log('Router object:', router);
+    // eslint-disable-next-line no-console
     console.log('Current pathname:', window.location.pathname);
     
     if (module.isActive && module.route) {
+      // eslint-disable-next-line no-console
       console.log('✅ Conditions met, attempting navigation...');
+      // eslint-disable-next-line no-console
       console.log('Navigating to:', module.route);
       
       try {
+        // eslint-disable-next-line no-console
         console.log('⏱️ Calling router.push...');
         const startTime = Date.now();
         
         await router.push(module.route);
         
         const endTime = Date.now();
+        // eslint-disable-next-line no-console
         console.log(`✅ router.push completed in ${endTime - startTime}ms`);
         
         // Check if navigation actually happened
         setTimeout(() => {
+          // eslint-disable-next-line no-console
           console.log('🔍 Post-navigation check:');
+          // eslint-disable-next-line no-console
           console.log('  Current pathname:', window.location.pathname);
+          // eslint-disable-next-line no-console
           console.log('  Expected route:', module.route);
           const navSuccess = window.location.pathname === module.route;
+          // eslint-disable-next-line no-console
           console.log('  Navigation successful:', navSuccess);
           
           if (!navSuccess) {
-            console.log('🔄 Router failed, trying hard navigation...');
+            console.warn('🔄 Router failed, trying hard navigation...');
             window.location.href = module.route!;
           }
         }, 100);
         
       } catch (error) {
         console.error('❌ Router.push failed:', error);
-        console.log('🔄 Trying window.location.href instead...');
+        console.warn('🔄 Trying window.location.href instead...');
         window.location.href = module.route!;
       }
     } else {
-      console.log('❌ Conditions not met:');
-      console.log('  - isActive:', module.isActive);
-      console.log('  - route exists:', !!module.route);
+      console.warn('❌ Conditions not met:');
+      console.warn('  - isActive:', module.isActive);
+      console.warn('  - route exists:', !!module.route);
     }
+    // eslint-disable-next-line no-console
     console.log('=== END MODULE CLICK DEBUG ===');
   };
 
@@ -160,7 +216,7 @@ export default function ModulesPage() {
         </div>
 
         {/* Modules Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {modules.map((module, index) => (
             <div 
               key={module.id}

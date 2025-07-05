@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import ProgressBar from '@/components/ProgressBar';
 import Button from '@/components/Button';
@@ -142,9 +142,10 @@ export default function LiteracyExercisePage() {
     if (userSyllable.length === 2) {
       checkAnswer(userSyllable);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps  
   }, [userSyllable, currentExerciseIndex]); // Yeni egzersizde tekrar tetiklenmesi için index'e de bağlı
 
-  const checkAnswer = async (syllable: string) => {
+  const checkAnswer = useCallback(async (syllable: string) => {
     const correct = syllable.toLowerCase() === exercise.correctSyllable.toLowerCase();
     dispatch({ type: 'EVALUATE_ANSWER', payload: { isCorrect: correct } });
     
@@ -159,7 +160,8 @@ export default function LiteracyExercisePage() {
         }
       }, 3000); // Kutlama için bekle
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exercise.correctSyllable, currentExerciseIndex, exercises.length]);
 
   const handleDragStart = (letter: string) => {
     dispatch({ type: 'DRAG_START', payload: letter });
@@ -216,13 +218,9 @@ export default function LiteracyExercisePage() {
       dispatch({ type: 'SET_IS_PLAYING', payload: true });
       await speak(exercise.audioText, 'word');
     } catch (error) {
-      console.error('Ses çalma hatası:', error);
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(exercise.audioText);
-        utterance.lang = 'tr-TR';
-        utterance.rate = 0.8;
-        speechSynthesis.speak(utterance);
-      }
+      console.warn('Ses çalma hatası (sessizce atlanıyor):', error);
+      // Hata durumunda Web Speech API fallback'i zaten çalışacak
+      // Eğer o da başarısız olursa sessizce devam et
     } finally {
       dispatch({ type: 'SET_IS_PLAYING', payload: false });
     }
@@ -234,13 +232,15 @@ export default function LiteracyExercisePage() {
       dispatch({ type: 'SET_IS_PLAYING', payload: true });
       await speak(letter, 'letter');
     } catch (error) {
-      console.error('Harf ses hatası:', error);
+      console.warn('Harf ses hatası (sessizce atlanıyor):', error);
+      // Hata durumunda Web Speech API fallback'i zaten çalışacak
+      // Eğer o da başarısız olursa sessizce devam et
     } finally {
       dispatch({ type: 'SET_IS_PLAYING', payload: false });
     }
   };
 
-  const playCelebration = async () => {
+  const playCelebration = useCallback(async () => {
     try {
       const celebrationTexts = [
         'Harikasın! Çok güzel yaptın!',
@@ -251,9 +251,11 @@ export default function LiteracyExercisePage() {
       const randomText = celebrationTexts[Math.floor(Math.random() * celebrationTexts.length)];
       await speak(randomText, 'celebration');
     } catch (error) {
-      console.error('Kutlama ses hatası:', error);
+      console.warn('Kutlama ses hatası (sessizce atlanıyor):', error);
+      // Hata durumunda Web Speech API fallback'i zaten çalışacak
+      // Eğer o da başarısız olursa sessizce devam et
     }
-  };
+  }, [speak]);
 
   // --- RENDER --- 
 

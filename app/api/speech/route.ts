@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { speechRequestSchema, validateData } from '@/lib/validation';
+import { getTurkishFemaleVoices, getTurkishMaleVoices, getAllTurkishVoices } from '@/lib/elevenlabs';
 
 // Rate limiting - Simple in-memory store for MVP
 // Production'da Redis veya database kullanılmalı
@@ -40,39 +41,34 @@ interface SpeechRequest {
   voiceId?: string;
 }
 
-interface ElevenLabsResponse {
-  audio?: ArrayBuffer;
-  error?: string;
-}
-
-// Voice configurations optimized for children with autism
+// Voice configurations optimized for children with autism - Cinsiyet dengeleyici
 const VOICE_CONFIGS = {
   letter: {
-    voiceId: 'pNInz6obpgDQGcFmaJgB', // Adam - clear and calm
-    stability: 0.7,
-    similarityBoost: 0.8,
+    voiceId: 'pNInz6obpgDQGcFmaJgB', // Adam - sakin ve açık erkek ses (harf öğrenme için ideal)
+    stability: 0.8,
+    similarityBoost: 0.9,
     style: 0.3,
     useSpeakerBoost: true
   },
   word: {
-    voiceId: 'pNInz6obpgDQGcFmaJgB', // Adam
-    stability: 0.6,
-    similarityBoost: 0.7,
+    voiceId: '21m00Tcm4TlvDq8ikWAM', // Rachel - profesyonel bayan ses (kelimeler için)
+    stability: 0.7,
+    similarityBoost: 0.8,
     style: 0.4,
     useSpeakerBoost: true
   },
   sentence: {
-    voiceId: 'pNInz6obpgDQGcFmaJgB', // Adam
-    stability: 0.5,
-    similarityBoost: 0.6,
+    voiceId: 'ErXwobaYiN019PkySvjV', // Antoni - derin ve hikayeci erkek ses (cümleler için)
+    stability: 0.6,
+    similarityBoost: 0.7,
     style: 0.5,
     useSpeakerBoost: true
   },
   celebration: {
-    voiceId: 'EXAVITQu4vr4xnSDxMaL', // Bella - warm and encouraging
+    voiceId: 'VR6AewLTigWG4xSOukaG', // Josh - eğlenceli erkek ses (kutlamalar için)
     stability: 0.4,
     similarityBoost: 0.5,
-    style: 0.7,
+    style: 0.8,
     useSpeakerBoost: true
   }
 };
@@ -232,9 +228,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Health check endpoint with security info
+// Health check endpoint with all Turkish voices info (male + female)
 export async function GET() {
   const apiKey = process.env.ELEVENLABS_API_KEY;
+  const turkishVoices = getAllTurkishVoices(); // Hem erkek hem bayan sesler
   
   return NextResponse.json({
     status: 'ok',
@@ -245,6 +242,27 @@ export async function GET() {
     rateLimits: {
       maxRequests: RATE_LIMIT_MAX,
       windowMs: RATE_LIMIT_WINDOW
+    },
+    voices: turkishVoices.map(voice => ({
+      id: voice.id,
+      name: voice.name,
+      description: voice.description,
+      language: voice.language,
+      gender: voice.gender,
+      age: voice.age,
+      traits: voice.traits,
+      bestFor: voice.bestFor
+    })),
+    voiceStats: {
+      total: turkishVoices.length,
+      female: getTurkishFemaleVoices().length,
+      male: getTurkishMaleVoices().length
+    },
+    voiceConfig: {
+      letter: VOICE_CONFIGS.letter.voiceId,
+      word: VOICE_CONFIGS.word.voiceId, 
+      sentence: VOICE_CONFIGS.sentence.voiceId,
+      celebration: VOICE_CONFIGS.celebration.voiceId
     }
   }, {
     headers: {

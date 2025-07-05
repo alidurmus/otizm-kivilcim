@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/Button';
 import { useElevenLabs } from '@/lib/elevenlabs';
 import GameHelpModal from '@/components/GameHelpModal';
 
@@ -30,6 +29,13 @@ interface DailyActivity {
   activity: string;
   steps: string[];
   emoji: string;
+}
+
+interface CommunicationSkill {
+  id: string;
+  skill: string;
+  phrase: string;
+  situation: string;
 }
 
 const emotions: Emotion[] = [
@@ -194,7 +200,7 @@ export default function SocialCommunicationModulePage() {
     }
   };
 
-  const handleCommunicationClick = async (skill: any) => {
+  const handleCommunicationClick = async (skill: CommunicationSkill) => {
     await speak(`${skill.skill}: ${skill.phrase}. ${skill.situation}`, 'sentence');
   };
 
@@ -429,19 +435,19 @@ export default function SocialCommunicationModulePage() {
             <p className="text-gray-600 text-center">
               Her bir beceriyi dinlemek için kartlara tıkla! Bu ifadeleri günlük hayatta kullanarak iletişim becerilerini geliştirebilirsin.
             </p>
-                  </div>
-      </div>
+          </div>
+        </div>
 
-      {/* Help Modal */}
-      <GameHelpModal
-        isOpen={showHelpModal}
-        onClose={() => setShowHelpModal(false)}
-        gameType={helpGameType}
-        gameName=""
-      />
-    </div>
-  );
-}
+        {/* Help Modal */}
+        <GameHelpModal
+          isOpen={showHelpModal}
+          onClose={() => setShowHelpModal(false)}
+          gameType={helpGameType}
+          gameName=""
+        />
+      </div>
+    );
+  }
 
   // Main Menu
   return (

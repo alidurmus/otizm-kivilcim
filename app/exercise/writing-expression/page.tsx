@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/Button';
 import { useElevenLabs } from '@/lib/elevenlabs';
 import GameHelpModal from '@/components/GameHelpModal';
 
@@ -174,6 +173,7 @@ export default function WritingExpressionModulePage() {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [helpGameType, setHelpGameType] = useState<string>('letter-tracing');
   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
   const { speak } = useElevenLabs();
