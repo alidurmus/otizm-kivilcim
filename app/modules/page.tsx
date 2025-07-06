@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ModuleCard from '@/components/ModuleCard';
 import Button from '@/components/Button';
@@ -103,11 +103,25 @@ const modules: Module[] = [
     icon: '🔤',
     isActive: true,
     route: '/exercise/alphabet-reading'
+  },
+  {
+    id: 'physics',
+    title: 'Fizik Dünyası',
+    description: 'Hareket, ağırlık, akış ve kuvvetlerle eğlenceli öğrenme',
+    icon: '🔬',
+    isActive: true,
+    route: '/exercise/physics'
   }
 ];
 
 export default function ModulesPage() {
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  // ✅ Hydration-safe: Only run on client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Calculate module counts
   const activeModules = modules.filter(module => module.isActive);
@@ -118,23 +132,24 @@ export default function ModulesPage() {
       try {
         await router.push(module.route);
         
-        // Check if navigation actually happened
-        setTimeout(() => {
-          const navSuccess = window.location.pathname === module.route;
-          
-          if (!navSuccess) {
-            // Fallback to hard navigation if router failed
-            window.location.href = module.route!;
-          }
-        }, 100);
+        // ✅ Hydration-safe: Only check window on client
+        if (isClient) {
+          setTimeout(() => {
+            const navSuccess = window.location.pathname === module.route;
+            
+            if (!navSuccess) {
+              // Fallback to hard navigation if router failed
+              window.location.href = module.route!;
+            }
+          }, 100);
+        }
         
       } catch (_error) {
-        // Router navigation failed - using fallback
-        // Fallback to hard navigation
-        window.location.href = module.route!;
+        // ✅ Hydration-safe: Only use window on client
+        if (isClient) {
+          window.location.href = module.route!;
+        }
       }
-    } else {
-      // Module not active or route missing - nothing to log
     }
   };
 
@@ -188,10 +203,8 @@ export default function ModulesPage() {
           {modules.map((module, index) => (
             <div 
               key={module.id}
-              className={`transform transition-all duration-500 ${
-                index % 2 === 0 ? 'animate-slow-slide-up' : 'animate-slow-slide-up'
-              }`}
-              style={{ animationDelay: `${index * 200}ms` }}
+              className="transform transition-all duration-500 animate-slow-slide-up"
+              style={isClient ? { animationDelay: `${index * 200}ms` } : undefined}
             >
               <ModuleCard
                 title={module.title}

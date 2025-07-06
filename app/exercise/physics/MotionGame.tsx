@@ -1,31 +1,31 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useElevenLabs } from '@/lib/elevenlabs';
 import Button from '@/components/Button';
 
 interface MotionGameProps {
   onBack: () => void;
 }
 
-interface MotionItem {
-  id: number;
-  name: string;
-  icon: string;
-  speed: 'fast' | 'slow' | 'stationary';
-  description: string;
-  sound: string;
+interface MotionQuestion {
+  object: string;
+  emoji: string;
+  correctAnswer: 'hızlı' | 'yavaş' | 'durgun';
+  options: string[];
+  soundDescription: string;
 }
 
-const MOTION_ITEMS: MotionItem[] = [
-  { id: 1, name: 'Araba', icon: '🚗', speed: 'fast', description: 'Hızla hareket eder', sound: 'Vııııın!' },
-  { id: 2, name: 'Kaplumbağa', icon: '🐢', speed: 'slow', description: 'Yavaş hareket eder', sound: 'Sessizce...' },
-  { id: 3, name: 'Masa', icon: '🪑', speed: 'stationary', description: 'Hareket etmez', sound: 'Sessiz' },
-  { id: 4, name: 'Uçak', icon: '✈️', speed: 'fast', description: 'Hızla hareket eder', sound: 'Vuvuvuuu!' },
-  { id: 5, name: 'Kedi', icon: '🐱', speed: 'slow', description: 'Yavaş hareket eder', sound: 'Miyav' },
-  { id: 6, name: 'Ev', icon: '🏠', speed: 'stationary', description: 'Hareket etmez', sound: 'Sessiz' },
-  { id: 7, name: 'Salyangoz', icon: '🐌', speed: 'slow', description: 'Çok yavaş hareket eder', sound: 'Şlap şlap' },
-  { id: 8, name: 'Roket', icon: '🚀', speed: 'fast', description: 'Çok hızla hareket eder', sound: 'Vooosh!' },
-];
+const motionItems = [
+  { name: 'araba', emoji: '🚗', motion: 'hızlı', sound: 'Vınn sesi çıkararak hızla gider' },
+  { name: 'kaplumbağa', emoji: '🐢', motion: 'yavaş', sound: 'Yavaş yavaş ilerler' },
+  { name: 'masa', emoji: '🪑', motion: 'durgun', sound: 'Hiç hareket etmez' },
+  { name: 'uçak', emoji: '✈️', motion: 'hızlı', sound: 'Gökyüzünde hızla uçar' },
+  { name: 'kedi', emoji: '🐱', motion: 'hızlı', sound: 'Hızla koşar ve zıplar' },
+  { name: 'ev', emoji: '🏠', motion: 'durgun', sound: 'Yerinde sabit durur' },
+  { name: 'salyangoz', emoji: '🐌', motion: 'yavaş', sound: 'Çok yavaş ilerler' },
+  { name: 'roket', emoji: '🚀', motion: 'hızlı', sound: 'Çok hızla uzaya fırlar' },
+] as const;
 
 const MOTION_TYPES = {
   fast: { name: 'Hızlı', icon: '⚡', color: 'bg-red-500', description: 'Çok hızla hareket eder' },
@@ -34,83 +34,79 @@ const MOTION_TYPES = {
 };
 
 export default function MotionGame({ onBack }: MotionGameProps) {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState<MotionQuestion | null>(null);
   const [score, setScore] = useState(0);
+  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [gameComplete, setGameComplete] = useState(false);
-  const [questions, setQuestions] = useState<MotionItem[]>([]);
+  const { speak } = useElevenLabs();
 
+  const generateQuestion = useCallback(() => {
+    const item = motionItems[Math.floor(Math.random() * motionItems.length)];
+    const options = ['hızlı', 'yavaş', 'durgun'].sort(() => Math.random() - 0.5);
+    
+    setCurrentQuestion({
+      object: item.name,
+      emoji: item.emoji,
+      correctAnswer: item.motion as 'hızlı' | 'yavaş' | 'durgun',
+      options,
+      soundDescription: item.sound
+    });
+    
+    setShowFeedback(false);
+    setSelectedAnswer(null);
+    
+    // Soruyu seslendir
+    setTimeout(() => {
+      speak(`Bu ${item.name} nasıl hareket eder?`, 'sentence');
+    }, 1000);
+  }, [speak]);
+
+  // İlk yükleme
   useEffect(() => {
-    // Soruları karıştır
-    const shuffled = [...MOTION_ITEMS].sort(() => Math.random() - 0.5).slice(0, 6);
-    setQuestions(shuffled);
+    generateQuestion();
+    speak('Hareket oyununa hoş geldin! Nesnelerin nasıl hareket ettiğini öğrenelim.', 'sentence');
   }, []);
 
-  const handleAnswer = (speed: string) => {
-    setSelectedAnswer(speed);
-    const correct = speed === questions[currentQuestion]?.speed;
+  const handleAnswer = async (answer: string) => {
+    if (!currentQuestion) return;
+    
+    setSelectedAnswer(answer);
+    const correct = answer === currentQuestion.correctAnswer;
+    setIsCorrect(correct);
+    setShowFeedback(true);
+    setTotalQuestions(prev => prev + 1);
     
     if (correct) {
-      setScore(score + 1);
+      setScore(prev => prev + 1);
+      await speak(`Aferin! ${currentQuestion.object} gerçekten ${currentQuestion.correctAnswer} hareket eder!`, 'celebration');
+    } else {
+      await speak(`${currentQuestion.object} aslında ${currentQuestion.correctAnswer} hareket eder. ${currentQuestion.soundDescription}`, 'sentence');
     }
     
-    setShowResult(true);
-    
+    // 4 saniye sonra yeni soru
     setTimeout(() => {
-      if (currentQuestion < questions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-        setSelectedAnswer(null);
-        setShowResult(false);
-      } else {
-        setGameComplete(true);
-      }
-    }, 2000);
+      generateQuestion();
+    }, 4000);
   };
 
-  const resetGame = () => {
-    setCurrentQuestion(0);
-    setScore(0);
-    setSelectedAnswer(null);
-    setShowResult(false);
-    setGameComplete(false);
-    const shuffled = [...MOTION_ITEMS].sort(() => Math.random() - 0.5).slice(0, 6);
-    setQuestions(shuffled);
+  const explainMotion = async () => {
+    if (!currentQuestion) return;
+    
+    await speak(`${currentQuestion.object} ${currentQuestion.soundDescription}`, 'sentence');
   };
 
-  if (questions.length === 0) {
-    return <div className="min-h-screen flex items-center justify-center">Yükleniyor...</div>;
-  }
-
-  if (gameComplete) {
+  if (!currentQuestion) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-            <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Tebrikler!</h2>
-            <p className="text-xl text-gray-600 mb-4">
-              Hareket oyununu tamamladın!
-            </p>
-            <p className="text-lg text-gray-700 mb-6">
-              Puanın: {score}/{questions.length}
-            </p>
-            
-            <div className="flex gap-4 justify-center">
-              <Button onClick={resetGame} variant="primary">
-                Tekrar Oyna
-              </Button>
-              <Button onClick={onBack} variant="secondary">
-                Geri Dön
-              </Button>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">🚗</div>
+          <div className="text-xl">Yükleniyor...</div>
         </div>
       </div>
     );
   }
-
-  const currentItem = questions[currentQuestion];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
@@ -120,101 +116,115 @@ export default function MotionGame({ onBack }: MotionGameProps) {
           <Button onClick={onBack} variant="secondary">
             ← Geri Dön
           </Button>
-          <div className="text-lg font-semibold text-gray-700">
-            Soru {currentQuestion + 1}/{questions.length} | Puan: {score}
+          <div className="bg-white px-4 py-2 rounded-lg shadow">
+            <span className="text-lg font-semibold text-blue-600">
+              Puan: {score}/{totalQuestions}
+            </span>
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
-          <div 
-            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
-          ></div>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">🚗 Hareket Oyunu</h1>
+          <p className="text-gray-600">Nesnelerin nasıl hareket ettiğini öğrenelim!</p>
         </div>
 
-        {/* Game Content */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Bu nesne nasıl hareket eder?
+        {/* Object Display */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">
+              Bu {currentQuestion.object} nasıl hareket eder?
             </h2>
             
-            <div className="inline-block p-6 bg-blue-50 rounded-xl mb-4">
-              <div className="text-8xl mb-4">{currentItem.icon}</div>
-              <h3 className="text-2xl font-bold text-gray-800">{currentItem.name}</h3>
-              <p className="text-gray-600 mt-2">{currentItem.sound}</p>
+            {/* Object */}
+            <div className="text-8xl mb-6 hover:scale-110 transition-transform duration-300">
+              {currentQuestion.emoji}
             </div>
+            
+            <p className="text-gray-600 mb-4">
+              {currentQuestion.soundDescription}
+            </p>
           </div>
-
-          {/* Answer Options */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {Object.entries(MOTION_TYPES).map(([key, type]) => {
-              const isSelected = selectedAnswer === key;
-              const isCorrect = key === currentItem.speed;
-              const showColors = showResult;
-              
-              let buttonClass = 'p-6 rounded-xl border-2 transition-all duration-300 cursor-pointer ';
-              
-              if (showColors) {
-                if (isCorrect) {
-                  buttonClass += 'bg-green-100 border-green-500 text-green-800';
-                } else if (isSelected && !isCorrect) {
-                  buttonClass += 'bg-red-100 border-red-500 text-red-800';
-                } else {
-                  buttonClass += 'bg-gray-100 border-gray-300 text-gray-600';
-                }
-              } else {
-                buttonClass += isSelected 
-                  ? 'bg-blue-100 border-blue-500 text-blue-800' 
-                  : 'bg-white border-gray-300 hover:border-blue-300 hover:bg-blue-50';
-              }
-
-              return (
-                <div
-                  key={key}
-                  onClick={() => !showResult && handleAnswer(key)}
-                  className={buttonClass}
-                >
-                  <div className="text-center">
-                    <div className="text-4xl mb-3">{type.icon}</div>
-                    <h4 className="text-xl font-bold mb-2">{type.name}</h4>
-                    <p className="text-sm">{type.description}</p>
-                  </div>
-                </div>
-              );
-            })}
+          
+          {/* Explain Button */}
+          <div className="text-center">
+            <button
+              onClick={explainMotion}
+              className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors"
+            >
+              🔊 Hareket Açıklaması
+            </button>
           </div>
-
-          {/* Result Message */}
-          {showResult && (
-            <div className="text-center p-4 rounded-lg">
-              {selectedAnswer === currentItem.speed ? (
-                <div className="text-green-600">
-                  <div className="text-3xl mb-2">✅</div>
-                  <p className="text-xl font-bold">Doğru! {currentItem.description}</p>
-                </div>
-              ) : (
-                <div className="text-red-600">
-                  <div className="text-3xl mb-2">❌</div>
-                  <p className="text-xl font-bold">
-                    Doğru cevap: {MOTION_TYPES[currentItem.speed].name}
-                  </p>
-                  <p className="text-lg">{currentItem.description}</p>
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
-        {/* Physics Fact */}
-        <div className="mt-6 bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-2">🤓 Fizik Bilgisi:</h3>
-          <p className="text-gray-600">
-            Hareket, bir nesnenin zaman içinde yer değiştirmesidir. 
-            Bazı nesneler çok hızlı (araba, uçak), bazıları yavaş (kaplumbağa), 
-            bazıları da hiç hareket etmez (ev, masa).
-          </p>
+        {/* Answer Options */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">
+            Hareket türünü seç:
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            {currentQuestion.options.map((option) => (
+              <button
+                key={option}
+                onClick={() => handleAnswer(option)}
+                disabled={showFeedback}
+                className={`
+                  py-6 px-4 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300
+                  text-2xl font-bold border-4 
+                  ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105'}
+                  ${
+                    showFeedback && option === currentQuestion.correctAnswer
+                      ? 'border-green-500 bg-green-100 text-green-700'
+                      : showFeedback && option === selectedAnswer && !isCorrect
+                      ? 'border-red-500 bg-red-100 text-red-700'
+                      : 'border-gray-200 text-blue-600 hover:border-blue-300'
+                  }
+                `}
+              >
+                <div className="text-3xl mb-2">
+                  {option === 'hızlı' ? '🏃‍♂️' : option === 'yavaş' ? '🐌' : '⏸️'}
+                </div>
+                {option.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Feedback */}
+        {showFeedback && (
+          <div className="text-center mt-8">
+            <div className={`text-3xl font-bold mb-2 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+              {isCorrect ? '🎉 Harika!' : '🤔 Tekrar Deneyelim'}
+            </div>
+            <div className="text-gray-600 text-lg">
+              {isCorrect 
+                ? `Evet! ${currentQuestion.object} ${currentQuestion.correctAnswer} hareket eder.`
+                : `${currentQuestion.object} aslında ${currentQuestion.correctAnswer} hareket eder.`
+              }
+            </div>
+          </div>
+        )}
+
+        {/* Physics Facts */}
+        <div className="mt-8 bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">🧪 Fizik Bilgisi</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="text-center p-3 bg-red-50 rounded-lg">
+              <div className="text-2xl mb-2">🏃‍♂️</div>
+              <h4 className="font-semibold text-red-800 mb-1">Hızlı Hareket</h4>
+              <p className="text-red-600">Kısa sürede uzun mesafe almak</p>
+            </div>
+            <div className="text-center p-3 bg-yellow-50 rounded-lg">
+              <div className="text-2xl mb-2">🐌</div>
+              <h4 className="font-semibold text-yellow-800 mb-1">Yavaş Hareket</h4>
+              <p className="text-yellow-600">Uzun sürede kısa mesafe almak</p>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="text-2xl mb-2">⏸️</div>
+              <h4 className="font-semibold text-gray-800 mb-1">Durgun</h4>
+              <p className="text-gray-600">Hiç hareket etmemek</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

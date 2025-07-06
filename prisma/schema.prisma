@@ -1,0 +1,514 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ====================
+// USER MANAGEMENT
+// ====================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  displayName   String
+  dateOfBirth   DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lastActiveAt  DateTime @default(now())
+  isActive      Boolean  @default(true)
+
+  // Diagnosis information
+  diagnosisType     DiagnosisType
+  diagnosisSeverity Severity
+  diagnosisDate     DateTime
+  clinicianNotes    String?
+
+  // Parent information
+  parentName         String
+  parentEmail        String
+  parentPhone        String?
+  parentRelationship ParentRelation
+
+  // Subscription
+  subscriptionType   SubscriptionType @default(FREE)
+  subscriptionStart  DateTime         @default(now())
+  subscriptionEnd    DateTime?
+
+  // Relations
+  preferences UserPreferences?
+  progress    Progress[]
+  sessions    Session[]
+  voiceUsages VoiceUsage[]
+
+  @@map("users")
+}
+
+model UserPreferences {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Theme and UI
+  theme           Theme  @default(LIGHT)
+  language        String @default("tr")
+  fontSize        FontSize @default(MEDIUM)
+  reduceMotion    Boolean  @default(false)
+  highContrast    Boolean  @default(false)
+  touchSensitivity TouchSensitivity @default(MEDIUM)
+
+  // Voice preferences (Gender-balanced Turkish voices)
+  preferredGender   VoiceGender      @default(MIXED)
+  voiceVolume       Float            @default(0.8)
+  speechRate        Float            @default(1.0)
+
+  // Voice assignments for content types
+  letterVoice       String @default("Adam")      // Default male calm voice
+  wordVoice         String @default("Rachel")    // Default female professional voice
+  sentenceVoice     String @default("Antoni")    // Default male storyteller voice
+  celebrationVoice  String @default("Josh")      // Default male energetic voice
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_preferences")
+}
+
+// ====================
+// MODULES & CONTENT
+// ====================
+
+model Module {
+  id                  String    @id
+  name                String
+  slug                String    @unique
+  description         String
+  icon                String
+  difficulty          Difficulty
+  estimatedDuration   Int       // minutes
+  learningObjectives  String    // JSON array
+  prerequisites       String    // JSON array of module IDs
+  isActive            Boolean   @default(true)
+  order               Int
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Voice configuration for this module
+  primaryVoiceName    String    @default("Gülsu")
+  primaryVoiceId      String    @default("9BWtsMINqrJLrRacOk9x")
+  voiceSettings       String    // JSON for voice configuration
+
+  // Relations
+  moduleProgress      ModuleProgress[]
+  activities          Activity[]
+
+  @@map("modules")
+}
+
+model Activity {
+  id          String      @id @default(cuid())
+  moduleId    String
+  module      Module      @relation(fields: [moduleId], references: [id])
+  
+  name        String
+  type        ActivityType
+  description String
+  content     String      // JSON content
+  difficulty  Difficulty
+  order       Int
+  
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  userActivities UserActivity[]
+
+  @@map("activities")
+}
+
+// ====================
+// PROGRESS TRACKING
+// ====================
+
+model Progress {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Overall statistics
+  totalModulesActive        Int @default(10)
+  completedModules          Int @default(0)
+  totalActivitiesCompleted  Int @default(0)
+  totalTimeSpent            Int @default(0) // minutes
+  averageScorePercentage    Float @default(0.0)
+  currentStreak             Int @default(0)
+  longestStreak             Int @default(0)
+
+  // Voice usage statistics
+  totalVoiceInteractions    Int @default(0)
+  maleVoiceUsage            Int @default(0)    // Adam, Antoni, Josh
+  femaleVoiceUsage          Int @default(0)    // Bella, Rachel
+  
+  // Content type usage
+  letterInteractions        Int @default(0)
+  wordInteractions          Int @default(0)
+  sentenceInteractions      Int @default(0)
+  celebrationInteractions   Int @default(0)
+
+  lastUpdated DateTime @updatedAt
+
+  // Relations
+  moduleProgress ModuleProgress[]
+
+  @@unique([userId])
+  @@map("progress")
+}
+
+model ModuleProgress {
+  id                   String @id @default(cuid())
+  progressId          String
+  progress            Progress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  
+  moduleId            String
+  module              Module @relation(fields: [moduleId], references: [id])
+  moduleName          String
+  status              ModuleStatus @default(NOT_STARTED)
+  completionPercentage Float @default(0.0)
+  activitiesCompleted Int @default(0)
+  totalActivities     Int @default(0)
+  averageScore        Float @default(0.0)
+  timeSpent           Int @default(0) // minutes
+  bestScore           Float @default(0.0)
+  attemptsCount       Int @default(0)
+  
+  lastActivityAt      DateTime?
+  firstStartedAt      DateTime?
+  completedAt         DateTime?
+  
+  // Module-specific stats (JSON format)
+  specificStats       String? // JSON for module-specific metrics
+
+  @@unique([progressId, moduleId])
+  @@map("module_progress")
+}
+
+model UserActivity {
+  id            String   @id @default(cuid())
+  userId        String
+  activityId    String
+  activity      Activity @relation(fields: [activityId], references: [id])
+  
+  sessionId     String?
+  session       Session? @relation(fields: [sessionId], references: [id])
+  
+  startTime     DateTime @default(now())
+  endTime       DateTime?
+  duration      Int?     // seconds
+  score         Float?   // 0-100
+  completed     Boolean  @default(false)
+  attemptsCount Int      @default(1)
+  
+  // User actions during activity (JSON format)
+  userActions   String?  // JSON array of actions
+  
+  createdAt     DateTime @default(now())
+
+  @@map("user_activities")
+}
+
+// ====================
+// VOICE SYSTEM
+// ====================
+
+model VoiceUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String?
+
+  // Voice data
+  voiceId       String
+  voiceName     VoiceName
+  gender        VoiceGender
+  contentType   ContentType
+  text          String
+  textLength    Int
+  language      String      @default("tr")
+  
+  // Turkish character tracking
+  hasTurkishChars Boolean @default(false)
+  turkishChars    String? // JSON array of turkish chars used
+
+  // Audio source tracking
+  audioSource         AudioSource
+  loadTime           Int         // milliseconds
+  fileSize           Int?        // bytes for static files
+  apiResponseTime    Int?        // milliseconds for API calls
+  fallbackReason     String?
+
+  // Module context
+  moduleId       String
+  activityType   String?
+  
+  // User interaction
+  userSatisfaction    Float?   // 1-5 rating
+  playbackCompleted   Boolean  @default(false)
+  playbackDuration    Int?     // milliseconds
+  userInitiated       Boolean  @default(true)
+
+  // Performance metrics
+  audioQuality           AudioQuality @default(HIGH)
+  pronunciationAccuracy  Float        @default(5.0) // 1-5
+  speedAppropriate       Boolean      @default(true)
+  clarityRating         Float        @default(5.0) // 1-5
+
+  createdAt     DateTime @default(now())
+  deviceInfo    String?  // JSON for device information
+
+  @@map("voice_usage")
+}
+
+model StaticAudioFile {
+  id          String      @id @default(cuid())
+  fileName    String      @unique
+  filePath    String
+  contentType ContentType
+  content     String      // The text content
+  
+  // Voice generation info
+  voiceName           VoiceName
+  voiceId             String
+  gender              VoiceGender
+  generationDate      DateTime
+  voiceSettings       String      // JSON settings
+  
+  // File metadata
+  format              String      @default("mp3")
+  duration            Float       // seconds
+  fileSize            Int         // bytes
+  bitrate             Int         // kbps
+  sampleRate          Int         // Hz
+  quality             AudioQuality @default(HIGH)
+  
+  // Turkish character info
+  isSpecialTurkishChar Boolean @default(false)
+  urlSafeMapping       String?
+  phoneticTranscription String?  // IPA notation
+  
+  // Usage statistics
+  totalPlays      Int      @default(0)
+  uniqueUsers     Int      @default(0)
+  averageLoadTime Float    @default(0.0) // ms
+  cacheHitRate    Float    @default(0.0) // percentage
+  lastUsed        DateTime @default(now())
+  
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("static_audio_files")
+}
+
+// ====================
+// SESSIONS & ANALYTICS
+// ====================
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startTime DateTime @default(now())
+  endTime   DateTime?
+  duration  Int?     // minutes
+  
+  // Device and performance info
+  deviceInfo          String? // JSON
+  performanceMetrics  String? // JSON
+  
+  // Relations
+  userActivities UserActivity[]
+  
+  @@map("sessions")
+}
+
+model Analytics {
+  id        String        @id @default(cuid())
+  date      String        // YYYY-MM-DD
+  period    AnalyticsPeriod
+  
+  // Platform statistics
+  totalActiveUsers      Int @default(0)
+  newRegistrations      Int @default(0)
+  totalSessions         Int @default(0)
+  averageSessionDuration Float @default(0.0) // minutes
+  retentionDay1         Float @default(0.0) // percentage
+  retentionDay7         Float @default(0.0) // percentage
+  retentionDay30        Float @default(0.0) // percentage
+  
+  // Module usage (JSON format)
+  moduleUsageStats      String? // JSON object
+  
+  // Voice system analytics
+  totalVoiceInteractions Int @default(0)
+  maleVoicePercentage   Float @default(60.0)  // Target: ~60%
+  femaleVoicePercentage Float @default(40.0)  // Target: ~40%
+  
+  // Audio source distribution
+  staticFileUsage       Float @default(70.0)  // Target: 70%+
+  elevenLabsSDKUsage    Float @default(25.0)  // Target: 20-25%
+  apiRouteUsage         Float @default(5.0)   // Target: 5-10%
+  webSpeechUsage        Float @default(0.0)   // Target: <5%
+  
+  // Quality metrics
+  userSatisfactionScore    Float @default(4.0) // 1-5, target: >4.0
+  pronunciationAccuracy    Float @default(4.2) // 1-5, target: >4.2
+  audioClarity            Float @default(4.0) // 1-5, target: >4.0
+  turkishCharacterAccuracy Float @default(4.2) // Turkish phoneme accuracy
+  
+  // Technical performance
+  averagePageLoadTime     Float @default(0.0) // ms
+  averageAudioLoadTime    Float @default(100.0) // ms, target: <100ms
+  errorRate              Float @default(0.0) // percentage
+  uptime                 Float @default(99.9) // percentage
+  
+  createdAt DateTime @default(now())
+
+  @@unique([date, period])
+  @@map("analytics")
+}
+
+model SystemSettings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+  
+  description String?
+  category   String  @default("general")
+  isActive   Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+// ====================
+// ENUMS
+// ====================
+
+enum DiagnosisType {
+  AUTISM
+  ASPERGER
+  PDD
+  OTHER
+}
+
+enum Severity {
+  MILD
+  MODERATE
+  SEVERE
+}
+
+enum ParentRelation {
+  MOTHER
+  FATHER
+  GUARDIAN
+  CAREGIVER
+}
+
+enum SubscriptionType {
+  FREE
+  PREMIUM
+  EDUCATOR
+  INSTITUTION
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  HIGH_CONTRAST
+}
+
+enum FontSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum TouchSensitivity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum VoiceGender {
+  MALE
+  FEMALE
+  MIXED
+}
+
+enum VoiceName {
+  ADAM      // Male, calm, clear (letters)
+  ANTONI    // Male, storyteller (sentences)
+  JOSH      // Male, energetic (celebrations)
+  BELLA     // Female, gentle
+  RACHEL    // Female, professional (words)
+  GULSU     // Default Aria voice (9BWtsMINqrJLrRacOk9x)
+}
+
+enum ContentType {
+  LETTER
+  WORD
+  SENTENCE
+  CELEBRATION
+}
+
+enum AudioSource {
+  STATIC_FILE
+  ELEVENLABS_SDK
+  API_ROUTE
+  WEB_SPEECH
+}
+
+enum AudioQuality {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum ActivityType {
+  QUIZ
+  MATCHING
+  DRAG_DROP
+  DRAWING
+  LISTENING
+  READING
+  PUZZLE
+  MEMORY_GAME
+}
+
+enum ModuleStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum AnalyticsPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+}

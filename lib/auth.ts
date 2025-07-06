@@ -1,243 +1,333 @@
-import { 
-  signInAnonymously, 
-  onAuthStateChanged, 
-  User 
-} from 'firebase/auth';
-import { auth } from './firebase';
-import { createUserData, getUserData, UserData } from './firestore';
-import { Timestamp } from 'firebase/firestore';
+import { db } from './database'
+import type { User, UserPreferences } from './database'
 
-// Mock user for development and network failures
-const mockUser = {
-  uid: 'mock-user-id',
-  email: null,
-  displayName: 'Test User',
-  isAnonymous: true,
-  // Add additional properties to match User interface
-  emailVerified: false,
-  phoneNumber: null,
-  photoURL: null,
-  providerId: 'anonymous',
-  refreshToken: '',
-  tenantId: null,
-  metadata: {
-    creationTime: new Date().toISOString(),
-    lastSignInTime: new Date().toISOString()
-  }
-} as User;
+// Mock authentication for development - SQLite based
+export interface AuthUser {
+  id: string
+  email: string
+  displayName: string
+  isActive: boolean
+}
 
-// Track authentication mode
-let isUsingMockAuth = false;
+export interface LoginCredentials {
+  email: string
+  password: string
+}
 
-// Check if Firebase is properly initialized and available
-const isFirebaseAvailable = () => {
-  try {
-    return auth !== null && typeof signInAnonymously === 'function';
-  } catch {
-    return false;
-  }
-};
+export interface RegisterData {
+  email: string
+  password: string
+  displayName: string
+  dateOfBirth: Date
+  diagnosisType: 'AUTISM' | 'ASPERGER' | 'PDD' | 'OTHER'
+  diagnosisSeverity: 'MILD' | 'MODERATE' | 'SEVERE'
+  diagnosisDate: Date
+  parentName: string
+  parentEmail: string
+  parentPhone?: string
+  parentRelationship: 'MOTHER' | 'FATHER' | 'GUARDIAN' | 'CAREGIVER'
+}
 
-// Test Firebase connectivity
-const testFirebaseConnectivity = async (): Promise<boolean> => {
-  if (!isFirebaseAvailable()) return false;
-  
-  try {
-    // Try a simple auth check with timeout
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Connection timeout')), 3000)
-    );
-    
-    const connectivityTest = new Promise((resolve) => {
-      try {
-        // Test if we can access auth state
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const unsubscribe = onAuthStateChanged(auth as any, () => {
-          unsubscribe();
-          resolve(true);
-        });
-      } catch {
-        resolve(false);
+class MockAuth {
+  private currentUser: AuthUser | null = null
+
+  // Mock login - in production, replace with proper authentication
+  async login(credentials: LoginCredentials): Promise<AuthUser> {
+    try {
+      const user = await db.user.findUnique({
+        where: { email: credentials.email }
+      })
+
+      if (!user) {
+        throw new Error('Kullanıcı bulunamadı')
       }
-    });
-    
-    await Promise.race([connectivityTest, timeoutPromise]);
-    return true;
-  } catch (_error) {
-    return false;
-  }
-};
 
-// Anonymous sign in with robust error handling
-export const signInAnonymous = async (): Promise<User | null> => {
-  // First check if Firebase is available
-  if (!isFirebaseAvailable()) {
-    isUsingMockAuth = true;
-    return mockUser;
-  }
+      if (!user.isActive) {
+        throw new Error('Hesap deaktif durumda')
+      }
 
-  try {
-    // Test connectivity first
-    const isConnected = await testFirebaseConnectivity();
-    if (!isConnected) {
-      isUsingMockAuth = true;
-      return mockUser;
+      // Mock password validation (in production, use proper hashing)
+      // For now, accept any password for development
+
+      this.currentUser = {
+        id: user.id,
+        email: user.email,
+        displayName: user.displayName,
+        isActive: user.isActive
+      }
+
+      // Update last active time
+      await db.user.update({
+        where: { id: user.id },
+        data: { lastActiveAt: new Date() }
+      })
+
+      return this.currentUser
+    } catch (error) {
+      console.error('Login error:', error)
+      throw error
     }
+  }
 
-    // Try to sign in anonymously with timeout - with type safety
-    if (!auth || typeof auth.currentUser === 'undefined') {
-      throw new Error('Auth not properly initialized');
-    }
-    
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const signInPromise = signInAnonymously(auth as any); // Type assertion for Firebase compatibility
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Sign in timeout')), 5000)
-    );
-    
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await Promise.race([signInPromise, timeoutPromise]) as any;
-    
-    if (result && typeof result === 'object' && 'user' in result && result.user) {
-      // Firebase authentication successful
-      isUsingMockAuth = false;
-      const user = result.user as User;
-      
-      // Try to create user data (with fallback)
-      try {
-        const userData = await getUserData(user.uid);
-        
-        if (!userData) {
-          const initialUserData: UserData = {
-            profile: {
-              name: `Çocuk ${Math.floor(Math.random() * 1000)}`,
-              createdAt: Timestamp.now()
-            },
-            sensory_settings: {
-              visualTheme: 'calm',
-              soundVolume: 50,
-              reduceMotion: false,
-              hapticFeedback: true,
-              rewardStyle: 'animated'
-            },
-            avatar: {
-              character: 'kivilcim',
-              color: 'blue',
-              accessories: []
-            }
-          };
-          
-          await createUserData(user.uid, initialUserData);
-          // User data created successfully
+  // Mock register
+  async register(data: RegisterData): Promise<AuthUser> {
+    try {
+      // Check if user already exists
+      const existingUser = await db.user.findUnique({
+        where: { email: data.email }
+      })
+
+      if (existingUser) {
+        throw new Error('Bu e-posta adresi zaten kullanımda')
+      }
+
+      // Create new user
+      const newUser = await db.user.create({
+        data: {
+          email: data.email,
+          displayName: data.displayName,
+          dateOfBirth: data.dateOfBirth,
+          diagnosisType: data.diagnosisType,
+          diagnosisSeverity: data.diagnosisSeverity,
+          diagnosisDate: data.diagnosisDate,
+          parentName: data.parentName,
+          parentEmail: data.parentEmail,
+          parentPhone: data.parentPhone,
+          parentRelationship: data.parentRelationship,
+          isActive: true,
+          subscriptionType: 'FREE',
+          subscriptionStart: new Date(),
         }
-      } catch (_firestoreError) {
-        console.warn('⚠️ Firestore not available, continuing with authentication only');
+      })
+
+      // Create default user preferences
+      await db.user.update({
+        where: { id: newUser.id },
+        data: {
+          preferences: {
+            create: {
+              theme: 'LIGHT',
+              language: 'tr',
+              fontSize: 'MEDIUM',
+              preferredGender: 'MIXED',
+              voiceVolume: 0.8,
+              speechRate: 1.0,
+              letterVoice: 'Adam',
+              wordVoice: 'Rachel',
+              sentenceVoice: 'Antoni',
+              celebrationVoice: 'Josh'
+            }
+          }
+        }
+      })
+
+      // Initialize progress tracking
+      await db.progress.create({
+        data: {
+          userId: newUser.id,
+          totalModulesActive: 10,
+        }
+      })
+
+      this.currentUser = {
+        id: newUser.id,
+        email: newUser.email,
+        displayName: newUser.displayName,
+        isActive: newUser.isActive
+      }
+
+      return this.currentUser
+    } catch (error) {
+      console.error('Register error:', error)
+      throw error
+    }
+  }
+
+  // Get current user
+  getCurrentUser(): AuthUser | null {
+    return this.currentUser
+  }
+
+  // Mock logout
+  async logout(): Promise<void> {
+    this.currentUser = null
+  }
+
+  // Check if authenticated
+  isAuthenticated(): boolean {
+    return this.currentUser !== null
+  }
+
+  // Get user profile with preferences
+  async getUserProfile(userId: string): Promise<(User & { preferences: UserPreferences | null }) | null> {
+    try {
+      const user = await db.user.findUnique({
+        where: { id: userId },
+        include: {
+          preferences: true
+        }
+      })
+
+      return user
+    } catch (error) {
+      console.error('Get user profile error:', error)
+      return null
+    }
+  }
+
+  // Update user preferences
+  async updateUserPreferences(userId: string, preferences: Partial<UserPreferences>): Promise<UserPreferences> {
+    try {
+      const updatedPreferences = await prisma.userPreferences.upsert({
+        where: { userId },
+        update: preferences,
+        create: {
+          userId,
+          ...preferences
+        }
+      })
+
+      return updatedPreferences
+    } catch (error) {
+      console.error('Update preferences error:', error)
+      throw error
+    }
+  }
+
+  // Anonymous sign in (mock implementation)
+  async signInAnonymous(): Promise<AuthUser> {
+    try {
+      const anonymousUser: AuthUser = {
+        id: `anon_${Date.now()}`,
+        email: 'anonymous@kivilcim.com',
+        displayName: 'Misafir Kullanıcı',
+        isActive: true
       }
       
-      return user;
+      this.currentUser = anonymousUser
+      return anonymousUser
+    } catch (error) {
+      console.error('Anonymous sign in error:', error)
+      throw error
     }
-    
-    throw new Error('Invalid sign in result');
-    
-  } catch (error: unknown) {
-    // Handle specific Firebase errors
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const firebaseError = error as any;
-    if (firebaseError?.code) {
-      switch (firebaseError.code) {
-        case 'auth/network-request-failed':
-          console.warn('🌐 Network request failed, using mock authentication');
-          break;
-        case 'auth/timeout':
-          console.warn('⏱️ Authentication timeout, using mock authentication');
-          break;
-        case 'auth/too-many-requests':
-          console.warn('🚫 Too many requests, using mock authentication');
-          break;
-        default:
-          console.warn(`🔥 Firebase auth error (${firebaseError.code}):`, firebaseError.message);
-      }
-    } else {
-      const errorMessage = firebaseError?.message || firebaseError;
-      console.warn('🔥 Firebase authentication failed:', errorMessage);
-    }
-    
-    // Always fallback to mock user
-    isUsingMockAuth = true;
-    return mockUser;
-  }
-};
-
-// Monitor auth state with robust error handling
-export const onAuthStateChange = (callback: (user: User | null) => void) => {
-  if (!isFirebaseAvailable()) {
-    console.warn('🔄 Using mock auth state listener');
-    // Mock implementation with slight delay to simulate real behavior
-    setTimeout(() => callback(mockUser), 100);
-    return () => {};
   }
 
+  // Auth state change listener (mock implementation)
+  onAuthStateChange(callback: (user: AuthUser | null) => void): () => void {
+    // In a real implementation, this would listen to Firebase auth state changes
+    // For now, just call immediately with current user
+    callback(this.currentUser)
+    
+    // Return unsubscribe function
+    return () => {
+      // Cleanup logic would go here
+    }
+  }
+
+  // Admin check (mock implementation)
+  async isAdmin(userId: string): Promise<boolean> {
+    try {
+      const user = await db.user.findUnique({
+        where: { id: userId }
+      })
+
+      // Mock admin check - in production, add admin role to user model
+      const adminEmails = [
+        'admin@kivilcim.com',
+        'test@kivilcim.com',
+        'demo@kivilcim.com'
+      ]
+
+      return user ? adminEmails.includes(user.email) : false
+    } catch (error) {
+      console.error('Admin check error:', error)
+      return false
+    }
+  }
+}
+
+// Export singleton instance
+export const auth = new MockAuth()
+
+// Helper functions for Next.js API routes
+export async function requireAuth(req: any): Promise<AuthUser> {
+  const authHeader = req.headers.authorization
+  
+  if (!authHeader) {
+    throw new Error('Authentication required')
+  }
+
+  // Mock token validation - in production, validate JWT tokens
+  const token = authHeader.replace('Bearer ', '')
+  
+  // For development, accept any non-empty token
+  if (!token) {
+    throw new Error('Invalid token')
+  }
+
+  // Return current user (in production, decode token to get user ID)
+  const currentUser = auth.getCurrentUser()
+  
+  if (!currentUser) {
+    throw new Error('User not authenticated')
+  }
+
+  return currentUser
+}
+
+// Create demo users for development
+export async function createDemoUsers() {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return onAuthStateChanged(auth as any, (user) => {
-      if (user) {
-        console.warn('👤 Auth state changed: User signed in');
-        isUsingMockAuth = false;
-        callback(user);
-      } else if (isUsingMockAuth) {
-        console.warn('👤 Auth state changed: Using mock user');
-        callback(mockUser);
-      } else {
-        console.warn('👤 Auth state changed: No user');
-        callback(null);
+    const demoUsers = [
+      {
+        email: 'demo@kivilcim.com',
+        displayName: 'Demo Çocuk',
+        dateOfBirth: new Date('2018-05-15'),
+        diagnosisType: 'AUTISM' as const,
+        diagnosisSeverity: 'MILD' as const,
+        diagnosisDate: new Date('2021-03-10'),
+        parentName: 'Demo Anne',
+        parentEmail: 'anne@demo.com',
+        parentRelationship: 'MOTHER' as const,
+      },
+      {
+        email: 'test@kivilcim.com',
+        displayName: 'Test Öğrenci',
+        dateOfBirth: new Date('2017-08-22'),
+        diagnosisType: 'ASPERGER' as const,
+        diagnosisSeverity: 'MODERATE' as const,
+        diagnosisDate: new Date('2020-11-05'),
+        parentName: 'Test Baba',
+        parentEmail: 'baba@test.com',
+        parentRelationship: 'FATHER' as const,
       }
-    }, (error) => {
-      console.warn('🔥 Auth state listener error:', error);
-      // Fallback to mock user on error
-      console.warn('🔄 Auth state error, using mock user');
-      isUsingMockAuth = true;
-      callback(mockUser);
-    });
-  } catch (error) {
-    console.error('🔥 Error setting up auth state listener:', error);
-    // Fallback to mock
-    console.warn('🔄 Using mock auth state listener due to setup error');
-    setTimeout(() => {
-      isUsingMockAuth = true;
-      callback(mockUser);
-    }, 100);
-    return () => {};
-  }
-};
+    ]
 
-// Get current user with error handling
-export const getCurrentUser = (): User | null => {
-  if (!isFirebaseAvailable()) {
-    return mockUser;
-  }
+    for (const userData of demoUsers) {
+      const existingUser = await db.user.findUnique({
+        where: { email: userData.email }
+      })
 
-  try {
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      return currentUser;
-    } else if (isUsingMockAuth) {
-      return mockUser;
-    } else {
-      return null;
+      if (!existingUser) {
+        await auth.register({
+          ...userData,
+          password: 'demo123' // Mock password
+        })
+        console.log(`✅ Demo user created: ${userData.email}`)
+      }
     }
+
+    return true
   } catch (error) {
-    console.error('🔥 Error getting current user:', error);
-    return mockUser;
+    console.error('❌ Demo user creation failed:', error)
+    return false
   }
-};
+}
 
-// Helper to check if using mock authentication
-export const isUsingMockAuthentication = (): boolean => {
-  return isUsingMockAuth || !isFirebaseAvailable();
-};
+// Export types
+export type { User, UserPreferences } from './database'
 
-// Reset authentication state (useful for development)
-export const resetAuthState = () => {
-  isUsingMockAuth = false;
-  console.warn('🔄 Authentication state reset');
-}; 
+// Export missing functions that are being imported
+export const signInAnonymous = () => auth.signInAnonymous()
+export const getCurrentUser = () => auth.getCurrentUser()
+export const onAuthStateChange = (callback: (user: AuthUser | null) => void) => auth.onAuthStateChange(callback) 

@@ -70,10 +70,15 @@ export default function AdditionGame({ onBack }: AdditionGameProps) {
     }, 1000);
   }, [speak]);
 
+  // ✅ FIX: Initialize game once on mount (no dependency loop)
   useEffect(() => {
-    generateQuestion();
     speak('Toplama oyununa hoş geldin! Sayıları toplayalım.', 'sentence');
-  }, [speak, generateQuestion]);
+    
+    // Generate first question after welcome message
+    setTimeout(() => {
+      generateQuestion();
+    }, 2000);
+  }, []); // ✅ Empty deps - only runs once
 
   const handleAnswer = async (answer: number) => {
     if (!currentQuestion) return;

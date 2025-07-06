@@ -85,18 +85,30 @@
     "fix:config": "eslint *.config.* *.setup.* --ext .js,.ts,.mjs --fix",
     "clean": "rm -rf .next out dist",
     "clean:cache": "rm -rf .next/cache",
-    "clean:all": "npm-run-all clean && rm -rf node_modules"
+    "clean:all": "npm-run-all clean && rm -rf node_modules",
+    "db:init": "cross-env DATABASE_URL=\"file:./dev.db\" tsx scripts/init-database.ts",
+    "db:reset": "rm -f dev.db && npm run db:init",
+    "db:studio": "npx prisma studio",
+    "db:push": "cross-env DATABASE_URL=\"file:./dev.db\" npx prisma db push",
+    "db:generate": "npx prisma generate",
+    "db:migrate": "cross-env DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev",
+    "db:seed": "npm run db:init",
+    "db:backup": "cp dev.db dev.db.backup",
+    "db:restore": "cp dev.db.backup dev.db"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.5.0",
+    "@prisma/client": "^6.11.1",
     "axios": "^1.10.0",
     "dotenv": "^17.0.1",
     "firebase": "^11.10.0",
     "lucide-react": "^0.525.0",
     "next": "15.3.4",
     "next-themes": "^0.4.6",
+    "prisma": "^6.11.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "sqlite3": "^5.1.7",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.25.74"
   },
@@ -125,6 +137,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "msw": "^2.10.3",
     "tailwindcss": "^4",
+    "tsx": "^4.20.3",
     "typescript": "^5",
     "webpack-bundle-analyzer": "^4.10.2"
   }

@@ -20,29 +20,29 @@ export default function PhysicsPage() {
     {
       id: 'motion' as GameType,
       title: '🚗 Hareket Oyunu',
-      description: 'Nesnelerin hareketini keşfet: hızlı, yavaş, durgun',
+      description: 'Hızlı, yavaş ve durgun nesneleri tanı',
       color: 'bg-blue-500 hover:bg-blue-600',
       icon: '🚗',
     },
     {
       id: 'weight' as GameType,
       title: '⚖️ Ağırlık Oyunu',
-      description: 'Hafif ve ağır nesneleri karşılaştır',
+      description: 'Ağır ve hafif nesneleri öğren',
       color: 'bg-green-500 hover:bg-green-600',
       icon: '⚖️',
     },
     {
       id: 'flow' as GameType,
       title: '💧 Akış Oyunu',
-      description: 'Su ve havanın akışını gözlemle',
+      description: 'Su ve hava akışını keşfet',
       color: 'bg-cyan-500 hover:bg-cyan-600',
       icon: '💧',
     },
     {
       id: 'force' as GameType,
       title: '💪 Kuvvet Oyunu',
-      description: 'İtme, çekme ve döndürme kuvvetleri',
-      color: 'bg-orange-500 hover:bg-orange-600',
+      description: 'İtme ve çekme kuvvetlerini öğren',
+      color: 'bg-purple-500 hover:bg-purple-600',
       icon: '💪',
     },
   ];
@@ -98,10 +98,10 @@ export default function PhysicsPage() {
           </div>
           
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            🔬 Fizik ve Fen Dünyası
+            🔬 Fizik Dünyası
           </h1>
           <p className="text-lg text-gray-600">
-            Doğanın yasalarını keşfet ve eğlenerek öğren!
+            Hareket, ağırlık, akış ve kuvvetlerle eğlenceli öğrenme!
           </p>
         </div>
 
@@ -146,10 +146,10 @@ export default function PhysicsPage() {
         <div className="bg-white rounded-xl shadow-lg p-6">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              🌟 Fizik Kavramlarını Keşfet
+              🌟 Fizik Kavramları Öğren
             </h2>
             <p className="text-gray-600 mb-6">
-              Günlük yaşamdaki fizik olaylarını anlayalım!
+              Temel fizik kavramlarını oyunlarla keşfet!
             </p>
           </div>
           
@@ -157,25 +157,25 @@ export default function PhysicsPage() {
             <div className="p-4 bg-blue-50 rounded-lg text-center">
               <div className="text-3xl mb-2">🚗</div>
               <h3 className="font-semibold mb-1 text-blue-800">Hareket</h3>
-              <p className="text-sm text-blue-600">Hızlı, yavaş, durgun</p>
+              <p className="text-sm text-blue-600">Hızlı, yavaş ve durgun kavramları</p>
             </div>
             
             <div className="p-4 bg-green-50 rounded-lg text-center">
               <div className="text-3xl mb-2">⚖️</div>
               <h3 className="font-semibold mb-1 text-green-800">Ağırlık</h3>
-              <p className="text-sm text-green-600">Hafif ve ağır nesneler</p>
+              <p className="text-sm text-green-600">Ağır ve hafif nesneler</p>
             </div>
             
             <div className="p-4 bg-cyan-50 rounded-lg text-center">
               <div className="text-3xl mb-2">💧</div>
               <h3 className="font-semibold mb-1 text-cyan-800">Akış</h3>
-              <p className="text-sm text-cyan-600">Su ve hava akımları</p>
+              <p className="text-sm text-cyan-600">Su ve hava akışı</p>
             </div>
             
-            <div className="p-4 bg-orange-50 rounded-lg text-center">
+            <div className="p-4 bg-purple-50 rounded-lg text-center">
               <div className="text-3xl mb-2">💪</div>
-              <h3 className="font-semibold mb-1 text-orange-800">Kuvvet</h3>
-              <p className="text-sm text-orange-600">İtme, çekme, döndürme</p>
+              <h3 className="font-semibold mb-1 text-purple-800">Kuvvet</h3>
+              <p className="text-sm text-purple-600">İtme ve çekme kuvvetleri</p>
             </div>
           </div>
 
@@ -183,22 +183,25 @@ export default function PhysicsPage() {
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <h3 className="font-semibold text-gray-800 mb-2">🎯 Öğrenme Hedefleri:</h3>
             <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Nesnelerin hareket türlerini tanıma (hızlı, yavaş, durgun)</li>
-              <li>• Ağırlık kavramını anlama ve karşılaştırma yapma</li>
-              <li>• Su ve hava akışlarını gözlemleme</li>
-              <li>• Temel kuvvet türlerini keşfetme (itme, çekme)</li>
-              <li>• Günlük yaşamdaki fizik olaylarını anlama</li>
-              <li>• Neden-sonuç ilişkisi kurma becerisi</li>
+              <li>• Hareket kavramlarını anlama (hızlı, yavaş, durgun)</li>
+              <li>• Ağırlık farklarını fark etme ve karşılaştırma</li>
+              <li>• Akış kavramını öğrenme (su, hava, katı)</li>
+              <li>• Temel kuvvet türlerini tanıma</li>
+              <li>• Fiziksel dünyayı gözlemleme becerisini geliştirme</li>
             </ul>
           </div>
 
           {/* Safety Note */}
           <div className="mt-4 p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
-            <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Güvenlik Notu:</h3>
-            <p className="text-sm text-yellow-700">
-              Tüm aktiviteler sanal ortamda güvenli bir şekilde gerçekleştirilir. 
-              Gerçek hayatta deneyler yaparken mutlaka yetişkin gözetimi gereklidir.
-            </p>
+            <div className="flex">
+              <div className="text-yellow-600 mr-3">⚠️</div>
+              <div>
+                <h4 className="font-semibold text-yellow-800 mb-1">Güvenlik Notu:</h4>
+                <p className="text-sm text-yellow-700">
+                  Bu oyunlar sadece teorik öğrenme içindir. Gerçek deneyleri her zaman bir yetişkin gözetiminde yapın.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -208,6 +211,7 @@ export default function PhysicsPage() {
         isOpen={showHelpModal}
         onClose={() => setShowHelpModal(false)}
         gameType={helpGameType}
+        gameName="Fizik Oyunları"
       />
     </div>
   );

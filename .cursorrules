@@ -32,6 +32,13 @@
 - Error boundaries for each module
 - Suspense boundaries for loading states
 
+### Context7 Documentation Integration
+- **ALWAYS** use Context7 for external library documentation
+- **MANDATORY** context7 calls before implementing new libraries
+- Pattern: `mcp_context7_resolve-library-id` → `mcp_context7_get-library-docs`
+- Focus on autism-friendly, accessible implementations
+- Prioritize Turkish language support when available
+
 ### Audio System Pattern
 ```typescript
 // Always use Gülsu voice as default

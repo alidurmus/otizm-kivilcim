@@ -20,11 +20,12 @@ export default defineConfig({
   retries: process.env.CI ? 3 : 1, // CI'da daha fazla retry
   workers: process.env.CI ? 2 : undefined, // CI'da kontrollü parallellik
   
-  /* Comprehensive reporting */
+  /* Comprehensive reporting + fail report */
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['junit', { outputFile: 'test-results/junit.xml' }],
+    ['./tests/reporters/fail-report-reporter.ts'],
     process.env.CI ? ['github'] : ['list']
   ],
   
