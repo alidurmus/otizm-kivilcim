@@ -43,6 +43,32 @@ export const TURKISH_LETTERS: StaticAudioFile[] = [
   { text: 'z', filename: 'z.mp3', type: 'letter', category: 'alphabet' },
 ];
 
+// Sayılar - 1'den 10'a kadar (YENİ: public/audio/numbers/ klasöründen)
+export const NUMBERS: StaticAudioFile[] = [
+  { text: '1', filename: '1.mp3', type: 'word', category: 'numbers' },
+  { text: '2', filename: '2.mp3', type: 'word', category: 'numbers' },
+  { text: '3', filename: '3.mp3', type: 'word', category: 'numbers' },
+  { text: '4', filename: '4.mp3', type: 'word', category: 'numbers' },
+  { text: '5', filename: '5.mp3', type: 'word', category: 'numbers' },
+  { text: '6', filename: '6.mp3', type: 'word', category: 'numbers' },
+  { text: '7', filename: '7.mp3', type: 'word', category: 'numbers' },
+  { text: '8', filename: '8.mp3', type: 'word', category: 'numbers' },
+  { text: '9', filename: '9.mp3', type: 'word', category: 'numbers' },
+  { text: '10', filename: '10.mp3', type: 'word', category: 'numbers' },
+  
+  // Sayı kelimeleri (Türkçe) - matematik modülü için
+  { text: 'bir', filename: 'bir.mp3', type: 'word', category: 'numbers' },
+  { text: 'iki', filename: 'iki.mp3', type: 'word', category: 'numbers' },
+  { text: 'üç', filename: 'uch.mp3', type: 'word', category: 'numbers' },
+  { text: 'dört', filename: 'dort.mp3', type: 'word', category: 'numbers' },
+  { text: 'beş', filename: 'bes.mp3', type: 'word', category: 'numbers' },
+  { text: 'altı', filename: 'alti.mp3', type: 'word', category: 'numbers' },
+  { text: 'yedi', filename: 'yedi.mp3', type: 'word', category: 'numbers' },
+  { text: 'sekiz', filename: 'sekiz.mp3', type: 'word', category: 'numbers' },
+  { text: 'dokuz', filename: 'dokuz.mp3', type: 'word', category: 'numbers' },
+  { text: 'on', filename: 'on.mp3', type: 'word', category: 'numbers' },
+];
+
 // Türkçe heceler ve kelimeler - Dialog.md uyumlu
 export const BASIC_WORDS: StaticAudioFile[] = [
   // Okuryazarlık modülü heceler
@@ -121,43 +147,6 @@ export const BASIC_WORDS: StaticAudioFile[] = [
   { text: 'kitap', filename: 'kitap.mp3', type: 'word', category: 'objects' },
   { text: 'kalem', filename: 'kalem.mp3', type: 'word', category: 'objects' },
   { text: 'çanta', filename: 'chanta.mp3', type: 'word', category: 'objects' },
-
-  // Matematik modülü - sayılar (Eleven Turbo v2.5 ile yeniden oluşturuldu)
-  { text: 'bir', filename: 'bir.mp3', type: 'word', category: 'mathematics' },
-  { text: 'iki', filename: 'iki.mp3', type: 'word', category: 'mathematics' },
-  { text: 'üç', filename: 'uch.mp3', type: 'word', category: 'mathematics' },
-  { text: 'dört', filename: 'dort.mp3', type: 'word', category: 'mathematics' },
-  { text: 'beş', filename: 'bes.mp3', type: 'word', category: 'mathematics' },
-  { text: 'altı', filename: 'alti.mp3', type: 'word', category: 'mathematics' },
-  { text: 'yedi', filename: 'yedi.mp3', type: 'word', category: 'mathematics' },
-  { text: 'sekiz', filename: 'sekiz.mp3', type: 'word', category: 'mathematics' },
-  { text: 'dokuz', filename: 'dokuz.mp3', type: 'word', category: 'mathematics' },
-  { text: 'on', filename: 'on.mp3', type: 'word', category: 'mathematics' },
-  
-  // Matematik işlem kelimeleri
-  { text: 'artı', filename: 'arti.mp3', type: 'word', category: 'mathematics' },
-  { text: 'eşittir', filename: 'esittir.mp3', type: 'word', category: 'mathematics' },
-  { text: 'kaç eder', filename: 'kach-eder.mp3', type: 'word', category: 'mathematics' },
-  { text: 'toplam', filename: 'toplam.mp3', type: 'word', category: 'mathematics' },
-  { text: 'tane', filename: 'tane.mp3', type: 'word', category: 'mathematics' },
-  
-  // Matematik nesneleri (sayma için)
-  { text: 'elmalar', filename: 'elmalar.mp3', type: 'word', category: 'mathematics' },
-  { text: 'yıldızlar', filename: 'yildizlar.mp3', type: 'word', category: 'mathematics' },
-  { text: 'kalpler', filename: 'kalpler.mp3', type: 'word', category: 'mathematics' },
-  { text: 'toplar', filename: 'toplar.mp3', type: 'word', category: 'mathematics' },
-  { text: 'çiçekler', filename: 'chichekler.mp3', type: 'word', category: 'mathematics' },
-  { text: 'arabalar', filename: 'arabalar.mp3', type: 'word', category: 'mathematics' },
-  { text: 'kelebekler', filename: 'kelebekler.mp3', type: 'word', category: 'mathematics' },
-  { text: 'köpekler', filename: 'kopekler.mp3', type: 'word', category: 'mathematics' },
-  
-  // Şekil isimleri
-  { text: 'yıldız', filename: 'yildiz.mp3', type: 'word', category: 'mathematics' },
-  { text: 'elmas', filename: 'elmas.mp3', type: 'word', category: 'mathematics' },
-  { text: 'mavi kare', filename: 'mavi-kare.mp3', type: 'word', category: 'mathematics' },
-  { text: 'mor daire', filename: 'mor-daire.mp3', type: 'word', category: 'mathematics' },
-  { text: 'turuncu elmas', filename: 'turuncu-elmas.mp3', type: 'word', category: 'mathematics' },
-  { text: 'yeşil daire', filename: 'yesil-daire.mp3', type: 'word', category: 'mathematics' },
 
   // Ek kelimeler - diğer sayfalarda kullanılan
   { text: 'çe', filename: 'che.mp3', type: 'word', category: 'syllables' },
@@ -395,6 +384,7 @@ export const WORD_MESSAGES: StaticAudioFile[] = [
 // Tüm statik ses dosyalarını birleştir - Dialog.md uyumlu
 export const ALL_STATIC_AUDIO: StaticAudioFile[] = [
   ...TURKISH_LETTERS,
+  ...NUMBERS,
   ...BASIC_WORDS,
   ...HOME_PAGE_DIALOGS,
   ...ALPHABET_DIALOGS,
@@ -432,6 +422,11 @@ export function getStaticAudioPath(text: string, type: VoiceType, voiceSlug?: st
                      'celebrations';
     
     return `${voiceBasePath}/${typePath}/${audioFile.filename}`;
+  }
+  
+  // Özel kategori yolları
+  if (audioFile.category === 'numbers') {
+    return `/audio/numbers/${audioFile.filename}`;
   }
   
   // Varsayılan yol (eski yapı için uyumluluk)

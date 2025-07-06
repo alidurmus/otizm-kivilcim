@@ -29,6 +29,26 @@ const _shapes = [
   { emoji: '🟢', name: 'yeşil daire', color: 'text-green-500' },
 ];
 
+// Sayı ses dosyaları mapping - static audio files integration
+const numberAudioPaths: Record<number, string> = {
+  1: '/audio/numbers/1.mp3',
+  2: '/audio/numbers/2.mp3',
+  3: '/audio/numbers/3.mp3',
+  4: '/audio/numbers/4.mp3',
+  5: '/audio/numbers/5.mp3',
+  6: '/audio/numbers/6.mp3',
+  7: '/audio/numbers/7.mp3',
+  8: '/audio/numbers/8.mp3',
+  9: '/audio/numbers/9.mp3',
+  10: '/audio/numbers/10.mp3',
+};
+
+// Türkçe sayı isimleri - ElevenLabs fallback için
+const turkishNumbers: Record<number, string> = {
+  1: 'bir', 2: 'iki', 3: 'üç', 4: 'dört', 5: 'beş',
+  6: 'altı', 7: 'yedi', 8: 'sekiz', 9: 'dokuz', 10: 'on'
+};
+
 export default function ShapeNumberGame({ onBack }: ShapeNumberGameProps) {
   const [currentQuestion, setCurrentQuestion] = useState<ShapeQuestion | null>(null);
   const [score, setScore] = useState(0);
@@ -38,6 +58,25 @@ export default function ShapeNumberGame({ onBack }: ShapeNumberGameProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [animateShapes, setAnimateShapes] = useState(false);
   const { speak } = useElevenLabs();
+
+  // Sayı ses dosyasını çal - static dosya varsa onu kullan, yoksa ElevenLabs
+  const playNumberAudio = async (number: number) => {
+    const audioPath = numberAudioPaths[number];
+    if (audioPath) {
+      try {
+        const audio = new Audio(audioPath);
+        await audio.play();
+        console.log(`✅ Static number audio played: ${audioPath}`);
+      } catch (error) {
+        console.log(`❌ Static number audio failed, using ElevenLabs: ${error}`);
+        const turkishName = turkishNumbers[number] || number.toString();
+        await speak(turkishName, 'word');
+      }
+    } else {
+      const turkishName = turkishNumbers[number] || number.toString();
+      await speak(turkishName, 'word');
+    }
+  };
 
   const createPattern = useCallback((count: number): string[][] => {
     const patterns: { [key: number]: string[][] } = {
@@ -87,14 +126,21 @@ export default function ShapeNumberGame({ onBack }: ShapeNumberGameProps) {
     setShowFeedback(false);
     setAnimateShapes(false);
     
-    // Soruyu seslendir
-    setTimeout(() => {
-      speak(`Kaç tane ${randomShape.name} var? Şekilleri sayalım!`, 'sentence');
+    // Soruyu seslendir - mix of static audio and ElevenLabs
+    setTimeout(async () => {
+      await speak('Kaç tane', 'sentence');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak(randomShape.name, 'word'); // ElevenLabs for shape names
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('var? Şekilleri sayalım!', 'sentence');
     }, 1000);
-  }, [speak, createPattern]);
+  }, [createPattern]);
 
   useEffect(() => {
-    generateQuestion();
+    speak('Şekil-sayı oyununa hoş geldin! Şekilleri sayarak matematik öğrenelim.', 'sentence');
+    setTimeout(() => {
+      generateQuestion();
+    }, 2000);
   }, []); // Only run on component mount
 
   const handleAnswer = async (answer: number) => {
@@ -109,9 +155,22 @@ export default function ShapeNumberGame({ onBack }: ShapeNumberGameProps) {
     if (correct) {
       setScore(prev => prev + 1);
       setAnimateShapes(true);
-      await speak(`Mükemmel! ${currentQuestion.pattern.count} tane ${currentQuestion.pattern.name}!`, 'celebration');
+      // Static audio integration for celebration
+      await speak('Mükemmel!', 'celebration');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await playNumberAudio(currentQuestion.pattern.count);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('tane', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak(currentQuestion.pattern.name, 'word');
     } else {
-      await speak(`${currentQuestion.pattern.count} tane ${currentQuestion.pattern.name} vardı. Tekrar sayalım.`, 'sentence');
+      await playNumberAudio(currentQuestion.pattern.count);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('tane', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak(currentQuestion.pattern.name, 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('vardı. Tekrar sayalım.', 'sentence');
     }
     
     // 3 saniye sonra yeni soru
@@ -130,16 +189,20 @@ export default function ShapeNumberGame({ onBack }: ShapeNumberGameProps) {
       for (let col = 0; col < currentQuestion.pattern.pattern[row].length; col++) {
         if (currentQuestion.pattern.pattern[row][col] === 'x') {
           count++;
-          setTimeout(() => {
-            speak(count.toString(), 'word');
+          setTimeout(async () => {
+            await playNumberAudio(count); // Static audio for counting
             // Burada animasyon tetiklenebilir
           }, count * 1000);
         }
       }
     }
     
-    setTimeout(() => {
-      speak(`Toplam ${currentQuestion.pattern.count} tane!`, 'sentence');
+    setTimeout(async () => {
+      await speak('Toplam', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await playNumberAudio(currentQuestion.pattern.count);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('tane!', 'word');
     }, (count + 1) * 1000);
   };
 

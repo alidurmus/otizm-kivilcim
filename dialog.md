@@ -304,4 +304,4 @@ voice_settings: {
 > **Son Güncelleme:** 2025-01-06  
 > **Default Karakter:** Gülsu (Aria voice ID: 9BWtsMINqrJLrRacOk9x)  
 > **Toplam Diyalog:** ~94 benzersiz metin  
-> **Platform Durumu:** 9 aktif modül, tam Türkçe desteği 
+> **Platform Durumu:** 10 aktif modül, tam Türkçe desteği 

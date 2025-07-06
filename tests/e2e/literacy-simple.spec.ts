@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Literacy Module - Simple Test', () => {
   test('should load and allow basic interaction', async ({ page }) => {
     // Navigate to literacy module
-    await page.goto('http://localhost:3000/exercise/literacy');
+    await page.goto('/exercise/literacy');
     
     // Wait for page to load
     await page.waitForLoadState('networkidle');
@@ -40,7 +40,7 @@ test.describe('Literacy Module - Simple Test', () => {
   });
 
   test('should handle audio button clicks', async ({ page }) => {
-    await page.goto('http://localhost:3000/exercise/literacy');
+    await page.goto('/exercise/literacy');
     await page.waitForLoadState('networkidle');
     
     // Click audio button
@@ -56,7 +56,7 @@ test.describe('Literacy Module - Simple Test', () => {
   });
 
   test('should allow letter clicking for sounds', async ({ page }) => {
-    await page.goto('http://localhost:3000/exercise/literacy');
+    await page.goto('/exercise/literacy');
     await page.waitForLoadState('networkidle');
     
     // Click letters
@@ -71,7 +71,7 @@ test.describe('Literacy Module - Simple Test', () => {
   });
 
   test('should toggle auto-progress setting', async ({ page }) => {
-    await page.goto('http://localhost:3000/exercise/literacy');
+    await page.goto('/exercise/literacy');
     await page.waitForLoadState('networkidle');
     
     // Find and click auto-progress checkbox
@@ -91,7 +91,7 @@ test.describe('Literacy Module - Simple Test', () => {
   });
 
   test('should navigate back to modules', async ({ page }) => {
-    await page.goto('http://localhost:3000/exercise/literacy');
+    await page.goto('/exercise/literacy');
     await page.waitForLoadState('networkidle');
     
     // Click back button

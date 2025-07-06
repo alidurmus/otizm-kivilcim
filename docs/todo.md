@@ -1,61 +1,276 @@
-# 🎯 Kıvılcım Platform - AI Coder Görev Listesi
+# 🎯 Kıvılcım Platform - TODO Yönetim Sistemi
 
 **Son Güncelleme:** 2025-01-06  
-**Görev Yönetim Protokolü:** [PROJECT_RULES.md](../PROJECT_RULES.md)  
+**Görev Yönetim Protokolü:** [.cursor/rules/todo-management.mdc](./.cursor/rules/todo-management.mdc)  
 **Platform Durumu:** 🟢 Production Ready (%95+ test coverage, 10 aktif modül)
 
 ---
 
-## 🔥 URGENT TASKS (Acil - Öncelik)
+## 📋 Görev Durum Sistemi
 
-- ⏳ **CRITICAL** Mathematics module audio 404 errors fix (sayi-tanima-hosgeldin.mp3, bes.mp3)
-- ⏳ **CRITICAL** Physics module JSON parse error resolution (Unexpected end of JSON input)  
-- ⏳ **CRITICAL** Webpack cache corruption fix (missing .pack.gz files causing unhandled rejections)
-- ⏳ **SECURITY** Icon files creation for PWA compliance (icon-144.png, icon-512.png, icon-32.png, icon-16.png)
+| İkon | Durum | Açıklama | AI Coder Kuralı |
+|------|-------|----------|----------------|
+| ⏳ | BEKLEMEDE | Üzerinde çalışılmaya hazır | Sadece bu durumdan görev al |
+| 🔄 | ÜZERİNDE ÇALIŞILIYOR | Aktif olarak işleniyor (LOCKED) | (@username) ataması zorunlu |
+| ✅ | TAMAMLANDI | Başarıyla tamamlandı, test edildi | Alt adımlar [x] işaretli olmalı |
+| 🅿️ | DURAKLATILDI/BLOKLANDI | Harici nedenle durdu | Bloke nedeni belirtilmeli |
+| 🗑️ | İPTAL EDİLDİ | Artık gerekli değil | İptal nedeni belirtilmeli |
 
-## 🧪 TEST COVERAGE IMPROVEMENTS
+## 🔥 URGENT TASKS (Acil - Öncelik H)
 
-- ⏳ **TESTING** Literacy click-to-place final 2 failing tests fix (letter selection state, proceed button timing)
-- ⏳ **TESTING** Voice input button cross-browser compatibility enhancement
-- ⏳ **TESTING** Admin ElevenLabs test stability (sporadic failures on gender filtering)
-- ⏳ **TESTING** Physics module E2E test timeout issues resolution
+- ⏳ **(H)** **Mathematics module audio 404 errors fix** - (@atanmadi)
+  - Critical: sayi-tanima-hosgeldin.mp3, bes.mp3 ve diğer matematik sesleri eksik
+  - ElevenLabs Eleven Turbo v2.5 + Gülsu voice kullanarak oluştur
+    - [ ] Identify missing audio files (sayi-tanima-hosgeldin.mp3, bes.mp3)
+    - [ ] Generate with Gülsu voice (9BWtsMINqrJLrRacOk9x) 
+    - [ ] Update lib/audio-constants.ts mapping
+    - [ ] Test console 404 errors eliminated
+    - [ ] Verify mathematics module audio coverage 100%
 
-## 📚 MODULE ENHANCEMENT & NEW FEATURES
+- ⏳ **(H)** **Physics module JSON parse error resolution** - (@atanmadi)
+  - Critical: Unexpected end of JSON input hatası çözülmeli
+  - Component loading ve data parsing sistemi fix edilecek
+    - [ ] Debug JSON parse error in physics module
+    - [ ] Fix component data loading mechanism
+    - [ ] Add error boundaries for graceful failure
+    - [ ] Test physics module accessibility
 
-- ⏳ **FEATURE** 11th Module development (Fen Bilimleri / Science Module)
-- ⏳ **FEATURE** Advanced ElevenLabs features (custom voice training, voice cloning)
-- ⏳ **FEATURE** PWA features implementation (service worker, offline capability)
-- ⏳ **FEATURE** Multi-language i18n support (İngilizce desteği)
+- ⏳ **(H)** **Webpack cache corruption fix** - (@atanmadi)
+  - Critical: missing .pack.gz files causing unhandled rejections
+  - Cache system stability ensure edilecek
+    - [ ] Clean and rebuild webpack cache
+    - [ ] Fix pack.gz file generation issues
+    - [ ] Add cache corruption prevention
+    - [ ] Test build stability
 
-## 🎯 USER EXPERIENCE & ACCESSIBILITY
+- ⏳ **(H)** **PWA icon files creation** - (@atanmadi)
+  - Security: Icon files for PWA compliance needed
+  - icon-144.png, icon-512.png, icon-32.png, icon-16.png
+    - [ ] Create PWA icon set (144px, 512px, 32px, 16px)
+    - [ ] Update manifest.json icon references
+    - [ ] Test PWA installation capability
+    - [ ] Verify icon display across devices
 
-- ⏳ **UX** Image optimization migration to Next.js Image component
-- ⏳ **UX** Font loading optimization (preload fonts, font-display: swap)
-- ⏳ **PERFORMANCE** Bundle size reduction (target: <500KB gzipped)
-- ⏳ **A11Y** Screen reader compatibility enhancements
+## 🧪 TEST COVERAGE IMPROVEMENTS (Öncelik M)
 
-## 🔧 TECHNICAL DEBT & INFRASTRUCTURE
+- ⏳ **(M)** **Literacy click-to-place final 2 failing tests fix** - (@atanmadi)
+  - Letter selection state ve proceed button timing sorunları
+  - Playwright test stability enhancement gerekiyor
+    - [ ] Debug letter selection state management
+    - [ ] Fix proceed button timing issues
+    - [ ] Enhance test selector reliability
+    - [ ] Achieve 100% literacy test pass rate
 
-- ⏳ **TECH** Environment Variables security audit (move all to server-side)
-- ⏳ **TECH** Content Security Policy (CSP) headers implementation
-- ⏳ **TECH** Zod schema validation for user inputs
-- ⏳ **TECH** Firestore Security Rules deployment
-- ⏳ **DEVOPS** CI/CD pipeline setup with GitHub Actions
-- ⏳ **DEVOPS** Error tracking system (Sentry or built-in)
+- ⏳ **(M)** **Voice input button cross-browser compatibility** - (@atanmadi)
+  - Safari, Firefox, Edge browser'larda voice button test etme
+  - Gender-balanced voice system cross-browser stability
+    - [ ] Test voice buttons in Safari
+    - [ ] Test voice buttons in Firefox  
+    - [ ] Test voice buttons in Edge
+    - [ ] Fix browser-specific compatibility issues
 
-## 🚀 PERFORMANCE & OPTIMIZATION
+- ⏳ **(M)** **Admin ElevenLabs test stability enhancement** - (@atanmadi)
+  - Sporadic failures on gender filtering fix
+  - Enhanced test interface reliability
+    - [ ] Debug gender filtering test failures
+    - [ ] Improve test assertions stability
+    - [ ] Add retry mechanisms for API tests
+    - [ ] Achieve consistent admin test pass rate
 
-- ⏳ **PERF** React.memo and useMemo implementation for expensive components
-- ⏳ **PERF** Bundle analyzer integration (webpack-bundle-analyzer)
-- ⏳ **PERF** Core Web Vitals optimization (LCP, FID, CLS)
-- ⏳ **PERF** Static audio file caching strategy optimization
+- ⏳ **(M)** **Physics module E2E test timeout issues** - (@atanmadi)
+  - Component loading timeout'ları resolution
+  - Test performance optimization gerekiyor
+    - [ ] Increase physics module test timeouts
+    - [ ] Optimize component loading performance
+    - [ ] Add loading state assertions
+    - [ ] Eliminate timeout-related test failures
 
-## 📊 ANALYTICS & MONITORING
+## 📚 MODULE ENHANCEMENT & NEW FEATURES (Öncelik M)
 
-- ⏳ **ANALYTICS** Privacy-compliant user behavior tracking
-- ⏳ **ANALYTICS** A/B testing framework setup
-- ⏳ **ANALYTICS** Business metrics learning outcome tracking
-- ⏳ **MONITORING** Application health monitoring dashboard
+- ⏳ **(M)** **11th Module development (Fen Bilimleri/Science)** - (@atanmadi)
+  - Complete science module with autism-friendly design
+  - Physics concepts, chemistry basics, nature exploration
+    - [ ] Design science module UI components
+    - [ ] Create interactive science experiments
+    - [ ] Implement voice-guided science activities
+    - [ ] Add progress tracking for science concepts
+    - [ ] Test science module accessibility
+
+- ⏳ **(M)** **Advanced ElevenLabs features implementation** - (@atanmadi)
+  - Custom voice training, voice cloning capabilities
+  - Enhanced Turkish language support features
+    - [ ] Research ElevenLabs custom voice training API
+    - [ ] Implement voice cloning for personalized experience
+    - [ ] Add advanced Turkish pronunciation features
+    - [ ] Test advanced voice features stability
+
+- ⏳ **(M)** **PWA features implementation** - (@atanmadi)
+  - Service worker, offline capability, app-like experience
+  - Enhanced mobile user experience
+    - [ ] Implement service worker for offline support
+    - [ ] Add app-like navigation and UI
+    - [ ] Create offline mode for basic features
+    - [ ] Test PWA installation and usage
+
+- ⏳ **(M)** **Multi-language i18n support (İngilizce)** - (@atanmadi)
+  - International expansion preparation
+  - English language support with cultural adaptation
+    - [ ] Set up i18n framework (next-i18next)
+    - [ ] Translate core interface to English
+    - [ ] Adapt cultural references for international users
+    - [ ] Test language switching functionality
+
+## 🎯 USER EXPERIENCE & ACCESSIBILITY (Öncelik L)
+
+- ⏳ **(L)** **Image optimization migration to Next.js Image** - (@atanmadi)
+  - Performance improvement ve SEO enhancement
+  - Lazy loading ve responsive image system
+    - [ ] Audit current image usage across platform
+    - [ ] Convert to Next.js Image component
+    - [ ] Add proper alt texts for accessibility
+    - [ ] Test image loading performance improvement
+
+- ⏳ **(L)** **Font loading optimization** - (@atanmadi)
+  - Preload fonts, font-display: swap implementation
+  - Faster initial page load times
+    - [ ] Implement font preloading
+    - [ ] Add font-display: swap CSS property
+    - [ ] Optimize font loading strategy
+    - [ ] Test FOUC (Flash of Unstyled Content) elimination
+
+- ⏳ **(L)** **Bundle size reduction** - (@atanmadi)
+  - Target: <500KB gzipped bundle size
+  - Performance optimization için critical
+    - [ ] Run bundle analyzer to identify large dependencies
+    - [ ] Implement code splitting for route-based chunks
+    - [ ] Remove unused dependencies and dead code
+    - [ ] Test bundle size targets achievement
+
+- ⏳ **(L)** **Screen reader compatibility enhancements** - (@atanmadi)
+  - WCAG 2.1 AA compliance improvement
+  - Enhanced accessibility for visually impaired users
+    - [ ] Audit screen reader compatibility
+    - [ ] Add proper ARIA labels and roles
+    - [ ] Test with popular screen readers (NVDA, JAWS)
+    - [ ] Achieve 100% accessibility compliance
+
+## 🔧 TECHNICAL DEBT & INFRASTRUCTURE (Öncelik L)
+
+- ⏳ **(L)** **Environment Variables security audit** - (@atanmadi)
+  - Move all sensitive variables to server-side
+  - Enhanced API key security
+    - [ ] Audit all environment variables usage
+    - [ ] Move client-side variables to server-side
+    - [ ] Update API routes for secure variable access
+    - [ ] Test security improvements
+
+- ⏳ **(L)** **Content Security Policy (CSP) headers** - (@atanmadi)
+  - XSS protection enhancement
+  - Security headers implementation
+    - [ ] Research CSP best practices for Next.js
+    - [ ] Implement CSP headers configuration
+    - [ ] Test CSP compatibility with ElevenLabs API
+    - [ ] Verify security improvements
+
+- ⏳ **(L)** **Zod schema validation for user inputs** - (@atanmadi)
+  - Input validation standardization
+  - Type safety ve security enhancement
+    - [ ] Define Zod schemas for all user inputs
+    - [ ] Implement validation in API routes
+    - [ ] Add client-side validation feedback
+    - [ ] Test validation error handling
+
+- ⏳ **(L)** **Firestore Security Rules deployment** - (@atanmadi)
+  - Database security enhancement
+  - User data protection improvement
+    - [ ] Review and update Firestore security rules
+    - [ ] Test rules with different user roles
+    - [ ] Deploy security rules to production
+    - [ ] Monitor security rule effectiveness
+
+- ⏳ **(L)** **CI/CD pipeline setup with GitHub Actions** - (@atanmadi)
+  - Automated testing ve deployment
+  - Development workflow improvement
+    - [ ] Set up GitHub Actions workflow
+    - [ ] Configure automated testing on PR
+    - [ ] Add deployment automation
+    - [ ] Test CI/CD pipeline reliability
+
+- ⏳ **(L)** **Error tracking system implementation** - (@atanmadi)
+  - Sentry or built-in error tracking
+  - Production error monitoring
+    - [ ] Choose error tracking solution (Sentry vs built-in)
+    - [ ] Implement error tracking integration
+    - [ ] Set up error alerting and monitoring
+    - [ ] Test error tracking functionality
+
+## 🚀 PERFORMANCE & OPTIMIZATION (Öncelik L)
+
+- ⏳ **(L)** **React.memo and useMemo implementation** - (@atanmadi)
+  - Expensive components optimization
+  - Rendering performance improvement
+    - [ ] Identify expensive re-rendering components
+    - [ ] Implement React.memo for pure components
+    - [ ] Add useMemo for expensive calculations
+    - [ ] Test performance improvements
+
+- ⏳ **(L)** **Bundle analyzer integration** - (@atanmadi)
+  - webpack-bundle-analyzer setup
+  - Bundle size monitoring ve optimization
+    - [ ] Set up webpack-bundle-analyzer
+    - [ ] Create bundle analysis npm script
+    - [ ] Document bundle optimization guidelines
+    - [ ] Set up regular bundle size monitoring
+
+- ⏳ **(L)** **Core Web Vitals optimization** - (@atanmadi)
+  - LCP, FID, CLS improvement targets
+  - Performance metrics achievement
+    - [ ] Measure current Core Web Vitals
+    - [ ] Optimize for LCP < 2.5s target
+    - [ ] Optimize for FID < 100ms target
+    - [ ] Optimize for CLS < 0.1 target
+
+- ⏳ **(L)** **Static audio file caching strategy** - (@atanmadi)
+  - CDN integration ve browser caching
+  - Audio loading performance improvement
+    - [ ] Implement browser caching headers for audio files
+    - [ ] Add CDN integration for static audio files
+    - [ ] Optimize audio file compression and formats
+    - [ ] Test audio loading performance improvements
+
+## 📊 ANALYTICS & MONITORING (Öncelik L)
+
+- ⏳ **(L)** **Privacy-compliant user behavior tracking** - (@atanmadi)
+  - GDPR/KVKK compliant analytics system
+  - User behavior insights without privacy violation
+    - [ ] Research privacy-compliant analytics solutions
+    - [ ] Implement anonymous user behavior tracking
+    - [ ] Add consent management for analytics
+    - [ ] Test analytics accuracy and privacy compliance
+
+- ⏳ **(L)** **A/B testing framework setup** - (@atanmadi)
+  - Feature experimentation capability
+  - Data-driven design decisions
+    - [ ] Choose A/B testing framework
+    - [ ] Implement A/B testing infrastructure
+    - [ ] Create A/B testing guidelines
+    - [ ] Test A/B testing functionality
+
+- ⏳ **(L)** **Business metrics learning outcome tracking** - (@atanmadi)
+  - Educational effectiveness measurement
+  - Platform success metrics
+    - [ ] Define key learning outcome metrics
+    - [ ] Implement learning progress tracking
+    - [ ] Create educational effectiveness reports
+    - [ ] Test metrics accuracy and usefulness
+
+- ⏳ **(L)** **Application health monitoring dashboard** - (@atanmadi)
+  - System performance monitoring
+  - Proactive issue detection
+    - [ ] Set up application health monitoring
+    - [ ] Create health monitoring dashboard
+    - [ ] Configure alerts for critical issues
+    - [ ] Test monitoring accuracy and alerting
 
 ---
 
@@ -99,10 +314,10 @@
 *No tasks currently in progress (🔄)*
 
 ### **Task Assignment Rules**
-- 🔥 URGENT tasks have absolute priority
+- 🔥 (H) HIGH tasks have absolute priority
 - ⏳ BEKLEMEDE tasks taken top-to-bottom
 - 🔄 ÜZERİNDE ÇALIŞILIYOR tasks are locked
-- ⚠️ HATA tasks need investigation before restart
+- 🅿️ DURAKLATILDI tasks need investigation before restart
 
 ### **Quality Gates Checklist**
 - [ ] TypeScript strict mode compliance
@@ -136,7 +351,7 @@
 
 ## 🔗 Related Documentation
 
-- **[.cursor/PROJECT_RULES.md](../.cursor/PROJECT_RULES.md)** - AI Coder collaboration protocol (v1.2)
+- **[TODO Management Protocol](./.cursor/rules/todo-management.mdc)** - AI Coder collaboration protocol (v1.0)
 - **[docs/tests/](./tests/)** - Complete test documentation and troubleshooting
 - **[docs/tests/README.md](./tests/README.md)** - Test framework overview and current status
 - **[docs/tests/setup-summary.md](./tests/setup-summary.md)** - Two-tier test architecture details

@@ -108,6 +108,15 @@ export default function HomePage() {
             >
               👨‍👩‍👧‍👦 Ebeveyn Paneli
             </Button>
+
+            <Button 
+              variant="secondary" 
+              size="large"
+              onClick={() => router.push('/teacher')}
+              className="min-w-[200px]"
+            >
+              🎓 Öğretmen Paneli
+            </Button>
           </div>
 
           {/* Admin Panel Link - Only shown in development or for authorized users */}

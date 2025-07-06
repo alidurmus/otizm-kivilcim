@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useElevenLabs } from '@/lib/elevenlabs';
 
 interface CountingGameProps {
@@ -8,23 +8,36 @@ interface CountingGameProps {
 }
 
 interface CountingQuestion {
-  objects: string[];
+  items: string[];
   correctCount: number;
-  options: number[];
   objectType: string;
   emoji: string;
 }
 
 const objectTypes = [
-  { name: 'elmalar', emoji: '🍎', color: 'text-red-500' },
-  { name: 'yıldızlar', emoji: '⭐', color: 'text-yellow-500' },
-  { name: 'kalpler', emoji: '❤️', color: 'text-pink-500' },
-  { name: 'toplar', emoji: '⚽', color: 'text-blue-500' },
-  { name: 'çiçekler', emoji: '🌸', color: 'text-pink-400' },
-  { name: 'araba', emoji: '🚗', color: 'text-blue-600' },
-  { name: 'kelebek', emoji: '🦋', color: 'text-purple-500' },
-  { name: 'köpek', emoji: '🐕', color: 'text-amber-600' },
+  { name: 'elma', emoji: '🍎' },
+  { name: 'yıldız', emoji: '⭐' },
+  { name: 'kalp', emoji: '❤️' },
+  { name: 'çiçek', emoji: '🌸' },
+  { name: 'araba', emoji: '🚗' },
+  { name: 'balon', emoji: '🎈' },
+  { name: 'kelebek', emoji: '🦋' },
+  { name: 'top', emoji: '⚽' },
 ];
+
+// Sayı ses dosyaları mapping
+const numberAudioPaths: Record<number, string> = {
+  1: '/audio/numbers/1.mp3',
+  2: '/audio/numbers/2.mp3',
+  3: '/audio/numbers/3.mp3',
+  4: '/audio/numbers/4.mp3',
+  5: '/audio/numbers/5.mp3',
+  6: '/audio/numbers/6.mp3',
+  7: '/audio/numbers/7.mp3',
+  8: '/audio/numbers/8.mp3',
+  9: '/audio/numbers/9.mp3',
+  10: '/audio/numbers/10.mp3',
+};
 
 export default function CountingGame({ onBack }: CountingGameProps) {
   const [currentQuestion, setCurrentQuestion] = useState<CountingQuestion | null>(null);
@@ -32,55 +45,61 @@ export default function CountingGame({ onBack }: CountingGameProps) {
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedCount, setSelectedCount] = useState<number | null>(null);
+  const [showCounting, setShowCounting] = useState(false);
   const { speak } = useElevenLabs();
 
-  const generateQuestion = useCallback(() => {
-    const objectType = objectTypes[Math.floor(Math.random() * objectTypes.length)];
-    const count = Math.floor(Math.random() * 8) + 1; // 1-8 arası nesne
-    
-    // Nesne dizisi oluştur
-    const objects = Array(count).fill(objectType.emoji);
-    
-    // Seçenekler oluştur (doğru cevap + 3 yanlış)
-    const wrongOptions: number[] = [];
-    while (wrongOptions.length < 3) {
-      const wrong = Math.floor(Math.random() * 10) + 1;
-      if (wrong !== count && !wrongOptions.includes(wrong)) {
-        wrongOptions.push(wrong);
+  // Sayı ses dosyasını çal - static dosya varsa onu kullan, yoksa ElevenLabs
+  const playNumberAudio = async (number: number) => {
+    const audioPath = numberAudioPaths[number];
+    if (audioPath) {
+      try {
+        const audio = new Audio(audioPath);
+        await audio.play();
+        console.log(`✅ Static number audio played: ${audioPath}`);
+      } catch (error) {
+        console.log(`❌ Static number audio failed, using ElevenLabs: ${error}`);
+        await speak(number.toString(), 'word');
       }
+    } else {
+      await speak(number.toString(), 'word');
     }
+  };
+
+  const generateQuestion = () => {
+    const objectType = objectTypes[Math.floor(Math.random() * objectTypes.length)];
+    const count = Math.floor(Math.random() * 8) + 1; // 1-8 arası
     
-    const options = [count, ...wrongOptions].sort(() => Math.random() - 0.5);
+    const items = Array(count).fill(objectType.emoji);
     
-    setCurrentQuestion({
-      objects,
+    const question: CountingQuestion = {
+      items,
       correctCount: count,
-      options,
       objectType: objectType.name,
-      emoji: objectType.emoji
-    });
+      emoji: objectType.emoji,
+    };
     
+    setCurrentQuestion(question);
     setShowFeedback(false);
-    setSelectedAnswer(null);
+    setSelectedCount(null);
+    setShowCounting(false);
     
     // Soruyu seslendir
     setTimeout(() => {
       speak(`Kaç tane ${objectType.name} var? Sayalım!`, 'sentence');
-    }, 1000);
+    }, 500);
+  };
+
+  useEffect(() => {
+    speak('Sayma oyununa hoş geldin! Nesneleri sayalım.', 'sentence');
+    generateQuestion();
   }, [speak]);
 
-  // İlk yükleme - sadece bir kez çalışır (sonsuz döngü önlendi)
-  useEffect(() => {
-    generateQuestion();
-    speak('Sayma oyununa hoş geldin! Nesneleri sayalım.', 'sentence');
-  }, []); // Boş dependency array ile sadece mount'ta çalışır
-
-  const handleAnswer = async (answer: number) => {
+  const handleCountSelection = async (count: number) => {
     if (!currentQuestion) return;
     
-    setSelectedAnswer(answer);
-    const correct = answer === currentQuestion.correctCount;
+    setSelectedCount(count);
+    const correct = count === currentQuestion.correctCount;
     setIsCorrect(correct);
     setShowFeedback(true);
     setTotalQuestions(prev => prev + 1);
@@ -98,32 +117,28 @@ export default function CountingGame({ onBack }: CountingGameProps) {
     }, 3000);
   };
 
-  const countObjects = async () => {
+  const showCountingAnimation = async () => {
     if (!currentQuestion) return;
     
+    setShowCounting(true);
     await speak('Birlikte sayalım:', 'sentence');
     
-    // Her nesne için sayma sesi
+    // Her nesneyi tek tek say
     for (let i = 1; i <= currentQuestion.correctCount; i++) {
-      setTimeout(() => {
-        speak(i.toString(), 'word');
-      }, i * 800);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      await playNumberAudio(i);
     }
     
-    setTimeout(() => {
-      speak(`Toplam ${currentQuestion.correctCount} tane ${currentQuestion.objectType}!`, 'sentence');
-    }, (currentQuestion.correctCount + 1) * 800);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await speak(`Toplam ${currentQuestion.correctCount} tane ${currentQuestion.objectType}!`, 'sentence');
+    
+    setShowCounting(false);
   };
 
   if (!currentQuestion) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 p-4 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">🧮</div>
-          <div className="text-xl">Yükleniyor...</div>
-        </div>
-      </div>
-    );
+    return <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 flex items-center justify-center">
+      <div className="text-2xl">Yükleniyor...</div>
+    </div>;
   }
 
   return (
@@ -145,106 +160,77 @@ export default function CountingGame({ onBack }: CountingGameProps) {
         </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">🧮 Sayma Oyunu</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">🔢 Sayma Oyunu</h1>
           <p className="text-gray-600">Nesneleri say ve doğru sayıyı seç!</p>
         </div>
 
         {/* Objects Display */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
           <div className="text-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
               Kaç tane {currentQuestion.objectType} var?
             </h2>
-            
-            {/* Objects Grid */}
-            <div className="flex flex-wrap justify-center gap-4 max-w-2xl mx-auto">
-              {currentQuestion.objects.map((obj, index) => (
-                <div
-                  key={index}
-                  className="text-6xl animate-pulse hover:scale-110 transition-transform duration-300"
-                  style={{ animationDelay: `${index * 200}ms` }}
-                >
-                  {obj}
-                </div>
-              ))}
-            </div>
           </div>
           
-          {/* Count Helper Button */}
+          <div className="grid grid-cols-4 md:grid-cols-6 gap-4 max-w-3xl mx-auto mb-6">
+            {currentQuestion.items.map((item, index) => (
+              <div
+                key={index}
+                className={`
+                  aspect-square bg-gradient-to-br from-yellow-50 to-orange-100 rounded-lg
+                  flex items-center justify-center text-6xl transition-all duration-300
+                  ${showCounting && index < (selectedCount || 0) ? 'ring-4 ring-green-500 scale-110' : ''}
+                `}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+
           <div className="text-center">
             <button
-              onClick={countObjects}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors"
+              onClick={showCountingAnimation}
+              disabled={showCounting}
+              className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors disabled:opacity-50"
             >
-              👆 Birlikte Sayalım
+              {showCounting ? '🔄 Sayıyor...' : '🔍 Birlikte Sayalım'}
             </button>
           </div>
         </div>
 
-        {/* Answer Options */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">
-            Cevabını seç:
-          </h3>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            {currentQuestion.options.map((option) => (
-              <button
-                key={option}
-                onClick={() => handleAnswer(option)}
-                disabled={showFeedback}
-                className={`
-                  aspect-square bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300
-                  text-4xl font-bold border-4 
-                  ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105'}
-                  ${
-                    showFeedback && option === currentQuestion.correctCount
-                      ? 'border-green-500 bg-green-100 text-green-700'
-                      : showFeedback && option === selectedAnswer && !isCorrect
-                      ? 'border-red-500 bg-red-100 text-red-700'
-                      : 'border-gray-200 text-green-600 hover:border-green-300'
-                  }
-                `}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+        {/* Count Options */}
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-4 max-w-4xl mx-auto">
+          {Array.from({ length: 10 }, (_, i) => i + 1).map((count) => (
+            <button
+              key={count}
+              onClick={() => handleCountSelection(count)}
+              disabled={showFeedback || showCounting}
+              className={`
+                aspect-square bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300
+                text-3xl font-bold text-green-600 hover:bg-green-50
+                ${showFeedback && count === currentQuestion.correctCount ? 'bg-green-100 ring-4 ring-green-500' : ''}
+                ${showFeedback && count === selectedCount && !isCorrect ? 'bg-red-100 ring-4 ring-red-500' : ''}
+                ${showFeedback || showCounting ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}
+              `}
+            >
+              {count}
+            </button>
+          ))}
         </div>
 
         {/* Feedback */}
         {showFeedback && (
           <div className="text-center mt-8">
-            <div className={`text-3xl font-bold mb-2 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-              {isCorrect ? '🎉 Harika!' : '🤔 Tekrar Deneyelim'}
+            <div className={`text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+              {isCorrect ? '🎉 Doğru!' : '❌ Yanlış'}
             </div>
-            <div className="text-gray-600 text-lg">
-              {isCorrect 
-                ? `Evet! ${currentQuestion.correctCount} tane ${currentQuestion.objectType} var.`
-                : `Doğru cevap ${currentQuestion.correctCount} idi.`
-              }
-            </div>
+            {!isCorrect && (
+              <div className="text-gray-600 mt-2">
+                Doğru cevap: {currentQuestion.correctCount} tane {currentQuestion.objectType}
+              </div>
+            )}
           </div>
         )}
-
-        {/* Game Tips */}
-        <div className="mt-8 bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">💡 Sayma İpuçları</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl mb-2">👆</div>
-              <p className="text-blue-800">Parmaklarınla işaret ederek say</p>
-            </div>
-            <div className="text-center p-3 bg-green-50 rounded-lg">
-              <div className="text-2xl mb-2">🔢</div>
-              <p className="text-green-800">Her nesne için bir sayı söyle</p>
-            </div>
-            <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <div className="text-2xl mb-2">🎯</div>
-              <p className="text-purple-800">Son söylediğin sayı toplam sayıdır</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

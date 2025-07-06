@@ -1,0 +1,184 @@
+# TODO Yönetim Protokolü - AI Coder Kuralları
+
+## 🎯 Amaç ve Kapsam
+
+TODO.md dosyası, projedeki tüm geliştirme görevlerini merkezi olarak yönetir. AI Coder'lar bu protokole uyarak:
+- Görev durumlarını senkronize takip eder
+- Çakışmaları önler (görev kilitleme sistemi)
+- Önceliklendirme yapar
+- İlerlemeyi şeffaf tutar
+
+## 📋 Görev Durum Tanımları
+
+### ⏳ BEKLEMEDE
+- **Tanım:** Görev tanımlanmış, üzerinde çalışılmaya hazır
+- **AI Coder Kuralı:** Sadece bu durumdaki görevleri alabilirsin
+- **Gereksinimler:** Görev açıklaması ve gerekli bilgiler tam olmalı
+
+### 🔄 ÜZERİNDE ÇALIŞILIYOR
+- **Tanım:** Aktif olarak işleniyor (LOCKED)
+- **AI Coder Kuralı:** Bu görevi başka AI/insan alamaz
+- **Zorunluluk:** (@username) ataması yapılmalı
+- **Süre Limiti:** 2 saat içinde güncelleme yoksa DURAKLATILDI'ya geç
+
+### ✅ TAMAMLANDI
+- **Tanım:** Görev başarıyla tamamlandı, test edildi, merge edildi
+- **AI Coder Kuralı:** Alt adımlar [x] işaretli olmalı
+- **Doğrulama:** Test coverage korunmuş, linter hatasız olmalı
+
+### 🅿️ DURAKLATILDI / BLOKLANDI
+- **Tanım:** Harici nedenle durdu (bilgi eksikliği, dependency bekleniyor)
+- **AI Coder Kuralı:** Duraklatma nedenini yorumla belirt
+- **Çözüm:** Bloker kalkınca otomatik ⏳ BEKLEMEDE'ye geç
+
+### 🗑️ İPTAL EDİLDİ
+- **Tanım:** Artık gerekli değil, scope dışı
+- **AI Coder Kuralı:** İptal nedenini ve alternatif yaklaşımı belirt
+
+## 📝 Görev Tanımlama Formatı
+
+### Standart Format
+```markdown
+- [Durum] [Öncelik] **Görev Başlığı** - (@sorumlu_kisi)
+  - Görevin net açıklaması
+  - Kabul kriterleri
+    - [ ] Alt adım 1
+    - [ ] Alt adım 2
+    - [ ] Test gereksinimleri
+```
+
+### Öncelik Sistemi
+- **(H) HIGH:** Kritik, projeyi bloke ediyor, acil müdahale
+- **(M) MEDIUM:** Önemli, planlı sprint içinde tamamlanmalı  
+- **(L) LOW:** Gelecek sprint'e ertelenebilir, nice-to-have
+
+### AI Coder Örnekleri
+```markdown
+- ⏳ (H) **Mathematics module audio 404 errors fix** - (@ai-coder)
+  - sayi-tanima-hosgeldin.mp3 ve bes.mp3 dosyaları eksik
+  - ElevenLabs API ile Gülsu voice kullanarak oluştur
+    - [ ] Missing audio files identify (sayi-tanima-hosgeldin.mp3, bes.mp3)
+    - [ ] Generate with Gülsu voice (9BWtsMINqrJLrRacOk9x)
+    - [ ] Update audio-constants.ts mapping
+    - [ ] Test console 404 errors eliminated
+    - [ ] Verify mathematics module audio coverage 100%
+
+- 🔄 (M) **ElevenLabs v3 model upgrade testing** - (@ai-coder-alpha)
+  - Eleven Turbo v2.5'den v3'e geçiş test edilecek
+  - Response time ve audio quality karşılaştırması
+    - [x] Create test API endpoint
+    - [ ] Performance benchmark comparison
+    - [ ] Turkish pronunciation quality analysis
+    - [ ] Cost efficiency assessment
+```
+
+## 🤖 AI Coder İş Akışı
+
+### 1. Görev Seçimi Stratejisi
+```
+ÖNCELIK SIRASI:
+1. (H) HIGH priority ⏳ BEKLEMEDE görevler
+2. Uzmanlık alanına uygun (audio, UI, API, test)
+3. Dependency'si olmayan bağımsız görevler
+4. (M) MEDIUM priority görevler
+```
+
+### 2. Görev Sahiplenme Protokolü
+```typescript
+// MANDATORY: Görevi alırken
+1. Durum değiştir: ⏳ → 🔄
+2. Username ekle: (@ai-coder-{specialization})
+3. Timestamp ekle: Started: YYYY-MM-DD HH:MM
+4. Anında commit ve save (diğer AI'lara haber ver)
+```
+
+### 3. İş Yapma Kuralları
+```
+✅ DO:
+- Alt adımları teker teker [x] işaretle
+- Test coverage koru/artır
+- Linter hataları fix et
+- Console hataları temizle
+- Documentation güncelle
+
+❌ DON'T:
+- 2 saatten uzun sessiz kalma
+- Alt adımları atla
+- Test coverage düşür
+- Breaking change yap (approval olmadan)
+```
+
+### 4. Görev Tamamlama Protokolü
+```typescript
+// MANDATORY: Görevi tamamlarken
+1. Tüm alt adımlar [x] işaretli olmalı
+2. Durum değiştir: 🔄 → ✅
+3. Completion summary ekle
+4. Next recommended task öner
+5. Anında commit ve save
+```
+
+## 🚨 Acil Durum Protokolleri
+
+### Bloke Olma Durumu
+```markdown
+- 🅿️ (H) **Task X** - (@ai-coder)
+  - **BLOKLANDI:** ElevenLabs API key invalid, needs user intervention
+  - **Beklenen Çözüm:** Valid API key configuration
+  - **ETA:** User response + 30 minutes implementation
+```
+
+### Task Devri
+```markdown
+- 🔄 (H) **Complex UI Refactor** - (@ai-coder-alpha → @ai-coder-beta)
+  - **DEVIR NEDENİ:** UI specialization required
+  - **PROGRESS:** 60% complete, 3/5 sub-tasks done
+  - **NEXT STEPS:** Continue from step 4
+```
+
+## 📊 Performans Metrikleri
+
+### AI Coder KPI'ları
+- **Task Completion Rate:** >90%
+- **Average Task Duration:** <2 hours
+- **Test Coverage Impact:** Maintain or improve
+- **Error Introduction Rate:** <5%
+
+### Takım Senkronizasyonu
+- **Daily TODO Review:** Her 24 saatte TODO.md state check
+- **Priority Realignment:** Weekly priority review
+- **Block Resolution:** <4 hour response time
+- **Cross-AI Collaboration:** Clear handoff protocols
+
+## 🔗 Integration Patterns
+
+### Repository Integration
+```bash
+# TODO durumu değişikliği sonrası
+git add docs/todo.md
+git commit -m "TODO: Task X → COMPLETED"
+git push
+```
+
+### Issue Tracking Integration
+```markdown
+- ✅ (H) **Bug Fix: Safari audio delay** - (@ai-coder)
+  - **GitHub Issue:** #123
+  - **PR:** #124 (merged)
+  - **Test Coverage:** Added WebAudio API tests
+```
+
+### Communication Patterns
+```
+AI Coder → Human: TODO status updates via commits
+Human → AI Coder: New tasks via TODO.md additions
+AI Coder ↔ AI Coder: State synchronization via TODO.md
+```
+
+---
+
+> **Critical Success Factor:** Bu protokole strict uyum, parallel development'ta conflict prevention ve high-quality delivery için zorunludur. Her AI Coder, TODO.md'yi single source of truth olarak kullanmalıdır.
+description:
+globs:
+alwaysApply: false
+---

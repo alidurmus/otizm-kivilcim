@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useElevenLabs } from '@/lib/elevenlabs';
+import { getStaticAudioPath } from '@/lib/audio-constants';
 
 interface NumberRecognitionGameProps {
   onBack: () => void;
@@ -11,19 +12,21 @@ interface NumberQuestion {
   number: number;
   displayNumber: string;
   audioText: string;
+  staticAudioPath: string;
 }
 
+// Sayılar - static ses dosyalarıyla
 const numbers: NumberQuestion[] = [
-  { number: 1, displayNumber: '1', audioText: 'Bir' },
-  { number: 2, displayNumber: '2', audioText: 'İki' },
-  { number: 3, displayNumber: '3', audioText: 'Üç' },
-  { number: 4, displayNumber: '4', audioText: 'Dört' },
-  { number: 5, displayNumber: '5', audioText: 'Beş' },
-  { number: 6, displayNumber: '6', audioText: 'Altı' },
-  { number: 7, displayNumber: '7', audioText: 'Yedi' },
-  { number: 8, displayNumber: '8', audioText: 'Sekiz' },
-  { number: 9, displayNumber: '9', audioText: 'Dokuz' },
-  { number: 10, displayNumber: '10', audioText: 'On' },
+  { number: 1, displayNumber: '1', audioText: 'bir', staticAudioPath: '/audio/numbers/1.mp3' },
+  { number: 2, displayNumber: '2', audioText: 'iki', staticAudioPath: '/audio/numbers/2.mp3' },
+  { number: 3, displayNumber: '3', audioText: 'üç', staticAudioPath: '/audio/numbers/3.mp3' },
+  { number: 4, displayNumber: '4', audioText: 'dört', staticAudioPath: '/audio/numbers/4.mp3' },
+  { number: 5, displayNumber: '5', audioText: 'beş', staticAudioPath: '/audio/numbers/5.mp3' },
+  { number: 6, displayNumber: '6', audioText: 'altı', staticAudioPath: '/audio/numbers/6.mp3' },
+  { number: 7, displayNumber: '7', audioText: 'yedi', staticAudioPath: '/audio/numbers/7.mp3' },
+  { number: 8, displayNumber: '8', audioText: 'sekiz', staticAudioPath: '/audio/numbers/8.mp3' },
+  { number: 9, displayNumber: '9', audioText: 'dokuz', staticAudioPath: '/audio/numbers/9.mp3' },
+  { number: 10, displayNumber: '10', audioText: 'on', staticAudioPath: '/audio/numbers/10.mp3' },
 ];
 
 export default function NumberRecognitionGame({ onBack }: NumberRecognitionGameProps) {
@@ -36,13 +39,25 @@ export default function NumberRecognitionGame({ onBack }: NumberRecognitionGameP
   const [quizOptions, setQuizOptions] = useState<NumberQuestion[]>([]);
   const { speak } = useElevenLabs();
 
+  // Sayı ses dosyasını çal - static dosya varsa onu kullan, yoksa ElevenLabs
+  const playNumberAudio = async (number: NumberQuestion) => {
+    try {
+      const audio = new Audio(number.staticAudioPath);
+      await audio.play();
+      console.log(`✅ Static audio played: ${number.staticAudioPath}`);
+    } catch (error) {
+      console.log(`❌ Static audio failed, using ElevenLabs: ${error}`);
+      await speak(number.audioText, 'word');
+    }
+  };
+
   useEffect(() => {
     // Oyun başlarken hoş geldiniz mesajını çal
     speak('Sayı tanıma oyununa hoş geldin! Sayıları öğrenelim.', 'sentence');
   }, [speak]);
 
   const playNumberSound = async () => {
-    await speak(currentNumber.audioText, 'word');
+    await playNumberAudio(currentNumber);
   };
 
   const nextNumber = () => {
@@ -81,9 +96,9 @@ export default function NumberRecognitionGame({ onBack }: NumberRecognitionGameP
     setQuizOptions(allOptions);
     setShowFeedback(false);
     
-    // Soruyu seslendir
+    // Soruyu seslendir (static ses dosyasıyla)
     setTimeout(() => {
-      speak(correctAnswer.audioText, 'word');
+      playNumberAudio(correctAnswer);
     }, 1000);
   };
 
@@ -167,7 +182,7 @@ export default function NumberRecognitionGame({ onBack }: NumberRecognitionGameP
           {/* Quiz Controls */}
           <div className="text-center mt-8">
             <button
-              onClick={() => speak(currentNumber.audioText, 'word')}
+              onClick={() => playNumberAudio(currentNumber)}
               className="mx-2 px-6 py-3 bg-purple-500 text-white rounded-lg shadow hover:bg-purple-600 transition-colors"
             >
               🔊 Tekrar Dinle
@@ -205,63 +220,59 @@ export default function NumberRecognitionGame({ onBack }: NumberRecognitionGameP
 
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">🔢 Sayı Tanıma</h1>
-          <p className="text-gray-600">Sayıları öğren ve seslerini dinle!</p>
+          <p className="text-gray-600">Sayıları öğren ve tanı!</p>
         </div>
 
-        {/* Main Number Display */}
-        <div className="text-center mb-8">
-          <div className="bg-white rounded-3xl shadow-xl p-12 max-w-sm mx-auto">
-            <div className="text-9xl font-bold text-purple-600 mb-4">
-              {currentNumber.displayNumber}
-            </div>
-            <div className="text-2xl font-semibold text-gray-700">
-              {currentNumber.audioText}
-            </div>
+        {/* Number Display */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 text-center">
+          <div className="text-8xl font-bold text-purple-600 mb-4">
+            {currentNumber.displayNumber}
           </div>
-        </div>
-
-        {/* Controls */}
-        <div className="flex justify-center gap-4 mb-8">
-          <button
-            onClick={previousNumber}
-            className="px-6 py-3 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition-colors"
-          >
-            ← Önceki
-          </button>
+          <div className="text-2xl text-gray-700 mb-6">
+            {currentNumber.audioText}
+          </div>
           <button
             onClick={playNumberSound}
-            className="px-8 py-3 bg-purple-500 text-white rounded-lg shadow hover:bg-purple-600 transition-colors text-lg font-semibold"
+            className="px-8 py-4 bg-purple-500 text-white rounded-lg shadow hover:bg-purple-600 transition-colors text-xl"
           >
-            🔊 Dinle
+            🔊 Sesini Dinle
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={previousNumber}
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors"
+          >
+            ← Önceki Sayı
           </button>
           <button
             onClick={nextNumber}
-            className="px-6 py-3 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition-colors"
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors"
           >
-            Sonraki →
+            Sonraki Sayı →
           </button>
         </div>
 
         {/* Number Grid */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">🔢 Tüm Sayılar</h3>
-          <div className="grid grid-cols-5 md:grid-cols-10 gap-2">
-            {numbers.map((num) => (
-              <button
-                key={num.number}
-                onClick={() => setCurrentNumber(num)}
-                className={`
-                  aspect-square rounded-lg shadow text-2xl font-bold transition-colors
-                  ${currentNumber.number === num.number 
-                    ? 'bg-purple-500 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }
-                `}
-              >
-                {num.displayNumber}
-              </button>
-            ))}
-          </div>
+        <div className="grid grid-cols-5 gap-4 max-w-2xl mx-auto mt-8">
+          {numbers.map((num) => (
+            <button
+              key={num.number}
+              onClick={() => {
+                setCurrentNumber(num);
+                playNumberAudio(num);
+              }}
+              className={`
+                aspect-square bg-white rounded-lg shadow hover:shadow-lg transition-all duration-300
+                text-3xl font-bold text-purple-600 hover:bg-purple-50
+                ${currentNumber.number === num.number ? 'bg-purple-100 ring-4 ring-purple-500' : ''}
+              `}
+            >
+              {num.displayNumber}
+            </button>
+          ))}
         </div>
       </div>
     </div>

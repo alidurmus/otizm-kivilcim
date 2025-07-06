@@ -18,6 +18,26 @@ interface AdditionQuestion {
 
 const emojis = ['🟡', '🔵', '🟢', '🔴', '🟣'];
 
+// Sayı ses dosyaları mapping - static audio files integration
+const numberAudioPaths: Record<number, string> = {
+  1: '/audio/numbers/1.mp3',
+  2: '/audio/numbers/2.mp3',
+  3: '/audio/numbers/3.mp3',
+  4: '/audio/numbers/4.mp3',
+  5: '/audio/numbers/5.mp3',
+  6: '/audio/numbers/6.mp3',
+  7: '/audio/numbers/7.mp3',
+  8: '/audio/numbers/8.mp3',
+  9: '/audio/numbers/9.mp3',
+  10: '/audio/numbers/10.mp3',
+};
+
+// Türkçe sayı isimleri - ElevenLabs fallback için
+const turkishNumbers: Record<number, string> = {
+  1: 'bir', 2: 'iki', 3: 'üç', 4: 'dört', 5: 'beş',
+  6: 'altı', 7: 'yedi', 8: 'sekiz', 9: 'dokuz', 10: 'on'
+};
+
 export default function AdditionGame({ onBack }: AdditionGameProps) {
   const [currentQuestion, setCurrentQuestion] = useState<AdditionQuestion | null>(null);
   const [score, setScore] = useState(0);
@@ -27,6 +47,38 @@ export default function AdditionGame({ onBack }: AdditionGameProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showVisualHelp, setShowVisualHelp] = useState(true);
   const { speak } = useElevenLabs();
+
+  // Sayı ses dosyasını çal - static dosya varsa onu kullan, yoksa ElevenLabs
+  const playNumberAudio = async (number: number) => {
+    const audioPath = numberAudioPaths[number];
+    if (audioPath) {
+      try {
+        const audio = new Audio(audioPath);
+        await audio.play();
+        console.log(`✅ Static number audio played: ${audioPath}`);
+      } catch (error) {
+        console.log(`❌ Static number audio failed, using ElevenLabs: ${error}`);
+        const turkishName = turkishNumbers[number] || number.toString();
+        await speak(turkishName, 'word');
+      }
+    } else {
+      const turkishName = turkishNumbers[number] || number.toString();
+      await speak(turkishName, 'word');
+    }
+  };
+
+  // Toplama seslendirir - sayıları Turkish static audio ile
+  const speakAdditionProblem = async (num1: number, num2: number) => {
+    await speak('toplama işlemi:', 'sentence');
+    await new Promise(resolve => setTimeout(resolve, 800));
+    await playNumberAudio(num1);
+    await new Promise(resolve => setTimeout(resolve, 600));
+    await speak('artı', 'word');
+    await new Promise(resolve => setTimeout(resolve, 600));
+    await playNumberAudio(num2);
+    await new Promise(resolve => setTimeout(resolve, 600));
+    await speak('kaç eder?', 'sentence');
+  };
 
   const generateQuestion = useCallback(() => {
     // Basit toplama: 1-5 + 1-5 = 2-10
@@ -64,11 +116,11 @@ export default function AdditionGame({ onBack }: AdditionGameProps) {
     setShowFeedback(false);
     setSelectedAnswer(null);
     
-    // Soruyu seslendir
+    // Soruyu seslendir - static audio ile
     setTimeout(() => {
-      speak(`${num1} artı ${num2} kaç eder?`, 'sentence');
+      speakAdditionProblem(num1, num2);
     }, 1000);
-  }, [speak]);
+  }, []);
 
   // ✅ FIX: Initialize game once on mount (no dependency loop)
   useEffect(() => {
@@ -91,9 +143,30 @@ export default function AdditionGame({ onBack }: AdditionGameProps) {
     
     if (correct) {
       setScore(prev => prev + 1);
-      await speak(`Mükemmel! ${currentQuestion.number1} artı ${currentQuestion.number2} eşittir ${currentQuestion.result}!`, 'celebration');
+      // Static audio integration for celebration
+      await speak('Mükemmel!', 'celebration');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      await playNumberAudio(currentQuestion.number1);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('artı', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await playNumberAudio(currentQuestion.number2);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('eşittir', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await playNumberAudio(currentQuestion.result);
     } else {
-      await speak(`${currentQuestion.number1} artı ${currentQuestion.number2} eşittir ${currentQuestion.result} idi. Tekrar deneyelim.`, 'sentence');
+      await playNumberAudio(currentQuestion.number1);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('artı', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await playNumberAudio(currentQuestion.number2);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('eşittir', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await playNumberAudio(currentQuestion.result);
+      await new Promise(resolve => setTimeout(resolve, 600));
+      await speak('idi. Tekrar deneyelim.', 'sentence');
     }
     
     // 3 saniye sonra yeni soru
@@ -107,17 +180,29 @@ export default function AdditionGame({ onBack }: AdditionGameProps) {
     
     await speak('Toplama işlemini birlikte yapalım:', 'sentence');
     
-    setTimeout(() => {
-      speak(`Önce ${currentQuestion.number1} tane nesnemiz var`, 'sentence');
+    setTimeout(async () => {
+      await speak('Önce', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await playNumberAudio(currentQuestion.number1);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('tane nesnemiz var', 'sentence');
     }, 1500);
     
-    setTimeout(() => {
-      speak(`Sonra ${currentQuestion.number2} tane daha ekliyoruz`, 'sentence');
-    }, 3000);
+    setTimeout(async () => {
+      await speak('Sonra', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await playNumberAudio(currentQuestion.number2);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('tane daha ekliyoruz', 'sentence');
+    }, 3500);
     
-    setTimeout(() => {
-      speak(`Toplam ${currentQuestion.result} tane nesne oluyor!`, 'sentence');
-    }, 4500);
+    setTimeout(async () => {
+      await speak('Toplam', 'word');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await playNumberAudio(currentQuestion.result);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await speak('tane nesne oluyor!', 'sentence');
+    }, 5500);
   };
 
   if (!currentQuestion) {

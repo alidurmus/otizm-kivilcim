@@ -79,9 +79,9 @@ npm run test:full:core
 └── Error recovery & fallbacks
 
 📊 Test Metrikleri:
-├── Development: ~45 seconds (9 modules, 1 browser)
-├── Full Coverage: ~5 minutes (9 modules, 7 browsers)
-└── Module Coverage: 100% (all 9 active)
+├── Development: ~45 seconds (10 modules, 1 browser)
+├── Full Coverage: ~5 minutes (10 modules, 7 browsers)
+└── Module Coverage: 100% (all 10 active)
 
 🔴 Düzeltilecek Sorunlar:
 - 8+ unused variables (onBack, _error handlers)
@@ -396,7 +396,7 @@ npm run test:dev:admin           # API/admin issues
 # DEVELOPMENT TIER (Fast - Chromium Only)
 npm run test:dev                 # All development tests (~3 min)
 npm run test:dev:core            # Core system (~30s)
-npm run test:dev:exercises       # 9 modules (~45s)  
+npm run test:dev:exercises       # 10 modules (~45s)  
 npm run test:dev:admin           # Admin + API (~40s)
 npm run test:dev:pages           # UI pages (~25s)
 npm run test:dev:components      # Components (~20s)

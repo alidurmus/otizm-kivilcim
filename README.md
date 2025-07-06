@@ -669,3 +669,47 @@ Error Rate: 🟢 Near-zero
 **Module Count:** 10 Aktif Modül  
 **Success Rate:** 100% (All critical systems operational)  
 **Platform Status:** 🟢 **PRODUCTION READY**
+
+## 📋 TODO Yönetim Sistemi
+
+Kıvılcım platformu, geliştiriciler ve AI Coder'lar arasında etkili koordinasyon için yapılandırılmış bir TODO yönetim protokolü kullanır.
+
+### 🎯 Temel Özellikler
+- **Durum Takibi:** ⏳ BEKLEMEDE → 🔄 ÜZERİNDE ÇALIŞILIYOR → ✅ TAMAMLANDI
+- **Öncelik Sistemi:** (H) High, (M) Medium, (L) Low
+- **Çakışma Önleme:** Görev kilitleme sistemi
+- **İlerleme Takibi:** Alt adımlar ve checkbox sistemi
+
+### 📚 Görev Durum Tanımları
+| İkon | Durum | Açıklama |
+|------|-------|----------|
+| ⏳ | BEKLEMEDE | Üzerinde çalışılmaya hazır |
+| 🔄 | ÜZERİNDE ÇALIŞILIYOR | Aktif olarak işleniyor (LOCKED) |
+| ✅ | TAMAMLANDI | Başarıyla tamamlandı |
+| 🅿️ | DURAKLATILDI | Harici nedenle durdu |
+| 🗑️ | İPTAL EDİLDİ | Artık gerekli değil |
+
+### 🤖 AI Coder İş Akışı
+1. **Görev Seç:** ⏳ BEKLEMEDE durumundaki (H) öncelikli görevleri al
+2. **Sahiplen:** 🔄 ÜZERİNDE ÇALIŞILIYOR yap, (@username) ekle
+3. **İşle:** Alt adımları teker teker [x] işaretle
+4. **Tamamla:** ✅ TAMAMLANDI yap, completion summary ekle
+
+### 📖 Dokümantasyon
+- **[TODO Yönetim Protokolü](./.cursor/rules/todo-management.mdc)** - Detaylı kurallar ve iş akışı
+- **[Aktif TODO Listesi](./docs/todo.md)** - Güncel görevler ve durumları
+- **[Geliştirme Öncelikleri](./docs/todo.md#urgent-tasks)** - Acil müdahale gerektiren görevler
+
+### 🚀 Hızlı Başlangıç
+```bash
+# Mevcut TODO listesini görüntüle
+cat docs/todo.md
+
+# Yüksek öncelikli görevleri filtrele
+grep -A 5 "(H)" docs/todo.md
+
+# TODO protokolü kurallarını incele
+cat .cursor/rules/todo-management.mdc
+```
+
+---
