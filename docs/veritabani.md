@@ -1,6 +1,6 @@
 # Veritabanı Mimarisi ve Veri Modeli
 
-Bu doküman, Kıvılcım platformunun Firebase Firestore tabanlı veritabanı yapısını, 9 aktif modül için veri modellerini, gender-balanced voice system tracking'ini ve enhanced analytics'i detaylandırır.
+Bu doküman, Kıvılcım platformunun Firebase Firestore tabanlı veritabanı yapısını, 10 aktif modül için veri modellerini, gender-balanced voice system tracking'ini ve enhanced analytics'i detaylandırır.
 
 ## 🏗️ Genel Mimari
 
@@ -16,8 +16,8 @@ Bu doküman, Kıvılcım platformunun Firebase Firestore tabanlı veritabanı ya
 ```
 kivilcim-db/
 ├── users/                     # Kullanıcı profilleri
-├── modules/                   # 9 aktif modül metadata'sı
-├── progress/                  # İlerleme takibi (9 modül)
+├── modules/                   # 10 aktif modül metadata'sı
+├── progress/                  # İlerleme takibi (10 modül)
 ├── sessions/                  # Oturum verileri
 ├── voice_usage/               # Gender-balanced voice tracking (YENİ)
 ├── audio_files/               # Static audio file metadata (YENİ)
@@ -81,7 +81,7 @@ interface User {
 }
 ```
 
-## 📚 Modules Collection (9 Aktif Modül)
+## 📚 Modules Collection (10 Aktif Modül)
 
 ### Modül Metadata'sı
 ```typescript
@@ -105,19 +105,20 @@ interface Module {
       celebration?: 'Josh';
     };
   };
-  isActive: boolean;                    // 9 modül = true
+  isActive: boolean;                    // 10 modül = true
   order: number;                        // Modül sıralaması
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
 
-// 9 Aktif Modül Listesi
+// 10 Aktif Modül Listesi
 const ACTIVE_MODULES = [
   'alphabet-reading',      // YENİ MODÜL
   'vocabulary',
   'social-communication',
   'writing',
   'basic-concepts',
+  'mathematics',           // YENİ MODÜL - Matematik Dünyası
   'music-room',
   'video-room',
   'literacy',
@@ -138,7 +139,7 @@ interface VoiceConfig {
 }
 ```
 
-## 📊 Progress Collection (9 Modül Tracking)
+## 📊 Progress Collection (10 Modül Tracking)
 
 ### Genel İlerleme Takibi
 ```typescript
@@ -146,7 +147,7 @@ interface Progress {
   id: string;                           // user-{userId}
   userId: string;                       // User reference
   overallStats: {
-    totalModulesActive: 9;              // 9 aktif modül
+    totalModulesActive: 10;             // 10 aktif modül
     completedModules: number;           // Tamamlanan modül sayısı
     totalActivitiesCompleted: number;   // Toplam aktivite
     totalTimeSpent: number;             // Toplam süre (dakika)
@@ -155,7 +156,7 @@ interface Progress {
     longestStreak: number;              // En uzun seri
   };
   moduleProgress: {
-    [moduleId: string]: ModuleProgress; // 9 modül için detay
+    [moduleId: string]: ModuleProgress; // 10 modül için detay
   };
   voiceUsageStats: {                    // YENİ: Gender-balanced voice tracking
     totalVoiceInteractions: number;
@@ -286,6 +287,23 @@ interface ModuleProgress {
       };
       averageCompletionTime: number;
       bestCompletionTime: number;
+    };
+    
+    // Matematik Dünyası için
+    mathematics?: {
+      numbersLearned: number[];         // 1-10 arası sayılar
+      additionProblemsCompleted: number; // Toplama sorularını
+      subtractionProblemsCompleted: number; // Çıkarma soruları
+      shapesNumbersMatched: number;     // Şekil-sayı eşleştirme
+      countingAccuracy: number;         // Sayma doğruluğu %
+      mathConceptsUnderstood: string[]; // Anlaşılan matematik kavramları
+      difficultyLevels: {
+        basic: number;                  // 1-5 arası sayılar %
+        intermediate: number;           // 6-10 arası sayılar %
+        advanced: number;               // Toplama/çıkarma %
+      };
+      problemSolvingTime: number;       // Ortalama çözüm süresi (saniye)
+      visualMathAccuracy: number;       // Görsel matematik doğruluk %
     };
   };
 }
@@ -836,7 +854,7 @@ service cloud.firestore {
 
 ### İlk Veri Yükleme
 ```typescript
-// Modules seeding - 9 aktif modül
+// Modules seeding - 10 aktif modül
 const seedModules = async () => {
   const modules = [
     {
@@ -867,18 +885,6 @@ const seedModules = async () => {
             useSpeakerBoost: true
           }
         },
-        fallbackVoices: [{
-          voiceId: 'EXAVITQu4vr4xnSDxMaL',
-          voiceName: 'Bella',
-          gender: 'female',
-          language: 'tr',
-          settings: {
-            stability: 0.8,
-            similarityBoost: 0.9,
-            style: 0.3,
-            useSpeakerBoost: true
-          }
-        }],
         contentTypes: {
           letter: 'Adam',
           celebration: 'Josh'
@@ -886,6 +892,44 @@ const seedModules = async () => {
       },
       isActive: true,
       order: 1
+    },
+    {
+      id: 'mathematics',
+      name: 'Matematik Dünyası',
+      slug: 'mathematics',
+      description: 'Sayıları öğrenin ve temel matematik becerilerini geliştirin',
+      icon: '🔢',
+      difficulty: 'beginner',
+      estimatedDuration: 25,
+      learningObjectives: [
+        '1-10 arası sayı tanıma',
+        'Toplama işlemleri',
+        'Sayma becerileri',
+        'Şekil-sayı eşleştirme',
+        'Görsel matematik kavramları'
+      ],
+      prerequisites: [],
+      voiceConfiguration: {
+        primaryVoice: {
+          voiceId: 'ErXwobaYiN019PkySvjV',
+          voiceName: 'Antoni',
+          gender: 'male',
+          language: 'tr',
+          settings: {
+            stability: 0.75,
+            similarityBoost: 0.85,
+            style: 0.4,
+            useSpeakerBoost: true
+          }
+        },
+        contentTypes: {
+          word: 'Rachel',
+          sentence: 'Antoni',
+          celebration: 'Josh'
+        }
+      },
+      isActive: true,
+      order: 6
     },
     // ... diğer 8 modül
   ];
@@ -1075,6 +1119,6 @@ const requiredIndexes = [
 
 ---
 
-> **Version:** 2.0.0  
-> **Son Güncelleme:** Gender-balanced Turkish voice system tracking, 9 aktif modül support, static audio files metadata ve enhanced analytics ile kapsamlı olarak güncellenmiştir.  
+> **Version:** 2.1.0  
+> **Son Güncelleme:** Gender-balanced Turkish voice system tracking, 10 aktif modül support (matematik modülü eklendi), static audio files metadata ve enhanced analytics ile kapsamlı olarak güncellenmiştir.  
 > **İlgili Dokümanlar:** [API Documentation](./api.md), [Security Guide](./security.md), [Performance Guide](./performance.md)

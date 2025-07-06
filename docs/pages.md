@@ -6,7 +6,7 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 
 ### Özellikleri
 - **Hoş Geldin Mesajı:** Kullanıcıya özel karşılama
-- **Modül Genel Bakış:** 9 aktif modülün kısa tanıtımı
+- **Modül Genel Bakış:** 10 aktif modülün kısa tanıtımı
 - **Hızlı Erişim:** En popüler modüllere doğrudan bağlantılar
 - **Ebeveyn Paneli Giriş:** Gelişim takibi erişimi
 - **Duyusal Ayarlar:** Tema ve ses kontrolü
@@ -20,7 +20,7 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 ## 📚 Modül Seçimi (/modules)
 
 ### Görünüm
-- **9 Aktif Modül Kartı:** Her modül için detaylı kart
+- **10 Aktif Modül Kartı:** Her modül için detaylı kart
 - **İlerleme Gösterimi:** Her modülde kaç aktivite tamamlandığı
 - **Zorluk Seviyeleri:** Başlangıç, orta, ileri seviyeleri
 - **Önerilen Modüller:** Yaş ve ilgi alanına göre
@@ -32,10 +32,11 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 3. **Sosyal İletişim** (`/exercise/social-communication`)
 4. **Yazma ve İfade** (`/exercise/writing`)
 5. **Temel Kavramlar** (`/exercise/basic-concepts`)
-6. **Müzik Odası** (`/exercise/music-room`)
-7. **Video Odası** (`/exercise/video-room`)
-8. **Okuryazarlık** (`/exercise/literacy`)
-9. **Puzzle Oyunu** (`/exercise/puzzle`)
+6. **Matematik Dünyası** (`/exercise/mathematics`) - **YENİ!**
+7. **Müzik Odası** (`/exercise/music-room`)
+8. **Video Odası** (`/exercise/video-room`)
+9. **Okuryazarlık** (`/exercise/literacy`)
+10. **Puzzle Oyunu** (`/exercise/puzzle`)
 
 ## 🎯 Egzersiz Sayfaları (/exercise/*)
 
@@ -119,7 +120,26 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 - İnteraktif renk paleti
 - Kategorik öğrenme sistemi
 
-### 5. Müzik Odası (/exercise/music-room)
+### 5. Matematik Dünyası (/exercise/mathematics) - **YENİ MODÜL**
+**Aktiviteler:**
+- **📊 Sayı Tanıma:** 1-10 arası sayıları görsel objelerle tanıma ve öğrenme
+- **➕ Toplama Oyunları:** Basit matematik işlemleri ve görsel toplama aktiviteleri
+- **🔢 Sayma Becerileri:** Nesneleri sayma, sayı-miktar ilişkilendirme
+- **📐 Şekil-Sayı Eşleştirme:** Geometrik şekilleri sayılarla eşleştirme oyunları
+- **🎯 Matematik Problemleri:** Yaşa uygun basit matematik soruları
+
+**Zorluk Seviyeleri:**
+- **Temel Sayılar:** 1-5 arası sayı tanıma ve sayma
+- **Orta Düzey:** 6-10 arası sayılar ve basit toplama
+- **İleri Seviye:** Çıkarma işlemleri ve problem çözme
+
+**Teknoloji:**
+- Gender-balanced Turkish voices ile matematik kavramları
+- İnteraktif sayı gösterimi ve animasyonlar
+- Drag & drop matematik oyunları
+- Görsel matematik öğrenme araçları
+
+### 6. Müzik Odası (/exercise/music-room)
 **Aktiviteler:**
 - **Sakinleştirici Müzikler:** Yağmur sesi, okyanus dalgaları
 - **Eğitici Şarkılar:** Alfabe ve sayı şarkıları
@@ -132,7 +152,7 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 - Çoklu oynatma listeleri
 - Otomatik shuffle özelliği
 
-### 6. Video Odası (/exercise/video-room)
+### 7. Video Odası (/exercise/video-room)
 **Aktiviteler:**
 - **Eğitici Videolar:** Renkler, şekiller, sayılar
 - **Sosyal Öyküler:** Arkadaşlık, paylaşma senaryoları
@@ -145,7 +165,7 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 - Güvenli içerik filtreleme
 - Kategori bazlı organizasyon
 
-### 7. Okuryazarlık (/exercise/literacy)
+### 8. Okuryazarlık (/exercise/literacy)
 **Aktiviteler:**
 - **Harf Tanıma:** Türk alfabesindeki harfleri tanıma ve sesletme
 - **Hece Birleştirme:** Harfleri birleştirerek hece oluşturma
@@ -158,7 +178,7 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 - İnteraktif kelime kartları
 - Okuma seviyesi değerlendirme
 
-### 8. Puzzle Oyunu (/exercise/puzzle)
+### 9. Puzzle Oyunu (/exercise/puzzle)
 **Aktiviteler:**
 - **Hayvan Puzzle'ları:** Sevimli hayvan resimlerini tamamlama
 - **Meyve Puzzle'ları:** Rengarenk meyve resimlerini birleştirme
@@ -178,7 +198,7 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 ## 👨‍👩‍👧‍👦 Ebeveyn Paneli (/parent-panel)
 
 ### Başlıca Bölümler
-- **Gelişim Özeti:** Genel ilerleme durumu (9 modül)
+- **Gelişim Özeti:** Genel ilerleme durumu (10 modül)
 - **Modül Bazlı Analiz:** Her modülde detaylı performans
 - **Güçlü Alanlar:** Çocuğun başarılı olduğu konular
 - **Gelişim Alanları:** Odaklanılması gereken konular
@@ -186,7 +206,7 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 - **Aktivite Raporu:** Günlük/haftalık aktivite özetleri
 
 ### Grafik ve Metrikler
-- **Donut Chart:** 9 modül bazlı başarı oranları
+- **Donut Chart:** 10 modül bazlı başarı oranları
 - **Bar Chart:** Haftalık aktivite dağılımı
 - **Progress Bar:** Genel ilerleme gösterimi
 - **Trend Lines:** Zaman içindeki gelişim trendi
@@ -259,6 +279,7 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 │   ├── /exercise/social-communication (Sosyal İletişim)
 │   ├── /exercise/writing (Yazma ve İfade)
 │   ├── /exercise/basic-concepts (Temel Kavramlar)
+│   ├── /exercise/mathematics (Matematik Dünyası) **YENİ**
 │   ├── /exercise/music-room (Müzik Odası)
 │   ├── /exercise/video-room (Video Odası)
 │   ├── /exercise/literacy (Okuryazarlık)
@@ -302,7 +323,7 @@ Admin > ElevenLabs Test > Gender-Based Voice Testing
     <priority>0.9</priority>
     <changefreq>weekly</changefreq>
   </url>
-  <!-- 9 aktif modül URL'leri -->
+  <!-- 10 aktif modül URL'leri -->
   <url>
     <loc>https://kivilcim.com/exercise/alphabet-reading</loc>
     <priority>0.8</priority>
@@ -313,7 +334,7 @@ Admin > ElevenLabs Test > Gender-Based Voice Testing
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
-  <!-- ... diğer 7 modül -->
+  <!-- ... diğer 8 modül -->
 </urlset>
 ```
 
@@ -368,4 +389,4 @@ const VOICE_ASSIGNMENTS = {
 
 ---
 
-> Bu doküman, platform'un güncel sayfa yapısını ve 9 aktif modülün detaylarını yansıtır. Gender-balanced Turkish voice system (3 erkek + 2 kadın), static audio files ve enhanced admin interface ile güçlendirilmiştir. Tüm sayfalar WCAG 2.1 AA erişilebilirlik standartlarına uygun olarak tasarlanmıştır. 
+> Bu doküman, platform'un güncel sayfa yapısını ve 10 aktif modülün detaylarını yansıtır. Gender-balanced Turkish voice system (3 erkek + 2 kadın), static audio files ve enhanced admin interface ile güçlendirilmiştir. Tüm sayfalar WCAG 2.1 AA erişilebilirlik standartlarına uygun olarak tasarlanmıştır. 

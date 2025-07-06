@@ -50,6 +50,7 @@ export const BASIC_WORDS: StaticAudioFile[] = [
   { text: 'al', filename: 'al.mp3', type: 'word', category: 'literacy' },
   { text: 'at', filename: 'at.mp3', type: 'word', category: 'literacy' },
   { text: 'ev', filename: 'ev.mp3', type: 'word', category: 'literacy' },
+  { text: 'ok', filename: 'ok.mp3', type: 'word', category: 'literacy' },
   
   // Temel kavramlar kelimeleri
   { text: 'bu', filename: 'bu.mp3', type: 'word', category: 'concepts' },
@@ -99,7 +100,7 @@ export const BASIC_WORDS: StaticAudioFile[] = [
   { text: 'domates', filename: 'domates.mp3', type: 'word', category: 'vegetables' },
   { text: 'salatalık', filename: 'salatalik.mp3', type: 'word', category: 'vegetables' },
   
-  // Hayvanlar
+  // Hayvanlar - Hafıza oyunu için Gülsu voice ile oluşturulmuş
   { text: 'kedi', filename: 'kedi.mp3', type: 'word', category: 'animals' },
   { text: 'köpek', filename: 'kohpek.mp3', type: 'word', category: 'animals' },
   { text: 'kuş', filename: 'kush.mp3', type: 'word', category: 'animals' },
@@ -108,6 +109,8 @@ export const BASIC_WORDS: StaticAudioFile[] = [
   { text: 'kaplan', filename: 'kaplan.mp3', type: 'word', category: 'animals' },
   { text: 'aslan', filename: 'aslan.mp3', type: 'word', category: 'animals' },
   { text: 'tavşan', filename: 'tavshan.mp3', type: 'word', category: 'animals' },
+  { text: 'kurbağa', filename: 'kurbaga.mp3', type: 'word', category: 'animals' },
+  { text: 'koala', filename: 'koala.mp3', type: 'word', category: 'animals' },
   
   // Temel nesneler
   { text: 'su', filename: 'su.mp3', type: 'word', category: 'objects' },
@@ -118,6 +121,43 @@ export const BASIC_WORDS: StaticAudioFile[] = [
   { text: 'kitap', filename: 'kitap.mp3', type: 'word', category: 'objects' },
   { text: 'kalem', filename: 'kalem.mp3', type: 'word', category: 'objects' },
   { text: 'çanta', filename: 'chanta.mp3', type: 'word', category: 'objects' },
+
+  // Matematik modülü - sayılar (Türkçe telaffuz)
+  { text: 'Bir', filename: 'bir.mp3', type: 'word', category: 'mathematics' },
+  { text: 'İki', filename: 'iki.mp3', type: 'word', category: 'mathematics' },
+  { text: 'Üç', filename: 'uch.mp3', type: 'word', category: 'mathematics' },
+  { text: 'Dört', filename: 'dort.mp3', type: 'word', category: 'mathematics' },
+  { text: 'Beş', filename: 'bes.mp3', type: 'word', category: 'mathematics' },
+  { text: 'Altı', filename: 'alti.mp3', type: 'word', category: 'mathematics' },
+  { text: 'Yedi', filename: 'yedi.mp3', type: 'word', category: 'mathematics' },
+  { text: 'Sekiz', filename: 'sekiz.mp3', type: 'word', category: 'mathematics' },
+  { text: 'Dokuz', filename: 'dokuz.mp3', type: 'word', category: 'mathematics' },
+  { text: 'On', filename: 'on.mp3', type: 'word', category: 'mathematics' },
+  
+  // Matematik işlem kelimeleri
+  { text: 'artı', filename: 'arti.mp3', type: 'word', category: 'mathematics' },
+  { text: 'eşittir', filename: 'esittir.mp3', type: 'word', category: 'mathematics' },
+  { text: 'kaç eder', filename: 'kach-eder.mp3', type: 'word', category: 'mathematics' },
+  { text: 'toplam', filename: 'toplam.mp3', type: 'word', category: 'mathematics' },
+  { text: 'tane', filename: 'tane.mp3', type: 'word', category: 'mathematics' },
+  
+  // Matematik nesneleri (sayma için)
+  { text: 'elmalar', filename: 'elmalar.mp3', type: 'word', category: 'mathematics' },
+  { text: 'yıldızlar', filename: 'yildizlar.mp3', type: 'word', category: 'mathematics' },
+  { text: 'kalpler', filename: 'kalpler.mp3', type: 'word', category: 'mathematics' },
+  { text: 'toplar', filename: 'toplar.mp3', type: 'word', category: 'mathematics' },
+  { text: 'çiçekler', filename: 'chichekler.mp3', type: 'word', category: 'mathematics' },
+  { text: 'arabalar', filename: 'arabalar.mp3', type: 'word', category: 'mathematics' },
+  { text: 'kelebekler', filename: 'kelebekler.mp3', type: 'word', category: 'mathematics' },
+  { text: 'köpekler', filename: 'kopekler.mp3', type: 'word', category: 'mathematics' },
+  
+  // Şekil isimleri
+  { text: 'yıldız', filename: 'yildiz.mp3', type: 'word', category: 'mathematics' },
+  { text: 'elmas', filename: 'elmas.mp3', type: 'word', category: 'mathematics' },
+  { text: 'mavi kare', filename: 'mavi-kare.mp3', type: 'word', category: 'mathematics' },
+  { text: 'mor daire', filename: 'mor-daire.mp3', type: 'word', category: 'mathematics' },
+  { text: 'turuncu elmas', filename: 'turuncu-elmas.mp3', type: 'word', category: 'mathematics' },
+  { text: 'yeşil daire', filename: 'yesil-daire.mp3', type: 'word', category: 'mathematics' },
 
   // Ek kelimeler - diğer sayfalarda kullanılan
   { text: 'çe', filename: 'che.mp3', type: 'word', category: 'syllables' },
@@ -169,6 +209,14 @@ export const SOCIAL_COMMUNICATION_DIALOGS: StaticAudioFile[] = [
   { text: "{activity} aktivitesini öğrenelim!", filename: 'aktivite-ogrenelim.mp3', type: 'sentence', category: 'social' },
   { text: "Tebrikler! Aktiviteyi tamamladın!", filename: 'tebrikler-aktivite-tamamlandi.mp3', type: 'celebration', category: 'social' },
   { text: "{skill}: {phrase}. {situation}", filename: 'iletisim-becerisi.mp3', type: 'sentence', category: 'social' },
+  
+  // Specific emotion descriptions - for social communication module
+  { text: "Mutlu: Neşeli ve keyifli hissetmek", filename: 'mutlu-neseli-keyifli.mp3', type: 'sentence', category: 'emotions' },
+  { text: "Üzgün: Kederli ve mutsuz hissetmek", filename: 'uzgun-kederli-mutsuz.mp3', type: 'sentence', category: 'emotions' },
+  { text: "Kızgın: Öfkeli ve sinirli hissetmek", filename: 'kizgin-ofkeli-sinirli.mp3', type: 'sentence', category: 'emotions' },
+  { text: "Şaşkın: Hayret etmek ve şaşırmak", filename: 'saskin-hayret-sasirama.mp3', type: 'sentence', category: 'emotions' },
+  { text: "Korkmuş: Endişeli ve korkulu hissetmek", filename: 'korkmus-endiseli-korkulu.mp3', type: 'sentence', category: 'emotions' },
+  { text: "Heyecanlı: Coşkulu ve heyecanlı hissetmek", filename: 'heyecanli-coskulu.mp3', type: 'sentence', category: 'emotions' },
 ];
 
 // Sosyal beceriler modülü diyalogları - Dialog.md'den
@@ -177,8 +225,6 @@ export const SOCIAL_SKILLS_DIALOGS: StaticAudioFile[] = [
   { text: "{explanation} Tekrar deneyelim!", filename: 'aciklama-tekrar-deneyelim.mp3', type: 'sentence', category: 'social-skills' },
   { text: "Harika! Tüm sosyal beceri egzersizlerini tamamladın! {score} doğru cevap verdin!", filename: 'harika-sosyal-tamamlandi.mp3', type: 'celebration', category: 'social-skills' },
 ];
-
-
 
 // Yazma ve ifade modülü diyalogları - Dialog.md'den
 export const WRITING_EXPRESSION_DIALOGS: StaticAudioFile[] = [
@@ -213,11 +259,54 @@ export const PUZZLE_DIALOGS: StaticAudioFile[] = [
   { text: "Başka bir yere dene. Sen yapabilirsin!", filename: 'baska-yere-dene.mp3', type: 'sentence', category: 'puzzle' },
   { text: "seviye seçtin.", filename: 'seviye-sectin.mp3', type: 'sentence', category: 'puzzle' },
   { text: "yapbozunu başlayalım!", filename: 'yapboz-baslayalim.mp3', type: 'sentence', category: 'puzzle' },
+  
+  // Specific puzzle sentences - filled templates
+  { text: "Hayvanlar kategorisini seçtin. Şimdi zorluk seviyesini seç.", filename: 'hayvanlar-kategorisini-sectin-zorluk-seviyesini-sec.mp3', type: 'sentence', category: 'puzzle' },
+  { text: "Kolay seviye seçtin. Dostane Köpek yapbozunu başlayalım!", filename: 'kolay-seviye-sectin-dostane-kopek-yapbozunu-baslayalim.mp3', type: 'sentence', category: 'puzzle' },
 ];
 
 // Hikayeler modülü diyalogları - Dialog.md'den
 export const STORIES_DIALOGS: StaticAudioFile[] = [
   { text: "Bu hikaye henüz hazırlanıyor. Lütfen daha sonra tekrar deneyin.", filename: 'hikaye-hazirlanıyor.mp3', type: 'sentence', category: 'stories' },
+];
+
+// Matematik modülü diyalogları - Yeni eklenen
+export const MATHEMATICS_DIALOGS: StaticAudioFile[] = [
+  // Hoş geldin mesajları
+  { text: 'Sayı tanıma oyununa hoş geldin! Sayıları öğrenelim.', filename: 'sayi-tanima-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Sayma oyununa hoş geldin! Nesneleri sayalım.', filename: 'sayma-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Toplama oyununa hoş geldin! Sayıları toplayalım.', filename: 'toplama-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Şekil sayı oyununa hoş geldin! Şekilleri sayalım.', filename: 'sekil-sayi-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
+  
+  // Sorular ve yönlendirmeler
+  { text: 'Şimdi quiz zamanı! Duyduğun sayıyı seç.', filename: 'quiz-zamani-sayi-sec.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Kaç tane var? Sayalım!', filename: 'kach-tane-var-sayalim.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Duyduğun sayıyı seç!', filename: 'duydugun-sayiyi-sec.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Birlikte sayalım:', filename: 'birlikte-sayalim.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Şekilleri tek tek sayalım:', filename: 'sekilleri-tek-tek-sayalim.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Toplama işlemini birlikte yapalım:', filename: 'toplama-islemini-birlikte.mp3', type: 'sentence', category: 'mathematics' },
+  
+  // Açıklamalar
+  { text: 'Önce tane nesnemiz var', filename: 'once-tane-nesnemiz-var.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Sonra tane daha ekliyoruz', filename: 'sonra-tane-daha-ekliyoruz.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Toplam tane nesne oluyor!', filename: 'toplam-tane-nesne-oluyor.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Şekillerdeki desenleri say ve doğru sayıyı seç!', filename: 'sekillerdeki-desenleri-say.mp3', type: 'sentence', category: 'mathematics' },
+  
+  // Başarı mesajları
+  { text: 'Aferin! Doğru sayıyı seçtin.', filename: 'aferin-dogru-sayiyi-sectin.mp3', type: 'celebration', category: 'mathematics' },
+  { text: 'doğru cevap!', filename: 'dogru-cevap.mp3', type: 'celebration', category: 'mathematics' },
+  { text: 'Mükemmel! eşittir !', filename: 'mukemmel-esittir.mp3', type: 'celebration', category: 'mathematics' },
+  { text: 'tane var.', filename: 'tane-var.mp3', type: 'celebration', category: 'mathematics' },
+  { text: 'tane !', filename: 'tane-isim.mp3', type: 'celebration', category: 'mathematics' },
+  
+  // Hata mesajları
+  { text: 'idi. Tekrar deneyelim.', filename: 'idi-tekrar-deneyelim.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Doğru cevap idi.', filename: 'dogru-cevap-idi.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'idi. Tekrar sayalım.', filename: 'idi-tekrar-sayalim.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'vardı. Tekrar sayalım.', filename: 'vardi-tekrar-sayalim.mp3', type: 'sentence', category: 'mathematics' },
+
+  // Matematik modülü hoş geldin mesajı
+  { text: 'Toplama oyunu! Hoş geldin!', filename: 'toplama-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
 ];
 
 // Türkçe yönlendirme cümleleri - genişletilmiş
@@ -261,6 +350,32 @@ export const CELEBRATION_MESSAGES: StaticAudioFile[] = [
   { text: 'Süpersin! Devam et böyle!', filename: 'supersin-devam-et.mp3', type: 'celebration', category: 'praise' },
   { text: 'Çok başarılısın! Harika iş!', filename: 'cok-basarilisin-harika-is.mp3', type: 'celebration', category: 'praise' },
   { text: 'Mükemmel! Devam et!', filename: 'mukemmel-devam-et.mp3', type: 'celebration', category: 'praise' },
+  // Hafıza oyunu için yeni oluşturulan kutlama mesajları (Gülsu voice)
+  { text: 'Harika! Eşleştirmeyi buldun!', filename: 'harika-eslestirme-buldu.mp3', type: 'celebration', category: 'vocabulary' },
+  { text: 'Tebrikler! Tüm eşleştirmeleri buldun!', filename: 'tebrikler-tum-eslestirmeler.mp3', type: 'celebration', category: 'vocabulary' },
+];
+
+export const SENTENCE_MESSAGES: StaticAudioFile[] = [
+  // Alfabetik sıra - static dosya adlarıyla tutarlı
+  { text: 'Alfabe okuma modülüne hoş geldin! Türk alfabesinin 29 harfini birlikte öğreneceğiz.', filename: 'alfabe-hosgeldin.mp3', type: 'sentence', category: 'instructions' },
+  { text: 'Bu duygu!', filename: 'bu-duygu.mp3', type: 'sentence', category: 'concepts' },
+  { text: 'Bu hayvan!', filename: 'bu-hayvan.mp3', type: 'sentence', category: 'concepts' },
+  { text: 'Bu renk!', filename: 'bu-renk.mp3', type: 'sentence', category: 'concepts' },
+  { text: 'Bu sayı!', filename: 'bu-sayi.mp3', type: 'sentence', category: 'concepts' },
+  { text: 'Bu şekil!', filename: 'bu-sekil.mp3', type: 'sentence', category: 'concepts' },
+  { text: 'Çok iyi!', filename: 'cok-iyi.mp3', type: 'sentence', category: 'instructions' },
+  { text: 'Harika!', filename: 'harika.mp3', type: 'celebration', category: 'praise' },
+  { text: 'Harika bir eşleştirme!', filename: 'harika-eslestirme.mp3', type: 'celebration', category: 'vocabulary' },
+  { text: 'Hayvan sesi!', filename: 'hayvan-sesi.mp3', type: 'sentence', category: 'concepts' },
+  { text: 'İletişim becerisi!', filename: 'iletisim-becerisi.mp3', type: 'sentence', category: 'social' },
+  { text: 'Sonraki adım!', filename: 'sonraki-adim.mp3', type: 'sentence', category: 'instructions' },
+  { text: 'Tekrar dene!', filename: 'tekrar-dene.mp3', type: 'sentence', category: 'instructions' },
+  { text: 'Yanlış!', filename: 'yanlis.mp3', type: 'sentence', category: 'instructions' },
+];
+
+// Word type mesajları - hece öğretimi için
+export const WORD_MESSAGES: StaticAudioFile[] = [
+  { text: 'Bu hece!', filename: 'bu-hece.mp3', type: 'word', category: 'literacy' },
 ];
 
 // Tüm statik ses dosyalarını birleştir - Dialog.md uyumlu
@@ -278,8 +393,11 @@ export const ALL_STATIC_AUDIO: StaticAudioFile[] = [
   ...BASIC_CONCEPTS_DIALOGS,
   ...PUZZLE_DIALOGS,
   ...STORIES_DIALOGS,
+  ...MATHEMATICS_DIALOGS,
   ...INSTRUCTION_SENTENCES,
   ...CELEBRATION_MESSAGES,
+  ...SENTENCE_MESSAGES,
+  ...WORD_MESSAGES,
 ];
 
 // Gelişmiş multi-voice ses dosyası yolu oluşturucu
