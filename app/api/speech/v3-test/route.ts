@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ElevenLabsApi, ElevenLabs } from 'elevenlabs';
 
 // ElevenLabs v3 test konfigürasyonu
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
@@ -25,7 +24,8 @@ const V3_MODELS = [
   'eleven_turbo_v2_5',
   'eleven_flash_v2_5', 
   'eleven_multilingual_v2',
-  'eleven_turbo_v3_alpha' // Varsayımsal v3 alpha
+  'eleven_turbo_v3', // V3 model (potansiyel)
+  'eleven_flash_v3'   // V3 Flash model (potansiyel)
 ];
 
 export async function POST(request: NextRequest) {
@@ -65,110 +65,144 @@ export async function POST(request: NextRequest) {
 
     console.log(`🧪 ElevenLabs v3 Test - Model: ${model_id}, Voice: ${voice_id}, Text: "${text.substring(0, 50)}..."`);
 
-    // ElevenLabs client oluştur
-    const client = new ElevenLabs({
-      apiKey: ELEVENLABS_API_KEY,
-    });
-
     const startTime = Date.now();
 
     try {
-      // ElevenLabs v3 API çağrısı
-      const audioResponse = await client.textToSpeech.convert(voice_id, {
-        text: text,
-        model_id: model_id,
-        language_code: language, // v3'te language_code kullanılıyor
-        voice_settings: {
-          stability: voice_settings.stability,
-          similarity_boost: voice_settings.similarity_boost,
-          style: voice_settings.style,
-          use_speaker_boost: voice_settings.use_speaker_boost
-        },
-        // v3 Alpha özellikler (varsayımsal)
-        pronunciation_dictionary_locators: [], // Türkçe telaffuz sözlüğü
-        seed: Math.floor(Math.random() * 1000), // Reproducible results
-        output_format: 'mp3_44100_128' // Yüksek kalite
-      });
+      // Timeout controller
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 saniye timeout
 
+      // ElevenLabs v3 API çağrısı (fetch ile)
+      const elevenLabsResponse = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`,
+        {
+          method: 'POST',
+          signal: controller.signal,
+          headers: {
+            'Accept': 'audio/mpeg',
+            'Content-Type': 'application/json',
+            'xi-api-key': ELEVENLABS_API_KEY,
+            'User-Agent': 'Kivilcim-v3-Test/1.0',
+          },
+          body: JSON.stringify({
+            text: text,
+            model_id: model_id,
+            voice_settings: {
+              stability: voice_settings.stability,
+              similarity_boost: voice_settings.similarity_boost,
+              style: voice_settings.style,
+              use_speaker_boost: voice_settings.use_speaker_boost
+            },
+            language_code: language, // v3'te language_code kullanılabilir
+            // v3 Alpha özellikler (varsayımsal/experimental)
+            pronunciation_dictionary_locators: [], // Türkçe telaffuz sözlüğü
+            seed: Math.floor(Math.random() * 1000), // Reproducible results
+            output_format: 'mp3_44100_128' // Yüksek kalite
+          })
+        }
+      );
+
+      clearTimeout(timeoutId);
       const responseTime = Date.now() - startTime;
-      
+
+      if (!elevenLabsResponse.ok) {
+        const errorText = await elevenLabsResponse.text().catch(() => 'Unknown error');
+        
+        console.error(`❌ ElevenLabs v3 API Error:`, {
+          status: elevenLabsResponse.status,
+          statusText: elevenLabsResponse.statusText,
+          model: model_id,
+          voice: voice_id,
+          error: errorText,
+          responseTime
+        });
+
+        // Specific error handling for v3 alpha
+        if (elevenLabsResponse.status === 404 && errorText.includes('model')) {
+          return NextResponse.json(
+            { 
+              error: 'Model not found - v3 model may not be available yet',
+              model: model_id,
+              fallback: 'Try eleven_turbo_v2_5 instead',
+              responseTime
+            },
+            { status: 422 }
+          );
+        }
+
+        if (elevenLabsResponse.status === 404 && errorText.includes('voice')) {
+          return NextResponse.json(
+            { 
+              error: 'Voice ID not found',
+              voice_id: voice_id,
+              details: errorText,
+              responseTime
+            },
+            { status: 404 }
+          );
+        }
+
+        if (elevenLabsResponse.status === 422) {
+          return NextResponse.json(
+            { 
+              error: 'Unprocessable request - check model/voice compatibility',
+              model: model_id,
+              voice: voice_id,
+              details: errorText,
+              responseTime
+            },
+            { status: 422 }
+          );
+        }
+
+        return NextResponse.json(
+          { 
+            error: 'Speech generation failed',
+            details: errorText,
+            model: model_id,
+            responseTime
+          },
+          { status: elevenLabsResponse.status }
+        );
+      }
+
       console.log(`✅ ElevenLabs v3 Success - Model: ${model_id}, Response time: ${responseTime}ms`);
 
-      // Audio stream'i buffer'a çevir
-      const chunks: Uint8Array[] = [];
-      const reader = audioResponse.getReader();
-      
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        chunks.push(value);
-      }
-
-      // Buffer'ları birleştir
-      const audioBuffer = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
-      let offset = 0;
-      for (const chunk of chunks) {
-        audioBuffer.set(chunk, offset);
-        offset += chunk.length;
-      }
+      // Audio data'yı buffer olarak al
+      const audioBuffer = await elevenLabsResponse.arrayBuffer();
+      const audioUint8 = new Uint8Array(audioBuffer);
 
       // Response headers
       const headers = new Headers({
         'Content-Type': 'audio/mpeg',
-        'Content-Length': audioBuffer.length.toString(),
+        'Content-Length': audioUint8.length.toString(),
         'X-Response-Time': responseTime.toString(),
         'X-Model-Used': model_id,
         'X-Voice-Used': voice_id,
         'X-Language': language,
-        'X-Test-Mode': 'v3-alpha',
+        'X-Test-Mode': 'v3-experimental',
         'Cache-Control': 'no-cache, no-store, must-revalidate'
       });
 
-      return new NextResponse(audioBuffer, {
+      return new NextResponse(audioUint8, {
         status: 200,
         headers
       });
 
-    } catch (elevenLabsError: any) {
+    } catch (fetchError: any) {
       const responseTime = Date.now() - startTime;
       
-      console.error(`❌ ElevenLabs v3 API Error:`, {
+      console.error(`❌ ElevenLabs v3 Fetch Error:`, {
         model: model_id,
         voice: voice_id,
-        error: elevenLabsError.message,
+        error: fetchError.message,
         responseTime
       });
 
-      // Specific error handling for v3 alpha
-      if (elevenLabsError.message?.includes('model not found') || 
-          elevenLabsError.message?.includes('v3_alpha')) {
-        return NextResponse.json(
-          { 
-            error: 'v3 Alpha model not yet available',
-            details: elevenLabsError.message,
-            fallback: 'Using v2.5 models instead',
-            responseTime
-          },
-          { status: 422 }
-        );
-      }
-
-      if (elevenLabsError.message?.includes('voice not found')) {
-        return NextResponse.json(
-          { 
-            error: 'Voice ID not found',
-            voice_id: voice_id,
-            details: elevenLabsError.message,
-            responseTime
-          },
-          { status: 404 }
-        );
-      }
-
       return NextResponse.json(
         { 
-          error: 'Speech generation failed',
-          details: elevenLabsError.message,
+          error: 'Network error or timeout',
+          details: fetchError.message,
           model: model_id,
           responseTime
         },
@@ -189,7 +223,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET endpoint - Test bilgileri
+// GET endpoint - Test bilgileri ve model status
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -201,21 +235,38 @@ export async function GET(request: NextRequest) {
         models: V3_MODELS,
         features: [
           'Turkish language optimization',
-          'v3 Alpha testing',
-          'Enhanced pronunciation',
-          'Real-time streaming (planned)',
-          'Custom voice training (planned)'
+          'v3 Model testing',
+          'Enhanced pronunciation dictionary',
+          'Reproducible seed generation',
+          'High quality MP3 output (44.1kHz)',
+          'Autism-friendly voice settings'
         ]
+      });
+    }
+
+    if (info === 'models') {
+      return NextResponse.json({
+        available_models: V3_MODELS,
+        recommended: 'eleven_turbo_v2_5',
+        experimental: ['eleven_turbo_v3', 'eleven_flash_v3'],
+        stable: ['eleven_turbo_v2_5', 'eleven_flash_v2_5'],
+        legacy: ['eleven_multilingual_v2']
       });
     }
 
     return NextResponse.json({
       status: 'ElevenLabs v3 Test API Ready',
       voice_id: GULSU_NEW_VOICE.id,
+      voice_name: GULSU_NEW_VOICE.name,
       supported_models: V3_MODELS,
-      api_version: 'v3-alpha-test',
+      api_version: 'v3-test',
       language: 'Turkish (tr)',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      test_endpoints: {
+        voice_info: '/api/speech/v3-test?info=voice',
+        model_info: '/api/speech/v3-test?info=models',
+        generate_speech: 'POST /api/speech/v3-test'
+      }
     });
 
   } catch (error: any) {
