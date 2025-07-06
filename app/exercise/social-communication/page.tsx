@@ -163,45 +163,41 @@ export default function SocialCommunicationModulePage() {
 
   const handleEmotionClick = async (emotion: Emotion) => {
     setSelectedEmotion(emotion.id);
-    await speak(`${emotion.name}: ${emotion.description}`, 'sentence');
+    // Duygu adı ve açıklamasını seslendır
+    const emotionDescription = `${emotion.name}: ${emotion.description}`;
+    await speak(emotionDescription, 'sentence');
   };
 
   const handleStoryAnswer = async (answerIndex: number) => {
-    const currentStory = socialStories[currentStoryIndex];
-    if (answerIndex === currentStory.correctAnswer) {
+    const story = socialStories[currentStoryIndex];
+    const isCorrect = answerIndex === story.correctAnswer;
+    
+    if (isCorrect) {
       setStoryScore(prev => prev + 1);
-      await speak('Doğru! ' + currentStory.explanation, 'celebration');
+      await speak("Doğru!", 'celebration');
     } else {
-      await speak('Tekrar dene. ' + currentStory.explanation, 'sentence');
+      await speak("Yanlış!", 'sentence');
     }
     
     setTimeout(() => {
-      if (currentStoryIndex < socialStories.length - 1) {
-        setCurrentStoryIndex(prev => prev + 1);
-      } else {
-        speak(`Harika! ${storyScore + (answerIndex === currentStory.correctAnswer ? 1 : 0)} doğru cevap verdin!`, 'celebration');
-      }
-    }, 3000);
+      setCurrentStoryIndex(prev => prev + 1);
+    }, 2000);
   };
 
   const handleActivitySelect = (activity: DailyActivity) => {
     setSelectedActivity(activity);
     setSelectedActivityStep(0);
-    speak(`${activity.activity} aktivitesini öğrenelim!`, 'sentence');
   };
 
   const handleNextStep = async () => {
     if (selectedActivity && selectedActivityStep < selectedActivity.steps.length - 1) {
-      const nextStep = selectedActivityStep + 1;
-      setSelectedActivityStep(nextStep);
-      await speak(selectedActivity.steps[nextStep], 'sentence');
-    } else {
-      await speak('Tebrikler! Aktiviteyi tamamladın!', 'celebration');
+      setSelectedActivityStep(prev => prev + 1);
+      await speak("Sonraki adım!", 'sentence');
     }
   };
 
-  const handleCommunicationClick = async (skill: CommunicationSkill) => {
-    await speak(`${skill.skill}: ${skill.phrase}. ${skill.situation}`, 'sentence');
+  const handleCommunicationClick = async (_skill: CommunicationSkill) => {
+    await speak("İletişim becerisi!", 'sentence');
   };
 
   // Emotion Recognition Activity

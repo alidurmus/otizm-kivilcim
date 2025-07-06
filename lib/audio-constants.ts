@@ -122,17 +122,17 @@ export const BASIC_WORDS: StaticAudioFile[] = [
   { text: 'kalem', filename: 'kalem.mp3', type: 'word', category: 'objects' },
   { text: 'çanta', filename: 'chanta.mp3', type: 'word', category: 'objects' },
 
-  // Matematik modülü - sayılar (Türkçe telaffuz)
-  { text: 'Bir', filename: 'bir.mp3', type: 'word', category: 'mathematics' },
-  { text: 'İki', filename: 'iki.mp3', type: 'word', category: 'mathematics' },
-  { text: 'Üç', filename: 'uch.mp3', type: 'word', category: 'mathematics' },
-  { text: 'Dört', filename: 'dort.mp3', type: 'word', category: 'mathematics' },
-  { text: 'Beş', filename: 'bes.mp3', type: 'word', category: 'mathematics' },
-  { text: 'Altı', filename: 'alti.mp3', type: 'word', category: 'mathematics' },
-  { text: 'Yedi', filename: 'yedi.mp3', type: 'word', category: 'mathematics' },
-  { text: 'Sekiz', filename: 'sekiz.mp3', type: 'word', category: 'mathematics' },
-  { text: 'Dokuz', filename: 'dokuz.mp3', type: 'word', category: 'mathematics' },
-  { text: 'On', filename: 'on.mp3', type: 'word', category: 'mathematics' },
+  // Matematik modülü - sayılar (Eleven Turbo v2.5 ile yeniden oluşturuldu)
+  { text: 'bir', filename: 'bir.mp3', type: 'word', category: 'mathematics' },
+  { text: 'iki', filename: 'iki.mp3', type: 'word', category: 'mathematics' },
+  { text: 'üç', filename: 'uch.mp3', type: 'word', category: 'mathematics' },
+  { text: 'dört', filename: 'dort.mp3', type: 'word', category: 'mathematics' },
+  { text: 'beş', filename: 'bes.mp3', type: 'word', category: 'mathematics' },
+  { text: 'altı', filename: 'alti.mp3', type: 'word', category: 'mathematics' },
+  { text: 'yedi', filename: 'yedi.mp3', type: 'word', category: 'mathematics' },
+  { text: 'sekiz', filename: 'sekiz.mp3', type: 'word', category: 'mathematics' },
+  { text: 'dokuz', filename: 'dokuz.mp3', type: 'word', category: 'mathematics' },
+  { text: 'on', filename: 'on.mp3', type: 'word', category: 'mathematics' },
   
   // Matematik işlem kelimeleri
   { text: 'artı', filename: 'arti.mp3', type: 'word', category: 'mathematics' },
@@ -270,10 +270,10 @@ export const STORIES_DIALOGS: StaticAudioFile[] = [
   { text: "Bu hikaye henüz hazırlanıyor. Lütfen daha sonra tekrar deneyin.", filename: 'hikaye-hazirlanıyor.mp3', type: 'sentence', category: 'stories' },
 ];
 
-// Matematik modülü diyalogları - Yeni eklenen
+// Matematik modülü diyalogları - Eleven Turbo v2.5 ile oluşturuldu
 export const MATHEMATICS_DIALOGS: StaticAudioFile[] = [
-  // Hoş geldin mesajları
-  { text: 'Sayı tanıma oyununa hoş geldin! Sayıları öğrenelim.', filename: 'sayi-tanima-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
+  // Hoş geldin mesajları - Yeni oluşturulan dosyalar
+  { text: 'Sayı tanıma modülüne hoş geldin! Birlikte sayıları öğreneceğiz.', filename: 'sayi-tanima-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
   { text: 'Sayma oyununa hoş geldin! Nesneleri sayalım.', filename: 'sayma-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
   { text: 'Toplama oyununa hoş geldin! Sayıları toplayalım.', filename: 'toplama-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
   { text: 'Şekil sayı oyununa hoş geldin! Şekilleri sayalım.', filename: 'sekil-sayi-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
@@ -307,6 +307,17 @@ export const MATHEMATICS_DIALOGS: StaticAudioFile[] = [
 
   // Matematik modülü hoş geldin mesajı
   { text: 'Toplama oyunu! Hoş geldin!', filename: 'toplama-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
+  
+  // Yeni oluşturulan matematik talimatları (Eleven Turbo v2.5)
+  { text: 'Bu sayıyı söyle.', filename: 'bu-sayiyi-soyle.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Kaç tane nesne var?', filename: 'kach-tane-nesne-var.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Toplama işlemini yap.', filename: 'toplama-islemini-yap.mp3', type: 'sentence', category: 'mathematics' },
+  { text: 'Bu sayıları say.', filename: 'bu-sayilari-say.mp3', type: 'sentence', category: 'mathematics' },
+  
+  // Yeni oluşturulan matematik kutlama mesajları (Eleven Turbo v2.5)
+  { text: 'Harika! Matematik ustası oldun!', filename: 'harika-matematik-ustasi-oldun.mp3', type: 'celebration', category: 'mathematics' },
+  { text: 'Süpersin! Sayıları çok iyi öğrendin!', filename: 'supersin-sayilari-cok-iyi-ogrendin.mp3', type: 'celebration', category: 'mathematics' },
+  { text: 'Bravo! Matematik çok eğlenceli!', filename: 'bravo-matematik-cok-eglenceli.mp3', type: 'celebration', category: 'mathematics' },
 ];
 
 // Türkçe yönlendirme cümleleri - genişletilmiş

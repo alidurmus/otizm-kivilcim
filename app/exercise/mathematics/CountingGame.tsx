@@ -70,10 +70,11 @@ export default function CountingGame({ onBack }: CountingGameProps) {
     }, 1000);
   }, [speak]);
 
+  // İlk yükleme - sadece bir kez çalışır (sonsuz döngü önlendi)
   useEffect(() => {
     generateQuestion();
     speak('Sayma oyununa hoş geldin! Nesneleri sayalım.', 'sentence');
-  }, [generateQuestion, speak]);
+  }, []); // Boş dependency array ile sadece mount'ta çalışır
 
   const handleAnswer = async (answer: number) => {
     if (!currentQuestion) return;

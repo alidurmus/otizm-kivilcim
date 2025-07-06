@@ -152,9 +152,10 @@ async function generateAudio(text, type) {
         'xi-api-key': ELEVENLABS_API_KEY
       },
       body: JSON.stringify({
-        text,
-        model_id: 'eleven_multilingual_v2', // Turkish support
-        voice_settings: settings
+        text: text,
+        model_id: 'eleven_turbo_v2_5', // EN GÜNCEL MODEL - Türkçe optimized, düşük latency
+        voice_settings: settings,
+        language: 'tr' // Açıkça Türkçe belirt
       })
     });
 

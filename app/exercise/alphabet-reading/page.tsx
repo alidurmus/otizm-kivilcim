@@ -133,13 +133,14 @@ export default function AlphabetReadingPage() {
       }, 2500); // 2000ms → 2500ms (celebration'ın bitmesi için)
     } else {
       setStreak(0);
-      await speak(`Hayır, bu ${answer}. Doğru cevap ${correctAnswer}. Tekrar deneyelim.`, 'sentence');
+      // Dinamik mesaj yerine basit statik mesaj kullan
+      await speak("Tekrar dene!", 'sentence');
       
       // Feedback tamamlandıktan sonra tekrar dene
       setTimeout(() => {
         setShowFeedback(false);
         startQuiz(); // Aynı soruyu tekrar sor
-      }, 3500); // 3000ms → 3500ms (feedback'in bitmesi için)
+      }, 2000); // Daha kısa süre çünkü mesaj basit
     }
   }, [correctAnswer, speak, startQuiz, stopCurrentAudio]);
 

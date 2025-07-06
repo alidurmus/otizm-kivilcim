@@ -77,7 +77,7 @@ export default function HafizaOyunu({ onBack }: { onBack?: () => void }) {
               : c
           ));
           setScore(prev => prev + 10);
-          speak('Harika! Eşleştirme buldu!', 'celebration');
+          speak('Harika! Eşleştirmeyi buldun!', 'celebration');
           setFlippedCards([]);
         }, 1000);
       } else {

@@ -43,6 +43,7 @@ Kıvılcım, otizmli çocukların bireysel gelişim yolculuklarında onlara ve a
 - **Rate Limiting:** IP tabanlı rate limiting implementasyonu
 - **4 Optimize Edilmiş Ses Türü:** letter, word, sentence, celebration
 - **Admin Panel:** API status dashboard, voice testing, performance metrics
+- **EN GÜNCEL MODEL:** eleven_turbo_v2_5 - %50 daha ucuz, düşük latency, yüksek Türkçe kalite
 
 ### 4.4 Güvenlik Gereksinimleri
 - **API Key Management:** Server-side proxy pattern (ElevenLabs SDK)

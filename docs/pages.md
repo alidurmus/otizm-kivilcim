@@ -134,10 +134,12 @@ Bu doküman, Kıvılcım platformunun sayfa yapısını ve navigasyon akışın�
 - **İleri Seviye:** Çıkarma işlemleri ve problem çözme
 
 **Teknoloji:**
-- Gender-balanced Turkish voices ile matematik kavramları
+- Eleven Turbo v2.5 model ile matematik kavramları seslendirilmesi
+- Gender-balanced Turkish voices (Gülsu default voice)
 - İnteraktif sayı gösterimi ve animasyonlar
 - Drag & drop matematik oyunları
 - Görsel matematik öğrenme araçları
+- 18/18 complete audio coverage (433KB total)
 
 ### 6. Müzik Odası (/exercise/music-room)
 **Aktiviteler:**

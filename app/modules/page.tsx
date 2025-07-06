@@ -57,6 +57,14 @@ const modules: Module[] = [
     route: '/exercise/basic-concepts'
   },
   {
+    id: 'mathematics',
+    title: 'Matematik Dünyası',
+    description: 'Sayı tanıma, sayma, toplama ve şekil-sayı eşleştirme oyunları',
+    icon: '🔢',
+    isActive: true,
+    route: '/exercise/mathematics'
+  },
+  {
     id: 'music-room',
     title: 'Müzik Dinleme Odası',
     description: 'Sakinleştirici müzikler, eğitici şarkılar ve doğa sesleri',
@@ -126,11 +134,7 @@ export default function ModulesPage() {
         window.location.href = module.route!;
       }
     } else {
-      // Module not active or route missing - ignoring click
-      console.log('Module inactive:', {
-        isActive: module.isActive,
-        hasRoute: !!module.route
-      });
+      // Module not active or route missing - nothing to log
     }
   };
 

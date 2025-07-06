@@ -360,22 +360,22 @@ export default function BasicConceptsModulePage() {
 
   const handleColorSelect = async (color: Color) => {
     setSelectedColor(color);
-    await speak(`Bu ${color.name} rengi. ${color.emoji}`, 'sentence');
+    await speak("Bu renk!", 'sentence');
   };
 
   const handleShapeSelect = async (shape: Shape) => {
     setSelectedShape(shape);
-    await speak(`Bu ${shape.name}. ${shape.description}`, 'sentence');
+    await speak("Bu şekil!", 'sentence');
   };
 
   const handleNumberSelect = async (number: NumberConcept) => {
     setCurrentNumberIndex(numbers.indexOf(number));
-    await speak(`Bu ${number.name}. ${number.number} tane elma`, 'sentence');
+    await speak("Bu sayı!", 'sentence');
   };
 
   const handleAnimalSelect = async (animal: Animal) => {
     setSelectedAnimal(animal);
-    await speak(`Bu ${animal.name}. ${animal.sound} sesi çıkarır. ${animal.description}`, 'sentence');
+    await speak("Bu hayvan!", 'sentence');
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -853,7 +853,7 @@ export default function BasicConceptsModulePage() {
                     Başka Hayvan Seç
                   </button>
                   <button
-                    onClick={() => speak(`${selectedAnimal.name} ${selectedAnimal.sound} der`, 'sentence')}
+                    onClick={() => speak("Hayvan sesi!", 'sentence')}
                     className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
                     🔊 Sesi Dinle

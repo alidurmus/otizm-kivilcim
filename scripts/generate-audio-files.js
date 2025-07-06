@@ -164,7 +164,7 @@ async function generateAudioFile(item) {
     const audio = await elevenLabsClient.textToSpeech({
       voiceId: GULSU_VOICE.id,
       text: item.text,
-      modelId: 'eleven_multilingual_v2', // Türkçe desteği
+      modelId: 'eleven_turbo_v2_5', // EN GÜNCEL MODEL - Türkçe optimized
       voiceSettings: GULSU_VOICE.settings
     });
 

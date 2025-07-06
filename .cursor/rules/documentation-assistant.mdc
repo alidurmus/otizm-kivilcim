@@ -1,0 +1,182 @@
+# 📋 Documentation Assistant System
+
+This rule activates when documentation-related activities are detected in the conversation context.
+
+## 🎯 Proactive Documentation Triggers
+
+### PRD Updates (`docs/prd.md`)
+**Trigger Phrases:** "yeni özellik", "modül ekleme", "gereksinimler", "platform hedefleri"
+**Current Status:** 95%+ test coverage achieved, 9 active modules, production-ready platform
+
+**Template Structure:**
+```markdown
+# 📝 Ürün Gereksinimleri Dokümanı (PRD): [Proje/Modül Adı]
+
+## 1. Vizyon ve Problem Tanımı
+* **Problem:** Çözmeye çalıştığımız temel problem
+* **Vizyon:** İdeal durum tanımı
+
+## 2. Hedef Kitle  
+* Birincil kullanıcı grupları ve faydacılar
+
+## 3. Temel Özellikler (Features)
+* **Özellik 1:** [Açıklama]
+
+## 4. Kapsam Dışı (Out of Scope)
+* Bilinçli olarak yapılmayacak özellikler
+
+## 5. Başarı Kriterleri
+* **Teknik Metrikler:** Performance, Security, Test Coverage
+* **Kullanıcı Metrikleri:** Engagement, Learning Outcomes, Satisfaction
+```
+
+### TODO Updates (`docs/todo.md`)
+**Trigger Phrases:** "görev tamamlandı", "yeni task", "sprint planning"
+**Current Pattern:** Task completion tracking with detailed technical achievements
+
+**Auto-Documentation Format:**
+```markdown
+### ✅ [Feature Name] (Tamamlandı/Geliştirildi)
+- [x] **Specific Achievement:** Detailed description with metrics
+- [x] **Technical Implementation:** Code changes and results
+- [x] **Quality Impact:** Test coverage, performance improvements
+- [x] **User Experience:** UX enhancements achieved
+
+### 🔄 [Active Development] (Devam Eden)
+- [ ] **Next Phase:** Implementation details
+- [ ] **Dependencies:** Prerequisites and blockers
+- [ ] **Timeline:** Expected completion
+```
+
+### Fail Reports (`docs/fail-report-YYYYMMDD-N.md`)
+**Trigger Phrases:** "hata çözüldü", "critical error", "emergency fix", "problem solved"
+**Recent Success Pattern:** Complete error recovery from critical failure state
+
+**Template Structure:**
+```markdown
+# 🎉 KΙVILCIM - [PROBLEM DESCRIPTION] BAŞARIYLA ÇÖZÜLDÜ!
+
+## ✅ **LATEST SUCCESS - [Brief Description]**
+
+**Son Güncelleme:** YYYY-MM-DD HH:MM  
+**Problem:** [Detailed problem description]  
+**Çözüm:** **BAŞARIYLA TAMAMLANDI** ✅  
+**Platform Durumu:** 🟢 **[Status Description]**
+
+---
+
+## 🎯 **PROBLEM ANALYSIS - COMPLETELY FIXED**
+
+### ✅ **Problem Solved:**
+❌ BEFORE: [Problem state]
+✅ AFTER:  [Solution state]
+
+### ✅ **Technical Solution:**
+[PowerShell/Command line solutions]
+
+### ✅ **Impact:**
+- **[Metric 1]:** Improvement achieved
+- **[Metric 2]:** Quality enhancement
+- **[Metric 3]:** User experience upgrade
+```
+
+## 📊 Current Documentation System Status
+
+### ✅ Maintained Documentation Files
+- **`docs/prd.md`:** Comprehensive product requirements (210 lines)
+- **`docs/todo.md`:** Task tracking with 95%+ test coverage achievements (234 lines)
+- **`docs/pages.md`:** Platform architecture and 9 module details (371 lines)
+- **`docs/veritabani.md`:** Complete database schema and voice tracking (1080 lines)
+- **`README.md`:** Main project documentation with recent successes (609 lines)
+- **`console-log.md`:** Development success tracking (471 lines)
+- **`fail-report.md`:** Error resolution documentation (251 lines)
+
+### 📈 Documentation Quality Metrics
+- **Total Documentation:** 3000+ lines of comprehensive docs
+- **Coverage Areas:** Technical specs, user guides, API docs, troubleshooting
+- **Update Frequency:** Real-time during development sessions
+- **Language:** Turkish primary with English technical terms
+- **Maintenance:** Proactive updates based on conversation context
+
+## 🔄 Auto-Documentation Patterns
+
+### Success Story Documentation
+**Trigger:** Successful problem resolution, feature completion
+**Action:** Update relevant docs with achievement details
+**Format:** Before/After comparison, technical solution, impact metrics
+
+### Development Progress Tracking
+**Trigger:** Module completion, test results, performance improvements
+**Action:** Update TODO and PRD with current status
+**Pattern:** 
+```markdown
+- [x] **[Achievement]:** [Description] ✅
+```
+
+### Error Resolution Documentation
+**Trigger:** Console errors fixed, system stability restored
+**Action:** Create fail-report with detailed solution
+**Impact:** Knowledge base for future troubleshooting
+
+## 🎯 Kıvılcım Platform-Specific Patterns
+
+### Voice System Documentation
+**Triggers:** ElevenLabs fixes, audio improvements, voice enhancements
+**Pattern:** Gender-balanced voice tracking, Turkish character support details
+**Example:** Recent bravo voice autism-friendly fix documentation
+
+### Module Development Documentation
+**Triggers:** New module creation, feature enhancement, test coverage improvements
+**Pattern:** Module-specific achievement tracking in TODO.md
+**Current Status:** 9/9 modules active and documented
+
+### Performance Achievement Documentation
+**Triggers:** Test coverage milestones, error elimination, stability improvements
+**Pattern:** Metrics-based success reporting
+**Recent Achievement:** 95%+ test coverage, zero console audio errors
+
+## 📋 Documentation Assistant Rules
+
+### 1. Automatic PRD Updates
+- **Trigger:** New feature discussions, platform requirements changes
+- **Action:** Update `docs/prd.md` with new requirements or status changes
+- **Focus:** Technical requirements, success criteria, platform capabilities
+
+### 2. TODO List Maintenance
+- **Trigger:** Task completion, new development goals, sprint outcomes
+- **Action:** Mark completed tasks as ✅, add new priorities
+- **Pattern:** Detailed technical achievements with metrics
+
+### 3. Success Story Documentation
+- **Trigger:** Major problem resolution, system improvements
+- **Action:** Create detailed fail-report with solution details
+- **Impact:** Build comprehensive troubleshooting knowledge base
+
+### 4. Real-time Status Updates
+- **Trigger:** Platform status changes, module updates, performance improvements
+- **Action:** Update relevant documentation sections
+- **Frequency:** During active development sessions
+
+## 🔧 Implementation Guidelines
+
+### Documentation Quality Standards
+- **Clarity:** Turkish autism education context always considered
+- **Technical Accuracy:** Include specific commands, file paths, and metrics
+- **Success Tracking:** Before/after comparisons for all improvements
+- **User Impact:** Always document how changes benefit children with autism
+
+### Proactive Documentation Triggers
+- **Feature Completion:** Auto-update TODO and PRD
+- **Error Resolution:** Auto-create fail-report with solution
+- **Performance Milestone:** Update README and relevant docs
+- **Test Coverage Achievement:** Document in TODO with metrics
+
+### Integration with Development Workflow
+- **Real-time Updates:** Documentation updated during conversation
+- **Cross-referencing:** Link related documents and achievements
+- **Version Control:** Track documentation evolution with platform development
+- **Accessibility Focus:** Maintain autism-friendly language and clear explanations
+
+---
+
+**Documentation Philosophy:** Every conversation that advances the Kıvılcım platform should result in updated documentation, creating a comprehensive knowledge base that supports both current development and future enhancements. The documentation system serves as both a development log and a resource for maintaining Turkey's most advanced autism education platform.

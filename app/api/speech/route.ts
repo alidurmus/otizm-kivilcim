@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { speechRequestSchema, validateData } from '@/lib/validation';
 import { getTurkishFemaleVoices, getTurkishMaleVoices, getAllTurkishVoices } from '@/lib/elevenlabs';
+import { z } from 'zod';
 
 // Rate limiting - Simple in-memory store for MVP
 // Production'da Redis veya database kullanılmalı
@@ -33,6 +34,26 @@ function checkRateLimit(key: string): { allowed: boolean; remaining: number } {
   current.count++;
   return { allowed: true, remaining: RATE_LIMIT_MAX - current.count };
 }
+
+// Zod validation schemas for input validation
+const SpeechRequestSchema = z.object({
+  text: z.string()
+    .min(1, 'Text cannot be empty')
+    .max(500, 'Text too long (max 500 characters)')
+    .regex(/^[a-zA-ZçğıöşüÇĞIİÖŞÜ0-9\s.,!?:-]+$/, 'Text contains invalid characters'),
+  voiceId: z.string()
+    .regex(/^[a-zA-Z0-9]+$/, 'Invalid voice ID format')
+    .optional(),
+  type: z.enum(['letter', 'word', 'sentence', 'celebration'])
+    .default('sentence'),
+  settings: z.object({
+    stability: z.number().min(0).max(1).optional(),
+    similarity_boost: z.number().min(0).max(1).optional(),
+    style: z.number().min(0).max(1).optional(),
+    use_speaker_boost: z.boolean().optional()
+  }).optional(),
+  language: z.literal('tr').default('tr')
+});
 
 // Type definitions
 interface SpeechRequest {
@@ -97,7 +118,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Input validation with Zod
-    const validation = validateData(speechRequestSchema, body);
+    const validation = validateData(SpeechRequestSchema, body);
     if (!validation.success) {
       return NextResponse.json(
         { error: `Validation error: ${validation.error}` },
@@ -144,13 +165,14 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({
             text,
-            model_id: 'eleven_multilingual_v2',
+            model_id: 'eleven_turbo_v2_5',
             voice_settings: {
               stability: config.stability,
               similarity_boost: config.similarityBoost,
               style: config.style,
               use_speaker_boost: config.useSpeakerBoost
-            }
+            },
+            language: 'tr'
           })
         }
       );

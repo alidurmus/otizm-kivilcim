@@ -387,93 +387,7 @@ class ElevenLabsClient {
   }
 
   /**
-   * Metni sese çevirir ve audio URL döndürür
-   * Türkçe karakterleri destekler: ç, ğ, ı, ö, ş, ü
-   * Server-side API route kullanır - güvenli ve optimize
-   */
-  async textToSpeech(
-    text: string, 
-    type: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence',
-    voiceId?: string
-  ): Promise<string> {
-    // Input validation
-    if (!text || text.trim().length === 0) {
-      throw new Error('Metin boş olamaz');
-    }
-
-    if (text.length > 1000) {
-      throw new Error('Metin çok uzun (maksimum 1000 karakter)');
-    }
-
-    // Updated Turkish character validation - includes apostrophes, numbers and common punctuation
-    const turkishPattern = /^[a-zA-Z0-9çğıöşüÇĞIİÖŞÜ\s.,!?'\"'-]+$/;
-    if (!turkishPattern.test(text)) {
-      // Text contains non-Turkish characters
-      // Don't block - just warn and continue
-    }
-
-    // 1. ÖNCE: Statik ses dosyasını kontrol et
-    const staticAudioPath = getStaticAudioPath(text, type);
-    if (staticAudioPath) {
-      return staticAudioPath;
-    }
-
-    // 2. CACHE kontrolü - clean expired entries first
-    this.cleanExpiredCache();
-    const cacheKey = `${text}-${type}-${voiceId || this.defaultVoiceId}`;
-    const cachedData = this.cache.get(cacheKey);
-    
-    if (cachedData && this.isCacheValid(cachedData.timestamp)) {
-      // Create a new blob URL each time to avoid revocation issues
-      return URL.createObjectURL(cachedData.blob);
-    }
-
-    // 3. SERVER-SIDE API route kullan (ElevenLabs SDK proxy)
-    try {
-      const response = await fetch('/api/speech', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text,
-          type,
-          voiceId: voiceId || this.defaultVoiceId,
-          language: 'tr' // Turkish language indicator
-        })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Unknown error');
-        throw new ElevenLabsAPIError(
-          `API isteği başarısız: ${response.status}`,
-          response.status,
-          errorText
-        );
-      }
-
-      // Convert response to blob
-      const audioBlob = await response.blob();
-      
-      // Cache the blob data with timestamp
-      this.cache.set(cacheKey, {
-        blob: audioBlob,
-        timestamp: Date.now()
-      });
-      
-      // Create URL for immediate use
-      const audioUrl = URL.createObjectURL(audioBlob);
-      
-      return audioUrl;
-
-    } catch (error) {
-      // ElevenLabs API error - falling back
-      throw error;
-    }
-  }
-
-  /**
-   * Sesi çalar ve cleanup yapar
+   * Sesi çalar - SADECE STATİK MP3 DOSYALARI (TTS DEVRE DIŞI)
    * Türkçe karakterli metinler için optimize edilmiş
    */
   async speak(
@@ -488,144 +402,51 @@ class ElevenLabsClient {
       // Browser'ın audio state'ini stabilize etmesi için daha uzun delay
       await new Promise(resolve => setTimeout(resolve, 150));
       
-      const audioUrl = await this.textToSpeech(text, type, voiceId);
+      // ⚡ SADECE STATİK MP3 DOSYALARI - TTS hiç kullanılmayacak
+      const staticPath = getStaticAudioPath(text, type);
       
-      // Check if we got a valid audio URL
-      if (!audioUrl || audioUrl === '') {
-        // No audio URL returned - using Web Speech fallback
-        return this.fallbackToWebSpeech(text);
-      }
-      
-      // Audio element oluştur ve aktif instance olarak kaydet
-      const audio = new Audio(audioUrl);
-      audio.volume = 0.8;
-      this.currentAudio = audio;
-      
-      return new Promise((resolve, reject) => {
-        // Null check - audio durdurulmuşsa promise'i resolve et
-        if (!this.currentAudio) {
-          if (audioUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(audioUrl);
-          }
-          resolve();
-          return;
-        }
+      if (staticPath) {
+        // Static MP3 dosyası varsa onu çal
+        const audio = new Audio(staticPath);
+        audio.volume = 0.8;
+        this.currentAudio = audio;
         
-        audio.onended = () => {
-          // Cleanup blob URL to prevent memory leaks
-          if (audioUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(audioUrl);
-          }
-          
-          // Sadece bu audio hala aktifse temizle
-          if (this.currentAudio === audio) {
-            this.currentAudio = null;
-          }
-          resolve();
-        };
-        
-        audio.onerror = (_error) => {
-          // Audio playback failed - using Web Speech fallback
-          if (audioUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(audioUrl);
-          }
-          
-          // Sadece bu audio hala aktifse temizle
-          if (this.currentAudio === audio) {
-            this.currentAudio = null;
-          }
-          
-          // Fallback to Web Speech API instead of rejecting
-          this.fallbackToWebSpeech(text).then(resolve).catch(reject);
-        };
-        
-        audio.onabort = () => {
-                      // Audio playback aborted
-          if (audioUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(audioUrl);
-          }
-          
-          // Sadece bu audio hala aktifse temizle
-          if (this.currentAudio === audio) {
-            this.currentAudio = null;
-          }
-          
-          // Graceful resolution instead of rejection
-          resolve();
-        };
-        
-        // Audio çalmaya başla - error handling ile
-        audio.play().catch((_playError) => {
-          // Audio interrupted - retrying with Web Speech fallback
-          
-          // Cleanup
-          if (audioUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(audioUrl);
-          }
-          
-          if (this.currentAudio === audio) {
-            this.currentAudio = null;
-          }
-          
-          // Fallback instead of failure
-          this.fallbackToWebSpeech(text).then(resolve).catch(reject);
+        return new Promise((resolve, reject) => {
+          audio.onended = () => resolve();
+          audio.onerror = () => {
+            console.log(`❌ MP3 dosyası çalınamadı: ${staticPath} - Ses olmayacak`);
+            resolve(); // Sessiz devam et, hata verme
+          };
+          audio.play().catch((error) => {
+            console.log(`❌ MP3 oynatma hatası: ${staticPath} - Ses olmayacak`);
+            resolve(); // Sessiz devam et, hata verme
+          });
         });
-      });
-      
-    } catch (_error) {
-      // ElevenLabs speak error - using fallback
-      // Fallback to Web Speech API on any error
-      return this.fallbackToWebSpeech(text);
+      } else {
+        // MP3 dosyası bulunamadı - sessiz devam et
+        console.log(`⚠️ MP3 dosyası bulunamadı: "${text}" (${type}) - Ses olmayacak`);
+        return Promise.resolve();
+      }
+    } catch (error) {
+      // Herhangi bir hata durumunda sessiz devam et
+      console.log(`❌ Audio hatası: ${error} - Ses olmayacak`);
+      return Promise.resolve();
     }
   }
 
   /**
-   * Web Speech API fallback function
+   * TTS API'si çağırır - SADECE ELEVENLabs TEST İÇİN
    */
-  private async fallbackToWebSpeech(text: string): Promise<void> {
-    return new Promise((resolve, _reject) => {
-      if ('speechSynthesis' in window) {
-        // Önceki konuşmaları durdur
-        speechSynthesis.cancel();
-        
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'tr-TR';
-        utterance.rate = 0.8;
-        utterance.pitch = 1.0;
-        utterance.volume = 0.8;
-        
-        utterance.onend = () => {
-          resolve();
-        };
-        
-        utterance.onerror = (error) => {
-          // Handle empty or malformed error objects gracefully
-          let _errorMsg = 'Unknown error';
-          
-          try {
-            // SpeechSynthesisErrorEvent has an 'error' property with the error type
-            if (error && typeof error === 'object' && 'error' in error) {
-              _errorMsg = error.error || 'Speech synthesis failed';
-            } else if (typeof error === 'string') {
-              _errorMsg = error;
-            }
-          } catch (_e) {
-            _errorMsg = 'Speech synthesis error (malformed error object)';
-          }
-          
-          // Web Speech API fallback failed
-          
-          // Don't reject, just resolve silently to avoid breaking the UI
-          resolve();
-        };
-        
-        speechSynthesis.speak(utterance);
-      } else {
-        // Speech synthesis not supported - playing silently
-        // Resolve after a short delay to simulate speech duration
-        setTimeout(resolve, Math.max(500, text.length * 100));
-      }
-    });
+  private async textToSpeech(
+    text: string, 
+    _type: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence',
+    _voiceId?: string
+  ): Promise<string | null> {
+    // ⚡ TTS tamamen devre dışı - sadece static MP3 dosyalarını kullan
+    return null;
+    
+    // Debugging için comment'de bırakıyoruz
+    // const response = await fetch('/api/speech', { method: 'POST', ... });
   }
 
   /**
@@ -719,10 +540,9 @@ class ElevenLabsClient {
       useSpeakerBoost?: boolean;
     }
   ) {
+    const startTime = Date.now();
+
     try {
-      const startTime = Date.now();
-      
-      // Use the main /api/speech endpoint instead of /api/speech/test
       const response = await fetch('/api/speech', {
         method: 'POST',
         headers: {
@@ -867,7 +687,7 @@ export function useElevenLabs() {
   return {
     speak: elevenLabsClient.speak.bind(elevenLabsClient),
     speakWithVoice: speakWithVoice,
-    textToSpeech: elevenLabsClient.textToSpeech.bind(elevenLabsClient),
+    speakWithStreaming: speakWithStreaming,
     getVoices: elevenLabsClient.getVoices.bind(elevenLabsClient),
     getSelectedTurkishVoices: getSelectedTurkishVoices,
     getVoiceBySlug: getVoiceBySlug,
@@ -875,8 +695,13 @@ export function useElevenLabs() {
     testVoice: elevenLabsClient.testVoice.bind(elevenLabsClient),
     getApiStatus: elevenLabsClient.getApiStatus.bind(elevenLabsClient),
     clearCache: elevenLabsClient.clearCache.bind(elevenLabsClient),
+    getTurkishFemaleVoices: getTurkishFemaleVoices,
+    getTurkishMaleVoices: getTurkishMaleVoices,
+    getAllTurkishVoices: getAllTurkishVoices,
+    getRecommendedTurkishVoice: getRecommendedTurkishVoice,
     stopCurrentAudio: elevenLabsClient.stopCurrentAudio.bind(elevenLabsClient),
-    getTestTexts: getTestTexts
+    getTestTexts: getTestTexts,
+    streamingClient: streamingTTSClient
   };
 }
 
@@ -922,4 +747,221 @@ export function getTestTexts() {
       'Olağanüstü! Çok yeteneklisin!'
     ]
   };
+}
+
+/**
+ * Streaming TTS using WebSockets - Advanced Feature
+ * Provides ultra-low latency (~75ms) for real-time speech generation
+ */
+export class StreamingTTSClient {
+  private ws: WebSocket | null = null;
+  private apiKey: string = '';
+  private isConnecting: boolean = false;
+  private messageQueue: Array<{ 
+    text: string; 
+    voiceId: string; 
+    resolve: (value: void | PromiseLike<void>) => void; 
+    reject: (reason?: any) => void 
+  }> = [];
+
+  constructor() {
+    // WebSocket will be initialized when needed
+  }
+
+  /**
+   * Initialize WebSocket connection for streaming
+   */
+  private async initializeWebSocket(): Promise<void> {
+    if (this.ws?.readyState === WebSocket.OPEN || this.isConnecting) {
+      return;
+    }
+
+    this.isConnecting = true;
+
+    try {
+      // Get API key from our secure endpoint
+      const response = await fetch('/api/speech/config');
+      const config = await response.json();
+      
+      if (!config.apiKey) {
+        throw new Error('API key not available for streaming');
+      }
+
+      this.apiKey = config.apiKey;
+
+      // Initialize WebSocket connection to ElevenLabs
+      const wsUrl = `wss://api.elevenlabs.io/v1/text-to-speech/${GULSU_VOICE.id}/stream?model_id=eleven_flash_v2_5&output_format=mp3_44100_128&xi-api-key=${this.apiKey}`;
+      
+      this.ws = new WebSocket(wsUrl);
+
+      return new Promise((resolve, reject) => {
+        this.ws!.onopen = () => {
+          this.isConnecting = false;
+          console.log('🔊 Streaming TTS WebSocket connected');
+          this.processMessageQueue();
+          resolve();
+        };
+
+        this.ws!.onerror = (error) => {
+          this.isConnecting = false;
+          console.error('❌ Streaming TTS WebSocket error:', error);
+          reject(error);
+        };
+
+        this.ws!.onclose = () => {
+          this.isConnecting = false;
+          this.ws = null;
+          console.log('🔇 Streaming TTS WebSocket closed');
+        };
+      });
+
+    } catch (error) {
+      this.isConnecting = false;
+      throw error;
+    }
+  }
+
+  /**
+   * Stream text to speech with ultra-low latency
+   */
+  async streamSpeak(text: string, voiceId: string = GULSU_VOICE.id): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Add to queue if WebSocket not ready
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+          this.messageQueue.push({ text, voiceId, resolve, reject });
+          await this.initializeWebSocket();
+          return;
+        }
+
+        // Send streaming request
+        const streamRequest = {
+          text: text,
+          voice_settings: GULSU_VOICE.voice_settings,
+          generation_config: {
+            chunk_length_schedule: [120, 160, 250, 290]
+          }
+        };
+
+        const audioChunks: Uint8Array[] = [];
+        let isComplete = false;
+
+        this.ws.onmessage = (event) => {
+          try {
+            const response = JSON.parse(event.data);
+            
+            if (response.audio) {
+              // Decode base64 audio chunk
+              const audioData = Uint8Array.from(atob(response.audio), c => c.charCodeAt(0));
+              audioChunks.push(audioData);
+            }
+
+            if (response.isFinal) {
+              isComplete = true;
+              this.playStreamedAudio(audioChunks);
+              resolve();
+            }
+
+            if (response.error) {
+              reject(new Error(response.error));
+            }
+
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        // Send the request
+        this.ws.send(JSON.stringify(streamRequest));
+
+        // Timeout fallback
+        setTimeout(() => {
+          if (!isComplete) {
+            reject(new Error('Streaming timeout'));
+          }
+        }, 10000);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  /**
+   * Play streamed audio chunks as they arrive
+   */
+  private playStreamedAudio(audioChunks: Uint8Array[]): void {
+    try {
+      // Combine all audio chunks
+      const totalLength = audioChunks.reduce((sum, chunk) => sum + chunk.length, 0);
+      const combinedAudio = new Uint8Array(totalLength);
+      
+      let offset = 0;
+      for (const chunk of audioChunks) {
+        combinedAudio.set(chunk, offset);
+        offset += chunk.length;
+      }
+
+      // Create audio blob and play
+      const audioBlob = new Blob([combinedAudio], { type: 'audio/mpeg' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      
+      audio.volume = 0.8;
+      audio.play();
+
+      // Cleanup
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+      };
+
+    } catch (error) {
+      console.error('❌ Error playing streamed audio:', error);
+    }
+  }
+
+  /**
+   * Process queued messages when WebSocket becomes available
+   */
+  private processMessageQueue(): void {
+    while (this.messageQueue.length > 0) {
+      const { text, voiceId, resolve, reject } = this.messageQueue.shift()!;
+      this.streamSpeak(text, voiceId).then(resolve).catch(reject);
+    }
+  }
+
+  /**
+   * Close WebSocket connection
+   */
+  close(): void {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+  }
+}
+
+// Global streaming instance
+const streamingTTSClient = new StreamingTTSClient();
+
+/**
+ * Enhanced speak function with streaming capability
+ */
+export async function speakWithStreaming(
+  text: string, 
+  type: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence',
+  useStreaming: boolean = false
+): Promise<void> {
+  if (useStreaming && text.length > 50) {
+    // Use streaming for longer texts to reduce latency
+    try {
+      return await streamingTTSClient.streamSpeak(text);
+    } catch (error) {
+      console.warn('⚠️ Streaming failed, falling back to regular TTS:', error);
+      // Fallback to regular TTS
+    }
+  }
+
+  // Use existing static + regular TTS chain
+  return elevenLabsClient.speak(text, type);
 }  

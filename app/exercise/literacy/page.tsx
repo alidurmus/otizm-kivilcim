@@ -49,11 +49,11 @@ interface SyllableExercise {
 }
 
 const exercises: SyllableExercise[] = [
-  { id: 1, letters: ['e', 'l'], correctSyllable: 'el', audioText: 'Bu hece el... el!' },
-  { id: 2, letters: ['a', 'l'], correctSyllable: 'al', audioText: 'Bu hece al... al!' },
-  { id: 3, letters: ['o', 'l'], correctSyllable: 'ol', audioText: 'Bu hece ol... ol!' },
-  { id: 4, letters: ['u', 'l'], correctSyllable: 'ul', audioText: 'Bu hece ul... ul!' },
-  { id: 5, letters: ['i', 'l'], correctSyllable: 'il', audioText: 'Bu hece il... il!' }
+  { id: 1, letters: ['e', 'l'], correctSyllable: 'el', audioText: 'el' },
+  { id: 2, letters: ['a', 'l'], correctSyllable: 'al', audioText: 'al' },
+  { id: 3, letters: ['o', 'l'], correctSyllable: 'ol', audioText: 'ol' },
+  { id: 4, letters: ['u', 'l'], correctSyllable: 'ul', audioText: 'ul' },
+  { id: 5, letters: ['i', 'l'], correctSyllable: 'il', audioText: 'il' }
 ];
 
 // --- useReducer ile State Yönetimi ---
@@ -75,7 +75,7 @@ type ExerciseState = {
 // 2. State'i değiştirebilecek tüm olası eylemler
 type Action =
   | { type: 'DRAG_START'; payload: string }
-  | { type: 'DROP_LETTER'; payload: { position: 'first' | 'second' } }
+  | { type: 'DROP_LETTER'; payload: { position: 'first' | 'second'; letter: string } }
   | { type: 'SET_USER_SYLLABLE'; payload: string } // Sesli girdi için
   | { type: 'EVALUATE_ANSWER'; payload: { isCorrect: boolean } }
   | { type: 'TRY_AGAIN' }
@@ -107,10 +107,10 @@ function exerciseReducer(state: ExerciseState, action: Action): ExerciseState {
       return { ...state, draggedLetter: action.payload };
     
     case 'DROP_LETTER': {
-      if (!state.draggedLetter) return state;
-      const newSyllable = action.payload.position === 'first'
-        ? state.draggedLetter + (state.userSyllable[1] || '')
-        : (state.userSyllable[0] || '') + state.draggedLetter;
+      const { position, letter } = action.payload;
+      const newSyllable = position === 'first'
+        ? letter + (state.userSyllable[1] || '')
+        : (state.userSyllable[0] || '') + letter;
       return { ...state, userSyllable: newSyllable, draggedLetter: null };
     }
 
@@ -180,6 +180,9 @@ export default function LiteracyExercisePage() {
     showProceedButton,
   } = state;
 
+  // Click-to-place interaction state
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+
   const exercise = exercises[currentExerciseIndex];
   const progress = currentExerciseIndex;
   const total = exercises.length;
@@ -218,19 +221,32 @@ export default function LiteracyExercisePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercise.correctSyllable, currentExerciseIndex, exercises.length, autoProgressEnabled]);
 
-  const handleDragStart = (letter: string) => {
-    dispatch({ type: 'DRAG_START', payload: letter });
+  const handleLetterClick = (letter: string) => {
+    if (selectedLetter === letter) {
+      setSelectedLetter(null); // Deselect if clicking the same letter
+    } else {
+      setSelectedLetter(letter);
+      playLetterSound(letter); // Play sound when selecting
+    }
   };
 
-  const handleDrop = (position: 'first' | 'second') => {
-    dispatch({ type: 'DROP_LETTER', payload: { position } });
+  const handleDropZoneClick = (position: 'first' | 'second') => {
+    if (selectedLetter) {
+      dispatch({ 
+        type: 'DROP_LETTER', 
+        payload: { position, letter: selectedLetter } 
+      });
+      setSelectedLetter(null); // Clear selection after placement
+    }
   };
 
   const handleTryAgain = () => {
     dispatch({ type: 'TRY_AGAIN' });
+    setSelectedLetter(null); // Clear selection when trying again
   };
 
   const handleProceed = () => {
+    setSelectedLetter(null); // Clear selection when proceeding
     if (currentExerciseIndex < exercises.length - 1) {
       dispatch({ type: 'NEXT_EXERCISE' });
     } else {
@@ -289,10 +305,8 @@ export default function LiteracyExercisePage() {
     try {
       dispatch({ type: 'SET_IS_PLAYING', payload: true });
       await speak(exercise.audioText, 'word');
-    } catch (_error) {
-              // Audio playback failed - continuing silently
-      // Hata durumunda Web Speech API fallback'i zaten çalışacak
-      // Eğer o da başarısız olursa sessizce devam et
+    } catch (_audioError) {
+      // Audio playback failed, continuing silently
     } finally {
       dispatch({ type: 'SET_IS_PLAYING', payload: false });
     }
@@ -303,10 +317,8 @@ export default function LiteracyExercisePage() {
     try {
       dispatch({ type: 'SET_IS_PLAYING', payload: true });
       await speak(letter, 'letter');
-    } catch (_error) {
-              // Letter audio failed - continuing silently
-      // Hata durumunda Web Speech API fallback'i zaten çalışacak
-      // Eğer o da başarısız olursa sessizce devam et
+    } catch (_audioError) {
+      // Letter audio failed, continuing silently
     } finally {
       dispatch({ type: 'SET_IS_PLAYING', payload: false });
     }
@@ -340,9 +352,8 @@ export default function LiteracyExercisePage() {
           speak('Harikasın! Çok güzel!', 'celebration').then(resolve).catch(reject);
         });
       });
-    } catch (_error) {
+    } catch (_audioError) {
       // Final fallback - continue silently
-      console.log('Audio playback failed, continuing silently');
     }
   }, [speak]);
 
@@ -412,46 +423,52 @@ export default function LiteracyExercisePage() {
                 Harfleri Birleştirerek Hece Oluştur
               </h2>
               <p className="text-adaptive-secondary">
-                Aşağıdaki harfleri sürükleyerek doğru hece'yi oluştur
+                Aşağıdaki harflere tıklayarak seç, sonra doğru pozisyona yerleştir
               </p>
             </div>
 
             {/* Exercise Content */}
             <div className="space-y-8">
-              {/* Draggable Letters */}
+              {/* Clickable Letters */}
               <div className="flex justify-center space-x-8">
                 {exercise.letters.map((letter, index) => (
                   <div
                     key={index}
-                    draggable
-                    onDragStart={() => handleDragStart(letter)}
-                    onClick={() => playLetterSound(letter)}
-                    className="w-16 h-16 bg-encourage-orange rounded-xl flex items-center justify-center text-2xl font-bold text-on-dark cursor-move shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group"
-                    title={`${letter} harfini dinle`}
+                    onClick={() => handleLetterClick(letter)}
+                    className={`w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold cursor-pointer shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group ${
+                      selectedLetter === letter 
+                        ? 'bg-success-green text-on-dark ring-4 ring-focus-blue' 
+                        : 'bg-encourage-orange text-on-dark'
+                    }`}
+                    title={selectedLetter === letter ? `${letter} seçili - yerleştirmek için alan tıkla` : `${letter} harfini seç`}
                   >
                     {letter}
                     <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs text-gray-500 whitespace-nowrap">
-                      Dinlemek için tıkla
+                      {selectedLetter === letter ? 'Seçili' : 'Seçmek için tıkla'}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Drop Zones */}
+              {/* Click Zones */}
               <div className="flex justify-center space-x-4">
                 <div
                   data-testid="drop-zone-1"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDrop('first')}
-                  className="w-16 h-16 border-4 border-dashed border-focus-blue rounded-xl flex items-center justify-center text-2xl font-bold bg-adaptive shadow-inner text-adaptive"
+                  onClick={() => handleDropZoneClick('first')}
+                  className={`w-16 h-16 border-4 border-dashed rounded-xl flex items-center justify-center text-2xl font-bold bg-adaptive shadow-inner text-adaptive cursor-pointer hover:bg-opacity-80 transition-all duration-200 ${
+                    selectedLetter ? 'border-success-green hover:border-focus-blue' : 'border-focus-blue'
+                  }`}
+                  title={selectedLetter ? `${selectedLetter} harfini buraya yerleştir` : 'Önce bir harf seç'}
                 >
                   {userSyllable[0] || '?'}
                 </div>
                 <div
                   data-testid="drop-zone-2"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDrop('second')}
-                  className="w-16 h-16 border-4 border-dashed border-focus-blue rounded-xl flex items-center justify-center text-2xl font-bold bg-adaptive shadow-inner text-adaptive"
+                  onClick={() => handleDropZoneClick('second')}
+                  className={`w-16 h-16 border-4 border-dashed rounded-xl flex items-center justify-center text-2xl font-bold bg-adaptive shadow-inner text-adaptive cursor-pointer hover:bg-opacity-80 transition-all duration-200 ${
+                    selectedLetter ? 'border-success-green hover:border-focus-blue' : 'border-focus-blue'
+                  }`}
+                  title={selectedLetter ? `${selectedLetter} harfini buraya yerleştir` : 'Önce bir harf seç'}
                 >
                   {userSyllable[1] || '?'}
                 </div>

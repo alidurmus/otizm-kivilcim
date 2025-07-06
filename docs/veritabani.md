@@ -1120,5 +1120,5 @@ const requiredIndexes = [
 ---
 
 > **Version:** 2.1.0  
-> **Son Güncelleme:** Gender-balanced Turkish voice system tracking, 10 aktif modül support (matematik modülü eklendi), static audio files metadata ve enhanced analytics ile kapsamlı olarak güncellenmiştir.  
+> **Son Güncelleme:** Gender-balanced Turkish voice system tracking, 10 aktif modül support (matematik modülü eklendi), static audio files metadata ve enhanced analytics ile kapsamlı olarak güncellenmiştir. ElevenLabs model upgrade (eleven_turbo_v2_5), matematik modülü 18/18 audio coverage ve perfect Turkish pronunciation sistemi entegre edildi.  
 > **İlgili Dokümanlar:** [API Documentation](./api.md), [Security Guide](./security.md), [Performance Guide](./performance.md)

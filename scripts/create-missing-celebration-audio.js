@@ -66,7 +66,7 @@ async function createMissingCelebrationAudio() {
       const audio = await client.textToSpeech({
         voice_id: GULSU_VOICE.id,
         text: celebration.text,
-        model_id: 'eleven_multilingual_v2', // Turkish support
+        model_id: 'eleven_turbo_v2_5', // EN GÜNCEL MODEL - Türkçe optimized
         voice_settings: GULSU_VOICE.settings
       });
 

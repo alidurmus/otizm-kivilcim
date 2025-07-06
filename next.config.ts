@@ -37,12 +37,14 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'", // Tailwind için gerekli
               "img-src 'self' data: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' blob:", // API calls ve audio blob'lar için
+              "connect-src 'self' blob: https://api.elevenlabs.io", // ElevenLabs API için güvenli bağlantı
               "media-src 'self' blob:", // Audio playback için
               "object-src 'none'",
               "base-uri 'self'",
               "frame-ancestors 'none'",
               "form-action 'self'",
+              "upgrade-insecure-requests", // HTTP'yi HTTPS'e yönlendir
+              "block-all-mixed-content" // Karışık içerik engelle
             ].join('; ')
           },
           // Security headers
