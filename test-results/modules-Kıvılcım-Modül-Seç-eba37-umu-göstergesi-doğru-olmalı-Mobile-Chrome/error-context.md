@@ -1,0 +1,77 @@
+# Page snapshot
+
+```yaml
+- button "Açık temaya geç": 🌙 ☀️ 🌙
+- button "← Ana Sayfa"
+- button "Ebeveyn Paneli"
+- heading "Gelişim Modülleri" [level=1]
+- paragraph: Hangi alanda gelişmek istiyorsun? Aktif modülü seçerek maceraya başla!
+- article:
+  - text: 📖
+  - heading "Okuryazarlık Becerileri" [level=3]
+  - paragraph: Harf tanıma, hece oluşturma ve okuma becerilerini geliştirin
+  - button "BAŞLA"
+- article:
+  - text: 🎨
+  - heading "Anlam ve Kelime Dağarcığı" [level=3]
+  - paragraph: Kelime hazinesi ve anlam bilgisi geliştirme
+  - button "BAŞLA"
+- article:
+  - text: 💬
+  - heading "Sosyal İletişim" [level=3]
+  - paragraph: İletişim becerileri ve sosyal etkileşim
+  - button "BAŞLA"
+- article:
+  - text: ✍️
+  - heading "Yazma ve İfade Etme" [level=3]
+  - paragraph: Yazma becerileri ve kendini ifade etme
+  - button "BAŞLA"
+- article:
+  - text: 💡
+  - heading "Temel Kavramlar" [level=3]
+  - paragraph: Sayılar, renkler, şekiller gibi temel kavramları öğrenin
+  - button "BAŞLA"
+- article:
+  - text: 🔢
+  - heading "Matematik Dünyası" [level=3]
+  - paragraph: Sayı tanıma, sayma, toplama ve şekil-sayı eşleştirme oyunları
+  - button "BAŞLA"
+- article:
+  - text: 🎵
+  - heading "Müzik Dinleme Odası" [level=3]
+  - paragraph: Sakinleştirici müzikler, eğitici şarkılar ve doğa sesleri
+  - button "BAŞLA"
+- article:
+  - text: 📺
+  - heading "Video İzleme Odası" [level=3]
+  - paragraph: Eğitici videolar, sosyal öyküler ve sakinleştirici içerikler
+  - button "BAŞLA"
+- article:
+  - text: 📚
+  - heading "Hikaye Dinleme" [level=3]
+  - paragraph: Görsel ve işitsel hikayeler, slide şeklinde hikaye okuma
+  - button "BAŞLA"
+- article:
+  - text: 🧩
+  - heading "Puzzle Oyunu" [level=3]
+  - paragraph: Görsel-motor koordinasyon ve problem çözme
+  - button "BAŞLA"
+- article:
+  - text: 🔤
+  - heading "Alfabe Okuma" [level=3]
+  - paragraph: Türk alfabesinin 29 harfini öğren, sesli-sessiz harf tanıma
+  - button "BAŞLA"
+- article:
+  - text: 🔬
+  - heading "Fizik Dünyası" [level=3]
+  - paragraph: Hareket, ağırlık, akış ve kuvvetlerle eğlenceli öğrenme
+  - button "BAŞLA"
+- heading "🎯 Gelişim Durumun" [level=3]
+- text: 12 Aktif Modül 0 Yakında Gelecek
+- paragraph: 12 modül aktif! Herhangi birini seçerek öğrenmeye başlayabilirsin! 🌟
+- text: 🎙️
+- paragraph:
+  - strong: "İpucu:"
+  - text: Kıvılcım sana yol gösterecek ve her adımda yanında olacak!
+- alert
+```

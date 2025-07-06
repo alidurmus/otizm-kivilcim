@@ -139,3 +139,22 @@ interface ModuleProps {
 ---
 
 **Core Principle:** Every development decision prioritizes accessibility, consistency, and positive user experience for children with autism spectrum disorders. Gülsu voice provides the reliable, calm audio experience essential for creating a safe learning environment.
+
+# 🧪 TEST SAYFALAR VE DEV TOOLS
+
+## Test Pages ve Developer Tools
+- **Admin Panel:** `/admin` - Sistem yönetimi ve genel istatistikler
+- **ElevenLabs Test:** `/admin/elevenlabs-test` - Gender-balanced voice system test
+- **ElevenLabs v3 Test:** `/demo/elevenlabs-v3-test` - 🆕 Gülsu voice (jbJMQWv1eS4YjQ6PCcn6) ile v3 model testing
+- **Single Letter Player:** `/demo/single-letter` - 🆕 Tek harf oynatma demo sayfası
+- **Teacher Dashboard:** `/teacher` - Öğretmen dashboard sistemi
+
+## Test Endpoints (API)
+- **v3 Test API:** `POST /api/speech/v3-test` - ElevenLabs v3 model testing
+- **Voice Info:** `GET /api/speech/v3-test?info=voice` - Gülsu voice bilgileri
+- **Model Info:** `GET /api/speech/v3-test?info=models` - Mevcut v3 modelleri
+
+## Development Quick Access
+- **Test Coverage:** `npm run test:dev` - Hızlı development tests
+- **Voice System:** Gülsu Default Voice (9BWtsMINqrJLrRacOk9x) + yeni v3 voice (jbJMQWv1eS4YjQ6PCcn6)
+- **Audio Files:** `/public/audio/` - Static Turkish audio files

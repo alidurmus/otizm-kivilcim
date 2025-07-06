@@ -435,11 +435,11 @@ export default function LiteracyExercisePage() {
                   <div
                     key={index}
                     onClick={() => handleLetterClick(letter)}
-                    className={`w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold cursor-pointer shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group ${
+                    className={
                       selectedLetter === letter 
-                        ? 'bg-success-green text-on-dark ring-4 ring-focus-blue' 
-                        : 'bg-encourage-orange text-on-dark'
-                    }`}
+                        ? 'w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold cursor-pointer shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group bg-green-500 text-white ring-4 ring-blue-400'
+                        : 'w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold cursor-pointer shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group bg-orange-400 text-white'
+                    }
                     title={selectedLetter === letter ? `${letter} seçili - yerleştirmek için alan tıkla` : `${letter} harfini seç`}
                   >
                     {letter}

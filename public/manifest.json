@@ -75,8 +75,9 @@
       "url": "/exercise/alphabet-reading",
       "icons": [
         {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
+          "src": "/icon-192.svg",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
         }
       ]
     },
@@ -87,8 +88,9 @@
       "url": "/exercise/mathematics",
       "icons": [
         {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
+          "src": "/icon-192.svg",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
         }
       ]
     },
@@ -99,8 +101,9 @@
       "url": "/exercise/vocabulary",
       "icons": [
         {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
+          "src": "/icon-192.svg",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
         }
       ]
     },
@@ -111,8 +114,9 @@
       "url": "/exercise/social-communication",
       "icons": [
         {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
+          "src": "/icon-192.svg",
+          "sizes": "192x192",
+          "type": "image/svg+xml"
         }
       ]
     }

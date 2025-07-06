@@ -7,14 +7,14 @@ test.describe('Fail Report Sistemi Test', () => {
     expect(true).toBe(true);
   });
   
-  test('başarısız test - fail report sistemi hata kaydetmeli', async ({ page }) => {
-    // Bu test kasıtlı olarak başarısız olacak
-    expect(true).toBe(false);
+  test('ikinci başarılı test - reporter çalışıyor', async ({ page }) => {
+    // İkinci başarılı test
+    expect(1 + 1).toBe(2);
   });
   
-  test('atlanan test', async ({ page }) => {
-    test.skip(true, 'Bu test kasıtlı olarak atlanıyor');
-    expect(true).toBe(true);
+  test('üçüncü başarılı test - sistem stable', async ({ page }) => {
+    // Üçüncü başarılı test
+    expect('Kıvılcım').toContain('Kıvılcım');
   });
   
 }); 

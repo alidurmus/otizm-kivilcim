@@ -105,7 +105,7 @@ export default function AdminPage() {
       {/* Quick Actions */}
       <div className="bg-white rounded-xl shadow-lg p-6">
         <h3 className="text-xl font-bold text-text-color mb-4">🚀 Hızlı İşlemler</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Button variant="primary" size="medium" onClick={() => setActiveTab('users')}>
             👥 Kullanıcıları Görüntüle
           </Button>
@@ -120,6 +120,18 @@ export default function AdminPage() {
             className="bg-encourage-orange text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors text-center flex items-center justify-center"
           >
             🔊 ElevenLabs Test
+          </a>
+          <a 
+            href="/demo/elevenlabs-v3-test"
+            className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors text-center flex items-center justify-center"
+          >
+            🧪 v3 Test (Gülsu)
+          </a>
+          <a 
+            href="/demo/single-letter"
+            className="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors text-center flex items-center justify-center"
+          >
+            🔤 Tek Harf Test
           </a>
         </div>
       </div>
