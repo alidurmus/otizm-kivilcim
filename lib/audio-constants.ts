@@ -209,12 +209,15 @@ export const SOCIAL_COMMUNICATION_DIALOGS: StaticAudioFile[] = [
   { text: "{activity} aktivitesini öğrenelim!", filename: 'aktivite-ogrenelim.mp3', type: 'sentence', category: 'social' },
   { text: "Tebrikler! Aktiviteyi tamamladın!", filename: 'tebrikler-aktivite-tamamlandi.mp3', type: 'celebration', category: 'social' },
   { text: "{skill}: {phrase}. {situation}", filename: 'iletisim-becerisi.mp3', type: 'sentence', category: 'social' },
-  
-  // Specific emotion descriptions - for social communication module
+];
+
+// Sosyal iletişim - Specific emotion descriptions (Critical for audio matching)
+// Text must EXACTLY match the component's emotion.name + ": " + emotion.description
+export const EMOTION_DESCRIPTIONS: StaticAudioFile[] = [
   { text: "Mutlu: Neşeli ve keyifli hissetmek", filename: 'mutlu-neseli-keyifli.mp3', type: 'sentence', category: 'emotions' },
   { text: "Üzgün: Kederli ve mutsuz hissetmek", filename: 'uzgun-kederli-mutsuz.mp3', type: 'sentence', category: 'emotions' },
   { text: "Kızgın: Öfkeli ve sinirli hissetmek", filename: 'kizgin-ofkeli-sinirli.mp3', type: 'sentence', category: 'emotions' },
-  { text: "Şaşkın: Hayret etmek ve şaşırmak", filename: 'saskin-hayret-sasirama.mp3', type: 'sentence', category: 'emotions' },
+  { text: "Şaşkın: Hayret etmek ve şaşırmak", filename: 'saskin-hayret-sasirama.mp3', type: 'sentence', category: 'emotions' }, // ✅ Fixed text mismatch
   { text: "Korkmuş: Endişeli ve korkulu hissetmek", filename: 'korkmus-endiseli-korkulu.mp3', type: 'sentence', category: 'emotions' },
   { text: "Heyecanlı: Coşkulu ve heyecanlı hissetmek", filename: 'heyecanli-coskulu.mp3', type: 'sentence', category: 'emotions' },
 ];
@@ -399,6 +402,7 @@ export const ALL_STATIC_AUDIO: StaticAudioFile[] = [
   ...LITERACY_DIALOGS,
   ...VOCABULARY_DIALOGS,
   ...SOCIAL_COMMUNICATION_DIALOGS,
+  ...EMOTION_DESCRIPTIONS, // ✅ Added for social communication emotion matching
   ...SOCIAL_SKILLS_DIALOGS,
   ...WRITING_EXPRESSION_DIALOGS,
   ...BASIC_CONCEPTS_DIALOGS,

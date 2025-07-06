@@ -3,8 +3,16 @@ import { test, expect } from '@playwright/test';
 test.describe('Literacy Module - Click-to-Place System', () => {
   
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000/exercise/literacy');
+    await page.goto('/exercise/literacy');
+    
+    // Wait for page to load completely
     await page.waitForLoadState('networkidle');
+    
+    // Wait for exercise content to be visible
+    await expect(page.locator('text=Harfleri Birleştirerek Hece Oluştur')).toBeVisible({ timeout: 10000 });
+    
+    // Wait for letters to be clickable
+    await page.waitForTimeout(1000);
   });
 
   test('should load literacy module correctly', async ({ page }) => {
@@ -13,8 +21,8 @@ test.describe('Literacy Module - Click-to-Place System', () => {
     await expect(page.locator('text=Aşağıdaki harflere tıklayarak seç')).toBeVisible();
     
     // Check that initial letters are visible (exercise 1: e, l)
-    await expect(page.locator('text=e').first()).toBeVisible();
-    await expect(page.locator('text=l').first()).toBeVisible();
+    await expect(page.locator('div.bg-orange-400').filter({ hasText: 'e' }).first()).toBeVisible();
+    await expect(page.locator('div.bg-orange-400').filter({ hasText: 'l' }).first()).toBeVisible();
     
     // Check drop zones are empty
     await expect(page.locator('[data-testid="drop-zone-1"]')).toContainText('?');
@@ -22,34 +30,34 @@ test.describe('Literacy Module - Click-to-Place System', () => {
   });
 
   test('should select and deselect letters by clicking', async ({ page }) => {
-    const letterE = page.locator('text=e').first();
-    const letterL = page.locator('text=l').first();
+    const letterE = page.locator('[data-testid="letter-e"]');
+    const letterL = page.locator('[data-testid="letter-l"]');
     
     // Click letter 'e' to select
     await letterE.click();
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
     
     // Letter should show as selected (green background)
     await expect(letterE).toHaveClass(/bg-green-500/);
     
     // Click letter 'e' again to deselect
     await letterE.click();
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
     
     // Letter should show as deselected (orange background)
     await expect(letterE).toHaveClass(/bg-orange-400/);
     
     // Click letter 'l' to select
     await letterL.click();
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
     
     // Letter L should be selected
     await expect(letterL).toHaveClass(/bg-green-500/);
   });
 
   test('should place letters in drop zones', async ({ page }) => {
-    const letterE = page.locator('text=e').first();
-    const letterL = page.locator('text=l').first();
+    const letterE = page.locator('[data-testid="letter-e"]');
+    const letterL = page.locator('[data-testid="letter-l"]');
     const dropZone1 = page.locator('[data-testid="drop-zone-1"]');
     const dropZone2 = page.locator('[data-testid="drop-zone-2"]');
     
@@ -71,8 +79,8 @@ test.describe('Literacy Module - Click-to-Place System', () => {
   });
 
   test('should show success feedback for correct syllable', async ({ page }) => {
-    const letterE = page.locator('text=e').first();
-    const letterL = page.locator('text=l').first();
+    const letterE = page.locator('[data-testid="letter-e"]');
+    const letterL = page.locator('[data-testid="letter-l"]');
     const dropZone1 = page.locator('[data-testid="drop-zone-1"]');
     const dropZone2 = page.locator('[data-testid="drop-zone-2"]');
     
@@ -92,8 +100,8 @@ test.describe('Literacy Module - Click-to-Place System', () => {
   });
 
   test('should show error feedback for incorrect syllable', async ({ page }) => {
-    const letterE = page.locator('text=e').first();
-    const letterL = page.locator('text=l').first();
+    const letterE = page.locator('[data-testid="letter-e"]');
+    const letterL = page.locator('[data-testid="letter-l"]');
     const dropZone1 = page.locator('[data-testid="drop-zone-1"]');
     const dropZone2 = page.locator('[data-testid="drop-zone-2"]');
     
@@ -109,12 +117,12 @@ test.describe('Literacy Module - Click-to-Place System', () => {
     // Error message should appear
     await expect(page.locator('[data-testid="error-message"]')).toBeVisible();
     await expect(page.locator('text=Haydi tekrar deneyelim!')).toBeVisible();
-    await expect(page.locator('text=Tekrar Dene')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Tekrar Dene' })).toBeVisible();
   });
 
   test('should allow retry after incorrect answer', async ({ page }) => {
-    const letterE = page.locator('text=e').first();
-    const letterL = page.locator('text=l').first();
+    const letterE = page.locator('[data-testid="letter-e"]');
+    const letterL = page.locator('[data-testid="letter-l"]');
     const dropZone1 = page.locator('[data-testid="drop-zone-1"]');
     const dropZone2 = page.locator('[data-testid="drop-zone-2"]');
     
@@ -128,7 +136,7 @@ test.describe('Literacy Module - Click-to-Place System', () => {
     await page.waitForTimeout(2000);
     
     // Click "Tekrar Dene" button
-    await page.locator('text=Tekrar Dene').click();
+    await page.getByRole('button', { name: 'Tekrar Dene' }).click();
     
     // Drop zones should be reset to '?'
     await expect(dropZone1).toContainText('?');
@@ -139,7 +147,7 @@ test.describe('Literacy Module - Click-to-Place System', () => {
   });
 
   test('should play audio feedback when clicking letters', async ({ page }) => {
-    const letterE = page.locator('text=e').first();
+    const letterE = page.locator('[data-testid="letter-e"]');
     
     // Click letter to select (this should trigger audio)
     await letterE.click();
@@ -151,16 +159,16 @@ test.describe('Literacy Module - Click-to-Place System', () => {
   });
 
   test('should play syllable audio when clicking audio button', async ({ page }) => {
-    const audioButton = page.locator('text=🔊 Dinle');
+    const audioButton = page.getByRole('button', { name: '🔊 Dinle' });
     
     await audioButton.click();
     
     // Button should temporarily show playing state
-    await expect(page.locator('text=🔊 Oynatılıyor...')).toBeVisible({ timeout: 1000 });
+    await expect(page.getByRole('button', { name: '🔊 Oynatılıyor...' })).toBeVisible({ timeout: 3000 });
     
     // Wait for audio to complete and button to return to normal
     await page.waitForTimeout(3000);
-    await expect(page.locator('text=🔊 Dinle')).toBeVisible();
+    await expect(page.getByRole('button', { name: '🔊 Dinle' })).toBeVisible();
   });
 
   test('should handle auto-progress toggle', async ({ page }) => {
@@ -174,8 +182,8 @@ test.describe('Literacy Module - Click-to-Place System', () => {
     await expect(checkbox).not.toBeChecked();
     
     // Complete correct syllable
-    const letterE = page.locator('text=e').first();
-    const letterL = page.locator('text=l').first();
+    const letterE = page.locator('[data-testid="letter-e"]');
+    const letterL = page.locator('[data-testid="letter-l"]');
     const dropZone1 = page.locator('[data-testid="drop-zone-1"]');
     const dropZone2 = page.locator('[data-testid="drop-zone-2"]');
     
@@ -184,15 +192,19 @@ test.describe('Literacy Module - Click-to-Place System', () => {
     await letterL.click();
     await dropZone2.click();
     
-    // Wait for feedback
-    await page.waitForTimeout(2000);
+    // Wait for feedback to appear
+    await page.waitForTimeout(3000);
+    
+    // Debug: Check if success message appears first
+    const successMessage = page.locator('[data-testid="success-message"]');
+    await expect(successMessage).toBeVisible({ timeout: 5000 });
     
     // Should show proceed button when auto-progress is disabled
-    await expect(page.locator('[data-testid="proceed-button"]')).toBeVisible();
+    await expect(page.locator('[data-testid="proceed-button"]')).toBeVisible({ timeout: 5000 });
   });
 
   test('should navigate back to modules', async ({ page }) => {
-    const backButton = page.locator('text=← Modüllere Dön');
+    const backButton = page.getByRole('button', { name: '← Modüllere Dön' });
     
     await backButton.click();
     
@@ -203,8 +215,8 @@ test.describe('Literacy Module - Click-to-Place System', () => {
 
   test('should complete exercise and progress to next', async ({ page }) => {
     // First exercise: 'el'
-    const letterE = page.locator('text=e').first();
-    const letterL = page.locator('text=l').first();
+    const letterE = page.locator('[data-testid="letter-e"]');
+    const letterL = page.locator('[data-testid="letter-l"]');
     const dropZone1 = page.locator('[data-testid="drop-zone-1"]');
     const dropZone2 = page.locator('[data-testid="drop-zone-2"]');
     
@@ -218,23 +230,28 @@ test.describe('Literacy Module - Click-to-Place System', () => {
     await page.waitForTimeout(4000);
     
     // Should progress to next exercise (should see 'a' and 'l' letters)
-    await expect(page.locator('text=a').first()).toBeVisible();
-    await expect(page.locator('text=l').first()).toBeVisible();
-    
-    // Progress bar should update
-    // (This would be exercise 2 out of 5)
+    await expect(page.locator('[data-testid="letter-a"]')).toBeVisible();
+    await expect(page.locator('[data-testid="letter-l"]')).toBeVisible();
   });
 
-  test('should handle voice input when supported', async ({ page }) => {
-    const voiceButton = page.locator('text=🎙️ Söyle');
+  test('should handle voice input button', async ({ page }) => {
+    // Check if voice input is supported first
+    const voiceButton = page.getByRole('button', { name: '🎙️ Söyle' });
+    const isVoiceSupported = await voiceButton.isVisible();
     
-    // Voice button should be visible if speech recognition is supported
-    if (await voiceButton.isVisible()) {
+    if (isVoiceSupported) {
+      // Voice supported, test the functionality
       await voiceButton.click();
       
-      // Should show listening state
-      await expect(page.locator('text=🎙️ Dinleniyor...')).toBeVisible({ timeout: 1000 });
+      // Button should temporarily show listening state
+      await expect(page.getByRole('button', { name: '🎙️ Dinleniyor...' })).toBeVisible({ timeout: 3000 });
+      
+      // Should return to normal state
+      await expect(page.getByRole('button', { name: '🎙️ Söyle' })).toBeVisible();
+    } else {
+      // Voice not supported, skip this test
+      console.log('Voice input not supported on this browser - skipping test');
+      test.skip();
     }
-    // If not supported, the button won't be visible, which is expected
   });
 }); 

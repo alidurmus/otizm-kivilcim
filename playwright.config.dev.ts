@@ -65,15 +65,15 @@ export default defineConfig({
     }
   ],
 
-  /* Development server ayarları - devre dışı */
-  // webServer: {
-  //   command: 'npm run dev',
-  //   url: 'http://localhost:3001',
-  //   reuseExistingServer: true, // Mevcut server'ı kullan
-  //   timeout: 60 * 1000, // 1 dakika timeout
-  //   stdout: 'ignore',
-  //   stderr: 'pipe'
-  // },
+  /* Development server ayarları */
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3001',
+    reuseExistingServer: true, // Mevcut server'ı kullan
+    timeout: 60 * 1000, // 1 dakika timeout
+    stdout: 'ignore',
+    stderr: 'pipe'
+  },
 
   /* Global test setup */
   // globalSetup: require.resolve('./tests/setup/global-setup.ts'),

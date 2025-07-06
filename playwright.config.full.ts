@@ -102,7 +102,7 @@ export default defineConfig({
   /* CI/CD server setup */
   webServer: process.env.CI ? {
     command: 'npm run build && npm run start',
-    url: 'http://localhost:3000',
+    url: 'http://localhost:3001',
     reuseExistingServer: false,
     timeout: 120 * 1000, // 2 dakika build time
   } : {

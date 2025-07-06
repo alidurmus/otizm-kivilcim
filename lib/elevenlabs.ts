@@ -405,6 +405,9 @@ class ElevenLabsClient {
       // ⚡ SADECE STATİK MP3 DOSYALARI - TTS hiç kullanılmayacak
       const staticPath = getStaticAudioPath(text, type);
       
+      // 🔍 DEBUG: Cache temizle button debug
+      console.log(`🔍 SPEAK DEBUG - Text: "${text}", Type: "${type}", StaticPath: "${staticPath || 'NOT FOUND'}"`);
+      
       if (staticPath) {
         // Static MP3 dosyası varsa onu çal
         const audio = new Audio(staticPath);

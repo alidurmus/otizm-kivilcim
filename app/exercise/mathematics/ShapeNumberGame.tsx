@@ -95,7 +95,7 @@ export default function ShapeNumberGame({ onBack }: ShapeNumberGameProps) {
 
   useEffect(() => {
     generateQuestion();
-  }, [generateQuestion]);
+  }, []); // Only run on component mount
 
   const handleAnswer = async (answer: number) => {
     if (!currentQuestion) return;

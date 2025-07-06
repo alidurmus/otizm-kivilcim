@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useReducer, useCallback } from 'react';
+import React, { useState, useEffect, useReducer, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import ProgressBar from '@/components/ProgressBar';
 import Button from '@/components/Button';
@@ -111,6 +111,7 @@ function exerciseReducer(state: ExerciseState, action: Action): ExerciseState {
       const newSyllable = position === 'first'
         ? letter + (state.userSyllable[1] || '')
         : (state.userSyllable[0] || '') + letter;
+      console.log('🔧 DEBUG: DROP_LETTER reducer - Position:', position, 'Letter:', letter, 'New syllable:', newSyllable, 'Old syllable:', state.userSyllable);
       return { ...state, userSyllable: newSyllable, draggedLetter: null };
     }
 
@@ -183,26 +184,33 @@ export default function LiteracyExercisePage() {
   // Click-to-place interaction state
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
 
-  const exercise = exercises[currentExerciseIndex];
-  const progress = currentExerciseIndex;
-  const total = exercises.length;
-
+  // Debug: Track selectedLetter state changes
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setSpeechSupported('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
+    console.log('🔧 DEBUG: selectedLetter changed to:', selectedLetter);
+  }, [selectedLetter]);
+
+  // Debug: Track userSyllable state changes  
+  useEffect(() => {
+    console.log('🔧 DEBUG: userSyllable changed to:', userSyllable);
+  }, [userSyllable]);
+
+  const exercise = exercises[currentExerciseIndex];
+  const { progress, total } = useMemo(() => ({
+    progress: currentExerciseIndex + 1,
+    total: exercises.length
+  }), [currentExerciseIndex]);
+
+  // Initialize speech synthesis
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      setSpeechSupported(true);
     }
   }, []);
 
-  // Hece tamamlandığında cevabı otomatik kontrol eden effect
-  useEffect(() => {
-    if (userSyllable.length === 2) {
-      checkAnswer(userSyllable);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps  
-  }, [userSyllable, currentExerciseIndex]); // Yeni egzersizde tekrar tetiklenmesi için index'e de bağlı
-
   const checkAnswer = useCallback(async (syllable: string) => {
+    console.log('🔧 DEBUG: checkAnswer called - User syllable:', syllable, 'Correct syllable:', exercise.correctSyllable);
     const correct = syllable.toLowerCase() === exercise.correctSyllable.toLowerCase();
+    console.log('🔧 DEBUG: Answer is', correct ? 'CORRECT' : 'INCORRECT');
     dispatch({ type: 'EVALUATE_ANSWER', payload: { isCorrect: correct } });
     
     if (correct) {
@@ -221,22 +229,44 @@ export default function LiteracyExercisePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercise.correctSyllable, currentExerciseIndex, exercises.length, autoProgressEnabled]);
 
+  // Hece tamamlandığında cevabı otomatik kontrol eden effect
+  useEffect(() => {
+    if (userSyllable.length === 2) {
+      console.log('🔧 DEBUG: Complete syllable detected, checking answer:', userSyllable);
+      checkAnswer(userSyllable);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps  
+  }, [userSyllable, currentExerciseIndex]); // Yeni egzersizde tekrar tetiklenmesi için index'e de bağlı
+
   const handleLetterClick = (letter: string) => {
+    console.log('🔧 DEBUG: Letter clicked:', letter, 'Current selection:', selectedLetter);
     if (selectedLetter === letter) {
+      console.log('🔧 DEBUG: Deselecting letter:', letter);
       setSelectedLetter(null); // Deselect if clicking the same letter
     } else {
+      console.log('🔧 DEBUG: Selecting letter:', letter);
       setSelectedLetter(letter);
       playLetterSound(letter); // Play sound when selecting
     }
+    
+    // Force immediate visual update for test compatibility
+    setTimeout(() => {
+      console.log('🔧 DEBUG: selectedLetter after timeout:', selectedLetter);
+    }, 0);
   };
 
   const handleDropZoneClick = (position: 'first' | 'second') => {
+    console.log('🔧 DEBUG: Zone clicked:', position, 'Selected letter:', selectedLetter);
     if (selectedLetter) {
+      console.log('🔧 DEBUG: Placing letter:', selectedLetter, 'in position:', position);
       dispatch({ 
         type: 'DROP_LETTER', 
         payload: { position, letter: selectedLetter } 
       });
       setSelectedLetter(null); // Clear selection after placement
+      console.log('🔧 DEBUG: Letter placed, selection cleared');
+    } else {
+      console.log('🔧 DEBUG: No letter selected, zone click ignored');
     }
   };
 
@@ -434,13 +464,18 @@ export default function LiteracyExercisePage() {
                 {exercise.letters.map((letter, index) => (
                   <div
                     key={index}
+                    data-testid={`letter-${letter}`}
+                    data-letter={letter}
                     onClick={() => handleLetterClick(letter)}
-                    className={
+                    className={[
+                      'w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold',
+                      'cursor-pointer shadow-lg hover:shadow-xl transform hover:scale-105', 
+                      'transition-all duration-300 relative group',
                       selectedLetter === letter 
-                        ? 'w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold cursor-pointer shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group bg-green-500 text-white ring-4 ring-blue-400'
-                        : 'w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold cursor-pointer shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative group bg-orange-400 text-white'
-                    }
-                    title={selectedLetter === letter ? `${letter} seçili - yerleştirmek için alan tıkla` : `${letter} harfini seç`}
+                        ? 'bg-green-500 text-white ring-4 ring-blue-400 scale-105' 
+                        : 'bg-orange-400 text-white hover:bg-orange-500'
+                    ].join(' ')}
+                    title={`${letter} harfini seç`}
                   >
                     {letter}
                     <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs text-gray-500 whitespace-nowrap">

@@ -158,3 +158,4 @@ interface ModuleProps {
 - **Test Coverage:** `npm run test:dev` - Hızlı development tests
 - **Voice System:** Gülsu Default Voice (9BWtsMINqrJLrRacOk9x) + yeni v3 voice (jbJMQWv1eS4YjQ6PCcn6)
 - **Audio Files:** `/public/audio/` - Static Turkish audio files
+
