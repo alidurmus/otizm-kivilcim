@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
-import { User } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
-import { onAuthStateChange, signInAnonymous, getCurrentUser } from '@/lib/auth';
+import { onAuthStateChange, signInAnonymous, getCurrentUser, AuthUser } from '@/lib/auth';
 import { getUserData, getAllModulesProgress, calculateUserStats, UserData, ModuleProgress } from '@/lib/firestore';
 import { createMockUserData } from '@/lib/mock-data';
 
@@ -27,7 +26,7 @@ interface Achievement {
 export default function ParentPanelPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'overview' | 'progress' | 'settings' | 'guide'>('overview');
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [modulesProgress, setModulesProgress] = useState<Record<string, ModuleProgress>>({});
   const [loading, setLoading] = useState(true);
@@ -43,14 +42,14 @@ export default function ParentPanelPage() {
           
           if (user) {
             setUser(user);
-            await loadUserData(user.uid);
+            await loadUserData(user.id);
           } else {
             // Auto sign in anonymously for demo
             try {
               const anonymousUser = await signInAnonymous();
               if (anonymousUser && mounted) {
                 setUser(anonymousUser);
-                await loadUserData(anonymousUser.uid);
+                await loadUserData(anonymousUser.id);
               }
             } catch (_authError) {
               // Authentication failed - using limited functionality
@@ -71,7 +70,7 @@ export default function ParentPanelPage() {
         if (currentUser && mounted) {
           setUser(currentUser);
           try {
-            await loadUserData(currentUser.uid);
+            await loadUserData(currentUser.id);
           } catch (_error) {
             // Failed to load user data - using defaults
           }
@@ -142,10 +141,10 @@ export default function ParentPanelPage() {
     
     setLoading(true);
     try {
-      const success = await createMockUserData(user.uid);
+      const success = await createMockUserData(user.id);
       if (success) {
         // Reload data after creating mock data
-        await loadUserData(user.uid);
+        await loadUserData(user.id);
         alert('Demo veriler başarıyla oluşturuldu!');
       } else {
         alert('Demo veriler oluşturulurken hata oluştu.');
@@ -474,7 +473,7 @@ export default function ParentPanelPage() {
         <div className="space-y-3">
           <div className="p-3 bg-gray-50 rounded-lg">
             <label className="block text-sm font-medium text-text-color mb-1">Kullanıcı ID</label>
-            <code className="text-xs text-gray-600 break-all">{user?.uid}</code>
+            <code className="text-xs text-gray-600 break-all">{user?.id}</code>
           </div>
           <div className="p-3 bg-gray-50 rounded-lg">
             <label className="block text-sm font-medium text-text-color mb-1">Kayıt Tarihi</label>

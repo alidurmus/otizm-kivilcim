@@ -36,10 +36,15 @@ test.describe('Kıvılcım Modül Seçimi', () => {
     await expect(page.getByRole('heading', { name: 'Temel Kavramlar' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Müzik Dinleme Odası' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Video İzleme Odası' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Hikaye Dinleme' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Puzzle Oyunu' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Alfabe Okuma' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Matematik Dünyası' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Fizik Dünyası' })).toBeVisible();
     
     // Tüm modüllerde BAŞLA butonlarının olduğunu kontrol et
     const baslaButtons = page.getByRole('button', { name: 'BAŞLA' });
-    await expect(baslaButtons).toHaveCount(7); // 7 aktif modül
+    await expect(baslaButtons).toHaveCount(12); // 12 aktif modül güncellendi
   });
 
   test('modül BAŞLA butonuna tıklayınca egzersiz sayfasına gitmeli', async ({ page }) => {
@@ -60,13 +65,13 @@ test.describe('Kıvılcım Modül Seçimi', () => {
     await expect(page.getByRole('heading', { name: '🎯 Gelişim Durumun' })).toBeVisible();
     
     // İstatistikleri kontrol et - gerçek sayfadaki değerler (daha spesifik locator)
-    await expect(page.locator('div.text-2xl.font-bold').filter({ hasText: '7' })).toBeVisible(); // Aktif modül sayısı
+    await expect(page.locator('div.text-2xl.font-bold').filter({ hasText: '12' })).toBeVisible(); // Aktif modül sayısı güncellendi
     await expect(page.locator('div.text-sm.text-adaptive-secondary').filter({ hasText: 'Aktif Modül' })).toBeVisible();
     await expect(page.locator('div.text-2xl.font-bold').filter({ hasText: '0' })).toBeVisible(); // Yakında gelecek sayısı
     await expect(page.locator('div.text-sm.text-adaptive-secondary').filter({ hasText: 'Yakında Gelecek' })).toBeVisible();
     
-    // Motivasyon mesajını kontrol et - gerçek sayfadaki mesaj
-    await expect(page.getByText('7 modül aktif! Herhangi birini seçerek öğrenmeye başlayabilirsin! 🌟')).toBeVisible();
+    // Motivasyon mesajını kontrol et - gerçek sayfadaki mesaj güncellendi
+    await expect(page.getByText('12 modül aktif! Herhangi birini seçerek öğrenmeye başlayabilirsin! 🌟')).toBeVisible();
   });
 
   test('navigasyon butonları çalışmalı', async ({ page }) => {

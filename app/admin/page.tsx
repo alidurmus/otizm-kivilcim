@@ -133,6 +133,12 @@ export default function AdminPage() {
           >
             🔤 Tek Harf Test
           </a>
+          <a 
+            href="/admin/audio-management"
+            className="bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors text-center flex items-center justify-center"
+          >
+            🎵 Ses Dosyaları
+          </a>
         </div>
       </div>
 

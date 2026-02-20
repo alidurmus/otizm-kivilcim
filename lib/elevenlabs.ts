@@ -387,6 +387,154 @@ class ElevenLabsClient {
   }
 
   /**
+   * Statik MP3 dosyalarını oynatmaya çalışır
+   * Enhanced with corruption detection for mathematics module
+   */
+  private async playStaticAudio(text: string, type: 'letter' | 'word' | 'sentence' | 'celebration'): Promise<void> {
+    try {
+      const staticPath = getStaticAudioPath(text, type);
+      
+      if (staticPath) {
+        console.log(`🔍 SPEAK DEBUG - Text: "${text}", Type: "${type}", StaticPath: "${staticPath}"`);
+        
+        return new Promise(async (resolve, reject) => {
+          // Enhanced: Check file integrity before playing
+          try {
+            const response = await fetch(staticPath, { method: 'HEAD' });
+            const contentLength = response.headers.get('Content-Length');
+            const fileSize = contentLength ? parseInt(contentLength) : 0;
+            
+            // Detect corrupt files (too small for valid audio)
+            if (fileSize < 1000) { // Less than 1KB is likely corrupt
+              console.warn(`⚠️ Corrupt audio file detected: ${staticPath} (${fileSize} bytes) - Triggering fallback`);
+              // Trigger ElevenLabs SDK fallback for mathematics module
+              await this.fallbackToElevenLabs(text, type);
+              resolve();
+              return;
+            }
+          } catch (fetchError) {
+            console.warn(`⚠️ Cannot check file integrity: ${staticPath} - Proceeding with playback attempt`);
+          }
+          
+          const audio = new Audio(staticPath);
+          
+          audio.onloadeddata = () => {
+            this.currentAudio = audio;
+            resolve();
+          };
+          
+          audio.onerror = async () => {
+            console.log(`❌ MP3 dosyası çalınamadı: ${staticPath} - Fallback tetikleniyor`);
+            // Enhanced: Trigger proper fallback instead of silent fail
+            try {
+              await this.fallbackToElevenLabs(text, type);
+            } catch (fallbackError) {
+              console.log(`❌ Fallback failed: ${fallbackError} - Ses olmayacak`);
+            }
+            resolve(); // Always resolve to prevent hanging
+          };
+          
+          audio.play().catch(async (error) => {
+            console.log(`❌ MP3 oynatma hatası: ${staticPath} - Fallback tetikleniyor`);
+            // Enhanced: Trigger proper fallback instead of silent fail
+            try {
+              await this.fallbackToElevenLabs(text, type);
+            } catch (fallbackError) {
+              console.log(`❌ Fallback failed: ${fallbackError} - Ses olmayacak`);
+            }
+            resolve(); // Always resolve to prevent hanging
+          });
+        });
+      } else {
+        // MP3 dosyası bulunamadı - trigger fallback
+        console.log(`⚠️ MP3 dosyası bulunamadı: "${text}" (${type}) - Fallback tetikleniyor`);
+        await this.fallbackToElevenLabs(text, type);
+        return Promise.resolve();
+      }
+    } catch (error) {
+      // Herhangi bir hata durumunda fallback sistemi dene
+      console.log(`❌ Audio hatası: ${error} - Fallback tetikleniyor`);
+      try {
+        await this.fallbackToElevenLabs(text, type);
+      } catch (fallbackError) {
+        console.log(`❌ Fallback failed: ${fallbackError} - Ses olmayacak`);
+      }
+      return Promise.resolve();
+    }
+  }
+
+  /**
+   * ElevenLabs SDK fallback for mathematics module
+   * Follows mathematics module voice rules: Antoni for sentences, Rachel for words, etc.
+   */
+  private async fallbackToElevenLabs(text: string, type: 'letter' | 'word' | 'sentence' | 'celebration'): Promise<void> {
+    try {
+      // Mathematics module voice rules compliance
+      let voiceId = this.defaultVoiceId; // Gülsu default
+      
+      // Apply mathematics module specific voice rules
+      if (type === 'sentence') {
+        voiceId = 'ErXwobaYiN019PkySvjV'; // Antoni - mathematics instructions
+      } else if (type === 'word') {
+        voiceId = 'piTKgcLEGmPE4e6mEKli'; // Rachel - numbers/words
+      } else if (type === 'celebration') {
+        voiceId = 'VR6AewLTigWG4xSOukaG'; // Josh - celebrations
+      } else if (type === 'letter') {
+        voiceId = 'pNInz6obpgDQGcFmaJgB'; // Adam - letters
+      }
+      
+      console.log(`🔄 ElevenLabs fallback: "${text}" (${type}) - Voice: ${voiceId}`);
+      
+      const audioUrl = await this.textToSpeech(text, type, voiceId);
+      if (audioUrl) {
+        const audio = new Audio(audioUrl);
+        this.currentAudio = audio;
+        await audio.play();
+        console.log(`✅ ElevenLabs fallback successful for: "${text}"`);
+      } else {
+        // Final fallback to Web Speech API
+        console.log(`⚠️ ElevenLabs unavailable, using Web Speech API for: "${text}"`);
+        await this.webSpeechFallback(text);
+      }
+    } catch (error) {
+      console.warn(`❌ ElevenLabs fallback failed: ${error}`);
+      // Final fallback to Web Speech API
+      try {
+        await this.webSpeechFallback(text);
+      } catch (webSpeechError) {
+        console.log(`❌ All fallbacks failed for: "${text}" - ${webSpeechError}`);
+      }
+    }
+  }
+
+  /**
+   * Web Speech API final fallback
+   */
+  private async webSpeechFallback(text: string): Promise<void> {
+    return new Promise((resolve) => {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'tr-TR';
+        utterance.rate = 0.8;
+        utterance.pitch = 1.0;
+        utterance.volume = 0.8;
+        
+        utterance.onend = () => resolve();
+        utterance.onerror = () => {
+          console.log(`❌ Web Speech API failed for: "${text}"`);
+          resolve(); // Always resolve
+        };
+        
+        speechSynthesis.speak(utterance);
+        console.log(`🗣️ Web Speech API fallback: "${text}"`);
+      } else {
+        console.log(`❌ Web Speech API not supported`);
+        resolve();
+      }
+    });
+  }
+
+  /**
    * Sesi çalar - SADECE STATİK MP3 DOSYALARI (TTS DEVRE DIŞI)
    * Türkçe karakterli metinler için optimize edilmiş
    */
@@ -438,18 +586,52 @@ class ElevenLabsClient {
   }
 
   /**
-   * TTS API'si çağırır - SADECE ELEVENLabs TEST İÇİN
+   * TTS API'si çağırır - Mathematics Module Fallback Support
+   * Mathematics module rules: Antoni for sentences, Rachel for words, Josh for celebrations
    */
   private async textToSpeech(
     text: string, 
-    _type: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence',
-    _voiceId?: string
+    type: 'letter' | 'word' | 'sentence' | 'celebration' = 'sentence',
+    voiceId?: string
   ): Promise<string | null> {
-    // ⚡ TTS tamamen devre dışı - sadece static MP3 dosyalarını kullan
-    return null;
+    // ⚡ TTS only for fallback cases - static MP3 files have priority
+    console.log(`🔄 TTS Fallback requested: "${text}" (${type}) - Voice: ${voiceId}`);
     
-    // Debugging için comment'de bırakıyoruz
-    // const response = await fetch('/api/speech', { method: 'POST', ... });
+    try {
+      const response = await fetch('/api/speech', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          voiceId: voiceId || this.defaultVoiceId,
+          type,
+          settings: {
+            stability: 0.75,
+            similarity_boost: 0.85,
+            style: 0.3,
+            use_speaker_boost: true
+          },
+          language: 'tr'
+        })
+      });
+
+      if (!response.ok) {
+        console.warn(`❌ TTS API failed: ${response.status} - ${response.statusText}`);
+        return null;
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      console.log(`✅ TTS Fallback successful: "${text}" - Generated ${audioBlob.size} bytes`);
+      return audioUrl;
+      
+    } catch (error) {
+      console.warn(`❌ TTS API error: ${error}`);
+      return null;
+    }
   }
 
   /**

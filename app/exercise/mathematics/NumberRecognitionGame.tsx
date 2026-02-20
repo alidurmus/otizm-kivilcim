@@ -15,7 +15,7 @@ interface NumberQuestion {
   staticAudioPath: string;
 }
 
-// Sayılar - static ses dosyalarıyla
+// Sayılar - numbers klasöründeki static ses dosyalarıyla
 const numbers: NumberQuestion[] = [
   { number: 1, displayNumber: '1', audioText: 'bir', staticAudioPath: '/audio/numbers/1.mp3' },
   { number: 2, displayNumber: '2', audioText: 'iki', staticAudioPath: '/audio/numbers/2.mp3' },
@@ -51,10 +51,15 @@ export default function NumberRecognitionGame({ onBack }: NumberRecognitionGameP
     }
   };
 
+  const [hasPlayedWelcome, setHasPlayedWelcome] = useState(false);
+
   useEffect(() => {
-    // Oyun başlarken hoş geldiniz mesajını çal
-    speak('Sayı tanıma oyununa hoş geldin! Sayıları öğrenelim.', 'sentence');
-  }, [speak]);
+    // Oyun başlarken hoş geldiniz mesajını sadece bir kez çal
+    if (!hasPlayedWelcome) {
+      speak('Sayı tanıma modülüne hoş geldin! Birlikte sayıları öğreneceğiz.', 'sentence');
+      setHasPlayedWelcome(true);
+    }
+  }, [speak, hasPlayedWelcome]);
 
   const playNumberSound = async () => {
     await playNumberAudio(currentNumber);

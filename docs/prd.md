@@ -45,6 +45,33 @@ Kıvılcım, otizmli çocukların bireysel gelişim yolculuklarında onlara ve a
 - **Admin Panel:** API status dashboard, voice testing, performance metrics
 - **EN GÜNCEL MODEL:** eleven_turbo_v2_5 - %50 daha ucuz, düşük latency, yüksek Türkçe kalite
 
+#### **Modüler Ses Sistemi Kuralı (YENİ)**
+```typescript
+// KURAL: Her modül kendi karşılama mesajı ile karşılasın
+// Modül-specific welcome messages prevent cross-module audio confusion
+
+// ✅ DOĞRU: Her modül için özel hoş geldin mesajı
+useEffect(() => {
+  if (!hasPlayedWelcome && currentGame === 'menu') {
+    speak('Matematik Dünyası modülüne hoş geldin! Sayıları öğren ve temel matematik becerilerini geliştir.', 'sentence');
+    setHasPlayedWelcome(true);
+  }
+}, [speak, hasPlayedWelcome, currentGame]);
+
+// ❌ YANLIŞ: Generic hoş geldin mesajı
+speak('Hoş geldin!', 'sentence'); // Hangi modül olduğu belirsiz
+
+// ❌ YANLIŞ: Başka modülün mesajını kullanma  
+speak('Alfabe okuma modülüne hoş geldin!', 'sentence'); // Matematik modülünde alfabe mesajı
+```
+
+**Modül Bazlı Ses Sistemi Gereksinimleri:**
+- Her modül (`/exercise/*`) kendi özel hoş geldin mesajına sahip olmalı
+- Audio constants'ta modül adı ile eşleşen welcome message tanımlanmalı
+- `hasPlayedWelcome` state ile sadece bir kez çalınması sağlanmalı
+- Modül ismi açık bir şekilde seslendirilmeli (örn: "Matematik Dünyası modülüne hoş geldin!")
+- Cross-module audio contamination önlenmeli
+
 ### 4.4 Güvenlik Gereksinimleri
 - **API Key Management:** Server-side proxy pattern (ElevenLabs SDK)
 - **Content Security Policy (CSP)** implementasyonu
@@ -187,6 +214,295 @@ Kıvılcım, otizmli çocukların bireysel gelişim yolculuklarında onlara ve a
 - **Priority Management:** Critical issue'ların hızlı resolution'u
 - **Progress Transparency:** Real-time task status visibility
 - **Knowledge Transfer:** Structured task handoff between team members
+
+### 9.4 Modül Bazlı Kural Sistemi (YENİ)
+- **Amaç:** Her modül için özel kurallar ile tutarlı geliştirme süreci
+- **Konum:** `docs/modules/` - 10 aktif modül için ayrı kural dosyaları
+- **Kullanım:** Modül işlemi öncesinde ilgili kural dosyasını oku ve uygula
+- **Kapsam:** Voice assignments, UI/UX rules, content standards, test requirements
+
+#### **Modül Kuralları Yapısı**
+```typescript
+// Her modül için özel kural dosyası
+docs/modules/
+├── README.md                    // Ana index ve kullanım rehberi
+├── alphabet-reading.md          // Alfabe okuma modülü kuralları  
+├── mathematics.md               // Matematik dünyası modülü kuralları
+├── social-communication.md      // Sosyal iletişim modülü kuralları
+├── vocabulary.md                // Kelime dağarcığı modülü kuralları
+├── basic-concepts.md            // Temel kavramlar modülü kuralları
+├── literacy.md                  // Okuryazarlık modülü kuralları
+├── writing-expression.md        // Yazma ve ifade modülü kuralları
+├── music-room.md                // Müzik odası modülü kuralları
+├── video-room.md                // Video odası modülü kuralları
+└── puzzle.md                    // Puzzle oyunu modülü kuralları
+```
+
+#### **Kural Kategorileri**
+- **🔊 Ses Sistemi Kuralları:** Voice character assignments, audio file management
+- **🎨 UI/UX Kuralları:** Autism-friendly design, accessibility requirements
+- **📚 İçerik Kuralları:** Turkish language, age-appropriate content standards
+- **🔧 Teknik Kuralları:** Performance, error handling, state management
+- **🧪 Test Kuralları:** Module-specific testing requirements
+- **⚠️ Critical Rules:** Do not / Always requirements per module
+
+#### **Development Workflow Integration**
+```typescript
+// Modül bazlı işlem workflow'u
+MODUEL_OPERATION_WORKFLOW = {
+  step1: 'Identify target module',
+  step2: 'Read docs/modules/{module-name}.md',
+  step3: 'Apply voice character rules',
+  step4: 'Follow audio file management policy',
+  step5: 'Implement autism-friendly design',
+  step6: 'Execute module-specific tests',
+  step7: 'Validate rule compliance'
+}
+```
+
+#### **Voice Character Rule Enforcement**
+- **Adam:** Letter pronunciation (alphabet-reading, literacy)
+- **Antoni:** Instructions and storytelling (social-communication, writing, video)
+- **Josh:** Celebrations and games (mathematics, music, puzzle)
+- **Rachel:** Word pronunciation and concepts (vocabulary, basic-concepts)
+- **Gülsu:** Default character continuity (mathematics, social-communication)
+
+#### **User Audio Management Integration**
+- **Policy:** User manages module-specific audio files manually
+- **System Support:** Fallback chain (static files → ElevenLabs → Web Speech)
+- **Developer Guideline:** Never auto-generate audio without user approval
+- **Exception Handling:** Graceful degradation when audio unavailable
+
+### 9.5 Bölüm Bazlı Kural Sistemi (CORE RULE - YENİ)
+**Ana Proje Kuralı: Herhangi bir bölüm/modül oluşturulduğunda o bölüme ait kurallar da oluşturulacak**
+
+#### **🎯 Temel Prensipler**
+- **Kural Oluşturma:** Yeni bölüm/modül → Otomatik kural dosyası oluşturma
+- **Kural Okuma:** Bölüm işlemi → İlgili kural dosyasını oku ve uygula
+- **Kural Güncelleme:** Gelişme/değişiklik → Kural dosyasını güncelle
+- **Tutarlılık Kontrolü:** Kural çelişkisi → Raporlama ve düzeltme
+
+#### **🏗️ Bölüm Kural Sistemi Yapısı**
+```typescript
+// CORE RULE STRUCTURE
+SECTION_RULE_SYSTEM = {
+  // 1. Bölüm oluşturma kuralı
+  onSectionCreated: {
+    action: 'CREATE_RULE_FILE',
+    location: 'docs/rules/{section-name}.md',
+    template: 'section-rule-template.md',
+    mandatory: true
+  },
+  
+  // 2. Bölüm işlemi kuralı
+  onSectionOperation: {
+    action: 'READ_SECTION_RULES',
+    location: 'docs/rules/{section-name}.md',
+    applyRules: true,
+    validateCompliance: true
+  },
+  
+  // 3. Geliştirme kuralı
+  onDevelopmentChanges: {
+    action: 'UPDATE_SECTION_RULES',
+    location: 'docs/rules/{section-name}.md',
+    trackChanges: true,
+    versionControl: true
+  },
+  
+  // 4. Tutarlılık kontrolü
+  onInconsistencyDetected: {
+    action: 'REPORT_INCONSISTENCY',
+    location: 'docs/reports/rule-inconsistencies.md',
+    severity: 'HIGH_PRIORITY',
+    requiresResolution: true
+  }
+}
+```
+
+#### **📁 Bölüm Kural Dosya Yapısı**
+```typescript
+// Her bölüm için standart kural dosyası formatı
+interface SectionRuleFile {
+  metadata: {
+    sectionName: string;
+    sectionType: 'module' | 'component' | 'service' | 'api' | 'ui';
+    createdAt: Date;
+    lastUpdated: Date;
+    version: string;
+    maintainer: string;
+  };
+  
+  rules: {
+    voice: VoiceRules;          // Ses sistemi kuralları
+    ui: UIRules;                // UI/UX kuralları
+    content: ContentRules;      // İçerik kuralları
+    technical: TechnicalRules;  // Teknik kuralları
+    testing: TestingRules;      // Test kuralları
+    critical: CriticalRules;    // Kritik kurallar
+  };
+  
+  compliance: {
+    mustDo: string[];           // Mutlaka yapılması gerekenler
+    mustNotDo: string[];        // Asla yapılmaması gerekenler
+    bestPractices: string[];    // En iyi uygulamalar
+    warnings: string[];         // Dikkat edilmesi gerekenler
+  };
+  
+  dependencies: {
+    relatedSections: string[];  // İlgili bölümler
+    sharedRules: string[];      // Ortak kurallar
+    conflicts: string[];        // Çelişkili kurallar
+  };
+  
+  changelog: {
+    date: Date;
+    changes: string[];
+    reason: string;
+    author: string;
+  }[];
+}
+```
+
+#### **🔄 Otomatik Kural Yönetimi**
+```typescript
+// Otomatik kural yönetim iş akışı
+AUTOMATIC_RULE_MANAGEMENT = {
+  // Yeni bölüm detect edildiğinde
+  onNewSectionDetected: {
+    step1: 'Scan for new sections/modules',
+    step2: 'Check if rule file exists',
+    step3: 'Create rule file from template',
+    step4: 'Populate with basic rules',
+    step5: 'Add to rule index',
+    step6: 'Notify maintainer'
+  },
+  
+  // Bölüm operation sırasında
+  onSectionOperation: {
+    step1: 'Identify target section',
+    step2: 'Load section-specific rules',
+    step3: 'Validate against rules',
+    step4: 'Apply rule constraints',
+    step5: 'Log compliance status',
+    step6: 'Report violations'
+  },
+  
+  // Geliştirme sonrası
+  onDevelopmentComplete: {
+    step1: 'Analyze changes made',
+    step2: 'Check rule compliance',
+    step3: 'Update rules if needed',
+    step4: 'Version control changes',
+    step5: 'Update documentation',
+    step6: 'Notify stakeholders'
+  }
+}
+```
+
+#### **📊 Tutarlılık Kontrolü ve Raporlama**
+```typescript
+// Tutarlılık kontrolü sistemi
+CONSISTENCY_CHECK_SYSTEM = {
+  automated: {
+    frequency: 'daily',
+    checks: [
+      'Rule file existence for all sections',
+      'Cross-section rule conflicts',
+      'Deprecated rule usage',
+      'Missing mandatory rules',
+      'Rule format validation'
+    ]
+  },
+  
+  manual: {
+    frequency: 'weekly',
+    checks: [
+      'Rule effectiveness assessment',
+      'Developer compliance review',
+      'Rule clarity and understanding',
+      'Update requirements identification'
+    ]
+  },
+  
+  reporting: {
+    inconsistencyReport: {
+      location: 'docs/reports/rule-inconsistencies.md',
+      format: 'markdown',
+      includes: [
+        'Detected inconsistencies',
+        'Severity levels',
+        'Recommended actions',
+        'Timeline for resolution'
+      ]
+    },
+    complianceReport: {
+      location: 'docs/reports/rule-compliance.md',
+      format: 'markdown',
+      includes: [
+        'Compliance percentage',
+        'Section-wise compliance',
+        'Violation patterns',
+        'Improvement suggestions'
+      ]
+    }
+  }
+}
+```
+
+#### **🚨 Kritik Kural Gereksinimleri**
+```typescript
+// Kritik kurallar - asla ihlal edilmemelidir
+CRITICAL_RULE_REQUIREMENTS = {
+  mandatory: [
+    'Every section MUST have a rule file',
+    'Rules MUST be read before section operations',
+    'Rule violations MUST be reported',
+    'Inconsistencies MUST be resolved within 48 hours',
+    'Rule changes MUST be documented and versioned'
+  ],
+  
+  enforcement: {
+    preCommitHooks: 'Check rule compliance before commits',
+    ciCdIntegration: 'Validate rules in CI/CD pipeline',
+    codeReview: 'Rule compliance review in PRs',
+    monitoring: 'Real-time rule violation monitoring'
+  },
+  
+  penalties: {
+    ruleViolation: 'Block deployment until resolved',
+    missingRules: 'Prevent section creation',
+    inconsistency: 'Alert maintainers immediately',
+    nonCompliance: 'Escalate to project lead'
+  }
+}
+```
+
+#### **🔧 Kural Sistemi Araçları**
+```bash
+# Kural yönetimi komutları
+npm run rules:scan           # Yeni bölümleri tara ve kural dosyası oluştur
+npm run rules:validate       # Tüm kuralları doğrula
+npm run rules:check          # Tutarlılık kontrolü
+npm run rules:report         # Kural uyumluluk raporu
+npm run rules:update         # Kuralları güncelle
+npm run rules:fix           # Otomatik düzeltmeler
+```
+
+#### **📚 Kural Sistemi Dokümantasyonu**
+- **`docs/rules/README.md`** - Ana kural sistemi rehberi
+- **`docs/rules/templates/`** - Kural dosyası şablonları
+- **`docs/rules/compliance/`** - Uyumluluk raporları
+- **`docs/rules/violations/`** - İhlal kayıtları
+- **`docs/rules/changelog/`** - Kural değişiklik geçmişi
+
+#### **🎯 Bölüm Kural Sistemi Faydaları**
+- **Tutarlılık:** Tüm bölümlerde aynı standartlar
+- **Kalite:** Otomatik kural kontrolü ile yüksek kalite
+- **Takım Koordinasyonu:** Herkesin aynı kuralları takip etmesi
+- **Hata Önleme:** Kurallar sayesinde hataların önlenmesi
+- **Dokümantasyon:** Otomatik kural dokümantasyonu
+- **Ölçeklenebilirlik:** Yeni bölümler için otomatik kural oluşturma
 
 ## 10. Gelecek Roadmap
 

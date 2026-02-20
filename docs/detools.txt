@@ -1,0 +1,85 @@
+## Next.js Projenizde Chrome DevTools Entegrasyonu: `com.chrome.devtools.json` Dosyasını Kullanma
+
+Evet, `com.chrome.devtools.json` dosyasını bir Next.js projesinde kullanabilirsiniz. Bu dosya, projenizle Chrome Geliştirici Araçları (DevTools) arasında daha derin bir entegrasyon sağlayarak geliştirme ve hata ayıklama (debugging) sürecinizi önemli ölçüde iyileştirebilir.
+
+Özellikle, bu dosya Chrome'un **"Otomatik Çalışma Alanı Klasörleri" (Automatic Workspace Folders)** özelliğini etkinleştirir. Bu özellik sayesinde, DevTools'un "Kaynaklar" (Sources) panelinde yaptığınız stil (CSS) veya kod (JavaScript) değişikliklerini doğrudan yerel proje dosyalarınıza kaydedebilirsiniz. Bu, tarayıcıda canlı olarak denediğiniz bir değişikliği anında kod tabanınıza yansıtmanıza olanak tanıyarak geliştirme döngüsünü hızlandırır.
+
+-----
+
+### `com.chrome.devtools.json` Dosyası Nedir ve Ne İşe Yarar?
+
+Chrome, yerel bir geliştirme sunucusunda (örneğin, `next dev` ile çalışan projenizde) çalıştığınızı algıladığında, projenin kaynak kodunun yerel makinede nerede olduğunu öğrenmek için `/.well-known/appspecific/com.chrome.devtools.json` adresine bir istek gönderir.
+
+Bu dosyayı projenize ekleyerek Chrome'a şu bilgileri sağlarsınız:
+
+  * **Proje Kök Dizini:** Kaynak kodlarınızın mutlak yolu.
+  * **Benzersiz Kimlik (UUID):** Projenizi tanımlayan benzersiz bir kimlik.
+
+Bu bilgilerle DevTools, tarayıcıda görüntülenen dosyaları yerel diskteki dosyalarınızla eşleştirir ve aralarında çift yönlü bir bağlantı kurar.
+
+### Next.js Projesine Nasıl Eklenir?
+
+Next.js (hem Pages Router hem de App Router ile) projelerinde bu dosyayı sunmanın en kolay yolu, `public` klasörünü kullanmaktır. `public` klasöründeki her şey, sitenin kök dizininden (`/`) sunulur.
+
+**Adım Adım Uygulama:**
+
+1.  **Klasörleri Oluşturun:** Projenizin ana dizininde bulunan `public` klasörünün içine, `.well-known` ve onun da içine `appspecific` adında yeni klasörler oluşturun.
+
+    ```bash
+    /
+    ├── public/
+    │   └── .well-known/
+    │       └── appspecific/
+    ├── src/ (veya app/)
+    └── ... diğer proje dosyaları
+    ```
+
+    *Not: Terminal üzerinden bu yapıyı hızlıca oluşturmak için projenizin ana dizinindeyken şu komutu çalıştırabilirsiniz:*
+
+    ```bash
+    mkdir -p public/.well-known/appspecific
+    ```
+
+2.  **`com.chrome.devtools.json` Dosyasını Oluşturun:** Yeni oluşturduğunuz `appspecific` klasörünün içine `com.chrome.devtools.json` adında bir dosya ekleyin.
+
+3.  **Dosyanın İçeriğini Doldurun:** Dosyanın içine aşağıdaki JSON yapısını yapıştırın.
+
+    ```json
+    {
+      "workspace": {
+        "root": "PROJE_DIZININIZIN_MUTLAK_YOLU",
+        "uuid": "BENZERSIZ_BIR_UUID"
+      }
+    }
+    ```
+
+      * **`PROJE_DIZININIZIN_MUTLAK_YOLU` Değerini Ayarlayın:** Bu alanı, projenizin bilgisayarınızdaki tam yolu ile değiştirmeniz gerekir.
+
+          * **macOS/Linux'ta:** Terminale `pwd` yazarak mevcut dizinin yolunu alabilirsiniz.
+          * **Windows'ta:** Dosya Gezgini'nde proje klasörünüzün adres çubuğuna tıklayarak yolu kopyalayabilirsiniz. Yolu yazarken ters eğik çizgi (`\`) yerine düz eğik çizgi (`/`) kullanmanız önerilir (örneğin, `C:/Users/KullaniciAdiniz/projelerim/next-projem`).
+
+      * **`BENZERSIZ_BIR_UUID` Değerini Oluşturun:** Bu, projeniz için rastgele ve benzersiz bir kimlik olmalıdır.
+
+          * **Hızlı Yöntem:** Terminalde `npx --package uuid uuid` komutunu çalıştırarak anında bir UUID oluşturabilir ve kopyalayabilirsiniz.
+          * **Online Araçlar:** İnternetteki "UUID generator" sitelerinden birini kullanabilirsiniz.
+
+    **Örnek (macOS):**
+
+    ```json
+    {
+      "workspace": {
+        "root": "/Users/kullanici/Documents/my-next-app",
+        "uuid": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+      }
+    }
+    ```
+
+4.  **Geliştirme Sunucusunu Başlatın:** `npm run dev` veya `yarn dev` komutuyla Next.js projenizi başlatın.
+
+Artık projenizi Chrome'da açıp DevTools'u başlattığınızda, "Kaynaklar" (Sources) sekmesinde, "Çalışma Alanı" (Workspace) bölümünde projenizi bağlamak için bir istem görebilirsiniz. İzin verdikten sonra, DevTools'da yaptığınız değişiklikler anında yerel dosyalarınıza yansıyacaktır.
+
+### Dikkat Edilmesi Gerekenler
+
+  * **404 Hatası:** Eğer bu dosyayı oluşturmazsanız, DevTools açıkken konsolda bu dosyaya yönelik bir `404 Not Found` hatası görmeniz normaldir. Bu hata uygulamanızın çalışmasını engellemez, sadece Chrome'un bu özelliği kullanmak için dosyayı aradığını gösterir.
+  * **Güvenlik:** Bu özellik sadece `localhost` üzerinde çalışırken denenir. `root` yolunu belirttiğiniz için bu dosyanın production (canlı) ortamına gönderilmemesi genellikle iyi bir pratiktir, ancak Next.js'in `public` klasörü varsayılan olarak build işlemine dahil edilir. Dosyanın içeriği hassas bir bilgi içermese de, bu konuya dikkat edebilirsiniz.
+  * **Dinamik Yol:** Eğer `root` yolunu manuel olarak girmek istemiyorsanız, bir sunucu betiği (script) aracılığıyla bu JSON dosyasını dinamik olarak da oluşturabilirsiniz, ancak çoğu geliştirme senaryosu için manuel olarak ayarlamak yeterlidir.

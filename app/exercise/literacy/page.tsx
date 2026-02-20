@@ -167,7 +167,7 @@ export default function LiteracyExercisePage() {
   const router = useRouter();
   const { speak } = useElevenLabs();
   const [state, dispatch] = useReducer(exerciseReducer, initialState);
-  const [speechSupported, setSpeechSupported] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(true);
 
   const {
     currentExerciseIndex,
@@ -200,10 +200,13 @@ export default function LiteracyExercisePage() {
     total: exercises.length
   }), [currentExerciseIndex]);
 
-  // Initialize speech synthesis
+  // Initialize speech recognition support
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      setSpeechSupported(true);
+    // Always try to enable speech support in modern browsers
+    if (typeof window !== 'undefined') {
+      const hasWebkitSpeech = !!window.webkitSpeechRecognition;
+      const hasSpeech = !!window.SpeechRecognition;
+      setSpeechSupported(hasWebkitSpeech || hasSpeech);
     }
   }, []);
 

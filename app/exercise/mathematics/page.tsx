@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useElevenLabs } from '@/lib/elevenlabs';
 import NumberRecognitionGame from './NumberRecognitionGame';
 import AdditionGame from './AdditionGame';
 import CountingGame from './CountingGame';
@@ -16,7 +17,17 @@ export default function MathematicsPage() {
   const [currentGame, setCurrentGame] = useState<GameType>('menu');
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [helpGameType, setHelpGameType] = useState<string>('number-recognition');
+  const [hasPlayedWelcome, setHasPlayedWelcome] = useState(false);
+  const { speak } = useElevenLabs();
   const router = useRouter();
+
+  // KURAL: Her modül kendi karşılama mesajı ile karşılasın
+  useEffect(() => {
+    if (!hasPlayedWelcome && currentGame === 'menu') {
+      speak('Matematik Dünyası modülüne hoş geldin! Sayıları öğren ve temel matematik becerilerini geliştir.', 'sentence');
+      setHasPlayedWelcome(true);
+    }
+  }, [speak, hasPlayedWelcome, currentGame]);
 
   const games = [
     {

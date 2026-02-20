@@ -1,12 +1,32 @@
-<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="72" height="72" rx="10.799999999999999" fill="url(#bg)"/>
-  <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="43" 
-        font-weight="bold" text-anchor="middle" dominant-baseline="central" 
-        fill="#ffffff">K</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle for better visibility -->
+  <circle cx="36" cy="36" r="32.4" 
+          fill="#F8FAFC" 
+          stroke="#4F46E5" 
+          stroke-width="1.5"/>
+  
+  <!-- Kıvılcım (Spark) symbol -->
+  <g transform="translate(36, 36)">
+    <!-- Main spark shape -->
+    <path d="M 0,-21.599999999999998 L 6.4799999999999995,-6.4799999999999995 L 21.599999999999998,0 L 6.4799999999999995,6.4799999999999995 L 0,21.599999999999998 L -6.4799999999999995,6.4799999999999995 L -21.599999999999998,0 L -6.4799999999999995,-6.4799999999999995 Z"
+          fill="#10B981"
+          stroke="#4F46E5"
+          stroke-width="0.75"/>
+    
+    <!-- Inner glow effect -->
+    <circle cx="0" cy="0" r="8.639999999999999" 
+            fill="#F59E0B" 
+            opacity="0.6"/>
+    
+    <!-- Center highlight -->
+    <circle cx="0" cy="0" r="3.2399999999999998" 
+            fill="#F8FAFC"/>
+  </g>
+  
+  <!-- Educational elements (small dots representing learning) -->
+  <circle cx="10.799999999999999" cy="10.799999999999999" r="1.44" fill="#F59E0B"/>
+  <circle cx="61.199999999999996" cy="10.799999999999999" r="1.44" fill="#F59E0B"/>
+  <circle cx="10.799999999999999" cy="61.199999999999996" r="1.44" fill="#F59E0B"/>
+  <circle cx="61.199999999999996" cy="61.199999999999996" r="1.44" fill="#F59E0B"/>
 </svg>

@@ -1,5 +1,6 @@
 // 🎵 Kıvılcım Platform'da Tek Harf Oynatma Örnekleri
 
+import React, { useState, useCallback } from 'react';
 import { useElevenLabs } from '@/lib/elevenlabs';
 
 // ✅ 1. EN BASIT KULLANIM - Sadece bir harf oynat

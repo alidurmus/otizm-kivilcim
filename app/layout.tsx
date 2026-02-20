@@ -139,13 +139,27 @@ export default async function RootLayout({
         <meta name="msapplication-navbutton-color" content="#667eea" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         
-        {/* Preload Critical Resources */}
-        <link rel="preload" href="/audio/letters/a.mp3" as="audio" />
-        <link rel="preload" href="/audio/letters/b.mp3" as="audio" />
-        <link rel="preload" href="/audio/letters/c.mp3" as="audio" />
+        {/* Preload Critical Audio Resources */}
+        <link rel="prefetch" href="/audio/letters/a.mp3" />
+        <link rel="prefetch" href="/audio/letters/b.mp3" />
+        <link rel="prefetch" href="/audio/letters/c.mp3" />
         
         {/* DNS Prefetch for External Services */}
         <link rel="dns-prefetch" href="https://api.elevenlabs.io" />
+        <link rel="prefetch" href="/manifest.json" />
+        
+        {/* Enhanced PWA Support */}
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Kıvılcım" />
+        <meta name="application-name" content="Kıvılcım" />
+        <meta name="msapplication-TileColor" content="#667eea" />
+        
+        {/* Fix icon references to use PNG instead of SVG for better compatibility */}
+        <link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         
         {/* Accessibility and Autism-Friendly Features */}
         <meta name="color-scheme" content="light" />

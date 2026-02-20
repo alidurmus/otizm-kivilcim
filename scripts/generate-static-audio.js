@@ -69,7 +69,15 @@ const AUDIO_FILES = {
     'Devam et.',
     'Sorun değil, tekrar deneyelim.',
     'Müthiş! Devam ediyoruz.',
-    'Şimdi bir sonraki harfe geçelim.'
+    'Şimdi bir sonraki harfe geçelim.',
+    // Matematik modülü gelişmiş aktiviteler
+    'Şekil Sayma. Kaç tane daire var?',
+    'Kare Sayma. Kaç tane kare var?',
+    'Tekrar bakalım. Görseli dikkatlice incele.',
+    'Çubuk Grafik Karşılaştırma. En düşük ve en yüksek çubuk toplamı kaç?',
+    'Sayı Doğrusu. İşaretli sayı kaç?',
+    // Matematik modülü diyalogları - Yeni eklenen sentences
+    'Matematik Dünyası modülüne hoş geldin! Sayıları öğren ve temel matematik becerilerini geliştir.'
   ],
   celebrations: [
     'Harikasın!',
@@ -83,7 +91,9 @@ const AUDIO_FILES = {
     'Tebrikler!',
     'Devam et böyle!',
     'Muhteşemsin!',
-    'Çok güzeldi!'
+    'Çok güzeldi!',
+    // Matematik modülü özel kutlama
+    'Mükemmel! Grafiği doğru okudun!'
   ]
 };
 

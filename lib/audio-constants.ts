@@ -264,52 +264,11 @@ export const STORIES_DIALOGS: StaticAudioFile[] = [
 
 // Matematik modülü diyalogları - Eleven Turbo v2.5 ile oluşturuldu
 export const MATHEMATICS_DIALOGS: StaticAudioFile[] = [
-  // Hoş geldin mesajları - Yeni oluşturulan dosyalar
-  { text: 'Sayı tanıma modülüne hoş geldin! Birlikte sayıları öğreneceğiz.', filename: 'sayi-tanima-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Sayma oyununa hoş geldin! Nesneleri sayalım.', filename: 'sayma-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Toplama oyununa hoş geldin! Sayıları toplayalım.', filename: 'toplama-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Şekil sayı oyununa hoş geldin! Şekilleri sayalım.', filename: 'sekil-sayi-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
-  
-  // Sorular ve yönlendirmeler
-  { text: 'Şimdi quiz zamanı! Duyduğun sayıyı seç.', filename: 'quiz-zamani-sayi-sec.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Kaç tane var? Sayalım!', filename: 'kach-tane-var-sayalim.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Duyduğun sayıyı seç!', filename: 'duydugun-sayiyi-sec.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Birlikte sayalım:', filename: 'birlikte-sayalim.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Şekilleri tek tek sayalım:', filename: 'sekilleri-tek-tek-sayalim.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Toplama işlemini birlikte yapalım:', filename: 'toplama-islemini-birlikte.mp3', type: 'sentence', category: 'mathematics' },
-  
-  // Açıklamalar
-  { text: 'Önce tane nesnemiz var', filename: 'once-tane-nesnemiz-var.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Sonra tane daha ekliyoruz', filename: 'sonra-tane-daha-ekliyoruz.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Toplam tane nesne oluyor!', filename: 'toplam-tane-nesne-oluyor.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Şekillerdeki desenleri say ve doğru sayıyı seç!', filename: 'sekillerdeki-desenleri-say.mp3', type: 'sentence', category: 'mathematics' },
-  
-  // Başarı mesajları
-  { text: 'Aferin! Doğru sayıyı seçtin.', filename: 'aferin-dogru-sayiyi-sectin.mp3', type: 'celebration', category: 'mathematics' },
-  { text: 'doğru cevap!', filename: 'dogru-cevap.mp3', type: 'celebration', category: 'mathematics' },
-  { text: 'Mükemmel! eşittir !', filename: 'mukemmel-esittir.mp3', type: 'celebration', category: 'mathematics' },
-  { text: 'tane var.', filename: 'tane-var.mp3', type: 'celebration', category: 'mathematics' },
-  { text: 'tane !', filename: 'tane-isim.mp3', type: 'celebration', category: 'mathematics' },
-  
-  // Hata mesajları
-  { text: 'idi. Tekrar deneyelim.', filename: 'idi-tekrar-deneyelim.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Doğru cevap idi.', filename: 'dogru-cevap-idi.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'idi. Tekrar sayalım.', filename: 'idi-tekrar-sayalim.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'vardı. Tekrar sayalım.', filename: 'vardi-tekrar-sayalim.mp3', type: 'sentence', category: 'mathematics' },
-
-  // Matematik modülü hoş geldin mesajı
-  { text: 'Toplama oyunu! Hoş geldin!', filename: 'toplama-oyunu-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
-  
-  // Yeni oluşturulan matematik talimatları (Eleven Turbo v2.5)
-  { text: 'Bu sayıyı söyle.', filename: 'bu-sayiyi-soyle.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Kaç tane nesne var?', filename: 'kach-tane-nesne-var.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Toplama işlemini yap.', filename: 'toplama-islemini-yap.mp3', type: 'sentence', category: 'mathematics' },
-  { text: 'Bu sayıları say.', filename: 'bu-sayilari-say.mp3', type: 'sentence', category: 'mathematics' },
-  
-  // Yeni oluşturulan matematik kutlama mesajları (Eleven Turbo v2.5)
-  { text: 'Harika! Matematik ustası oldun!', filename: 'harika-matematik-ustasi-oldun.mp3', type: 'celebration', category: 'mathematics' },
-  { text: 'Süpersin! Sayıları çok iyi öğrendin!', filename: 'supersin-sayilari-cok-iyi-ogrendin.mp3', type: 'celebration', category: 'mathematics' },
-  { text: 'Bravo! Matematik çok eğlenceli!', filename: 'bravo-matematik-cok-eglenceli.mp3', type: 'celebration', category: 'mathematics' },
+  { text: "Matematik Dünyası modülüne hoş geldin! Sayıları öğren ve temel matematik becerilerini geliştir.", filename: 'matematik-dunyasi-hosgeldin.mp3', type: 'sentence', category: 'mathematics' },
+  { text: "Harika! Doğru cevap!", filename: 'matematik-harika-dogru.mp3', type: 'celebration', category: 'mathematics' },
+  { text: "Süper! Matematik yeteneğin gelişiyor!", filename: 'matematik-super-yetenek.mp3', type: 'celebration', category: 'mathematics' },
+  { text: "Bravo! Sayıları çok iyi öğreniyorsun!", filename: 'matematik-bravo-sayilar.mp3', type: 'celebration', category: 'mathematics' },
+  { text: "Mükemmel! Toplama işlemini doğru yaptın!", filename: 'matematik-mukemmel-toplama.mp3', type: 'celebration', category: 'mathematics' },
 ];
 
 // Türkçe yönlendirme cümleleri - genişletilmiş

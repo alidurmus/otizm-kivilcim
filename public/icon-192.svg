@@ -1,12 +1,32 @@
-<svg width="192" height="192" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="192" height="192" rx="28.799999999999997" fill="url(#bg)"/>
-  <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="115" 
-        font-weight="bold" text-anchor="middle" dominant-baseline="central" 
-        fill="#ffffff">K</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle for better visibility -->
+  <circle cx="96" cy="96" r="86.4" 
+          fill="#F8FAFC" 
+          stroke="#4F46E5" 
+          stroke-width="4"/>
+  
+  <!-- Kıvılcım (Spark) symbol -->
+  <g transform="translate(96, 96)">
+    <!-- Main spark shape -->
+    <path d="M 0,-57.599999999999994 L 17.279999999999998,-17.279999999999998 L 57.599999999999994,0 L 17.279999999999998,17.279999999999998 L 0,57.599999999999994 L -17.279999999999998,17.279999999999998 L -57.599999999999994,0 L -17.279999999999998,-17.279999999999998 Z"
+          fill="#10B981"
+          stroke="#4F46E5"
+          stroke-width="2"/>
+    
+    <!-- Inner glow effect -->
+    <circle cx="0" cy="0" r="23.04" 
+            fill="#F59E0B" 
+            opacity="0.6"/>
+    
+    <!-- Center highlight -->
+    <circle cx="0" cy="0" r="8.639999999999999" 
+            fill="#F8FAFC"/>
+  </g>
+  
+  <!-- Educational elements (small dots representing learning) -->
+  <circle cx="28.799999999999997" cy="28.799999999999997" r="3.84" fill="#F59E0B"/>
+  <circle cx="163.2" cy="28.799999999999997" r="3.84" fill="#F59E0B"/>
+  <circle cx="28.799999999999997" cy="163.2" r="3.84" fill="#F59E0B"/>
+  <circle cx="163.2" cy="163.2" r="3.84" fill="#F59E0B"/>
 </svg>

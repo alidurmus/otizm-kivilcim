@@ -1,3 +1,32 @@
-<!-- Apple Touch Icon PNG Placeholder -->
-<!-- Size: 180x180 -->
-APPLE_TOUCH_ICON_PNG_DATA
+KIVI_APPLE_ICON_180_<?xml version="1.0" encoding="UTF-8"?>
+<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle for better visibility -->
+  <circle cx="90" cy="90" r="81" 
+          fill="#F8FAFC" 
+          stroke="#4F46E5" 
+          stroke-width="3.75"/>
+  
+  <!-- Kıvılcım (Spark) symbol -->
+  <g transform="translate(90, 90)">
+    <!-- Main spark shape -->
+    <path d="M 0,-54 L 16.2,-16.2 L 54,0 L 16.2,16.2 L 0,54 L -16.2,16.2 L -54,0 L -16.2,-16.2 Z"
+          fill="#10B981"
+          stroke="#4F46E5"
+          stroke-width="1.875"/>
+    
+    <!-- Inner glow effect -->
+    <circle cx="0" cy="0" r="21.6" 
+            fill="#F59E0B" 
+            opacity="0.6"/>
+    
+    <!-- Center highlight -->
+    <circle cx="0" cy="0" r="8.1" 
+            fill="#F8FAFC"/>
+  </g>
+  
+  <!-- Educational elements (small dots representing learning) -->
+  <circle cx="27" cy="27" r="3.6" fill="#F59E0B"/>
+  <circle cx="153" cy="27" r="3.6" fill="#F59E0B"/>
+  <circle cx="27" cy="153" r="3.6" fill="#F59E0B"/>
+  <circle cx="153" cy="153" r="3.6" fill="#F59E0B"/>
+</svg>

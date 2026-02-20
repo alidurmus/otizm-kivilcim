@@ -1,5 +1,32 @@
-<!-- PNG Icon Placeholder for icon-96.png -->
-<!-- This would be converted using browser Canvas API -->
-<!-- SVG Data: data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHJ4PSI2IiBmaWxsPSIjM2I4MmY2Ii8+CiAgPHBhdGggZD0iTTEyIDZsMyA2LTMgNi0zLTZ6IiBmaWxsPSIjZmJiZjI0Ii8+CiAgPGNpcmNsZSBjeD0iMTIiIGN5PSI5IiByPSIxLjUiIGZpbGw9IiNmZmZmZmYiLz4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjE1IiByPSIxLjUiIGZpbGw9IiNmZmZmZmYiLz4KICA8dGV4dCB4PSIxMiIgeT0iMTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmZmZmYiIGZvbnQtc2l6ZT0iMyIgZm9udC1mYW1pbHk9IkFyaWFsIj5LPC90ZXh0Pgo8L3N2Zz4= -->
-<!-- Size: 96x96 -->
-PNG_DATA_WOULD_BE_HERE_IN_BROWSER
+KIVI_ICON_96_<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96" height="96" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle for better visibility -->
+  <circle cx="48" cy="48" r="43.2" 
+          fill="#F8FAFC" 
+          stroke="#4F46E5" 
+          stroke-width="2"/>
+  
+  <!-- Kıvılcım (Spark) symbol -->
+  <g transform="translate(48, 48)">
+    <!-- Main spark shape -->
+    <path d="M 0,-28.799999999999997 L 8.639999999999999,-8.639999999999999 L 28.799999999999997,0 L 8.639999999999999,8.639999999999999 L 0,28.799999999999997 L -8.639999999999999,8.639999999999999 L -28.799999999999997,0 L -8.639999999999999,-8.639999999999999 Z"
+          fill="#10B981"
+          stroke="#4F46E5"
+          stroke-width="1"/>
+    
+    <!-- Inner glow effect -->
+    <circle cx="0" cy="0" r="11.52" 
+            fill="#F59E0B" 
+            opacity="0.6"/>
+    
+    <!-- Center highlight -->
+    <circle cx="0" cy="0" r="4.319999999999999" 
+            fill="#F8FAFC"/>
+  </g>
+  
+  <!-- Educational elements (small dots representing learning) -->
+  <circle cx="14.399999999999999" cy="14.399999999999999" r="1.92" fill="#F59E0B"/>
+  <circle cx="81.6" cy="14.399999999999999" r="1.92" fill="#F59E0B"/>
+  <circle cx="14.399999999999999" cy="81.6" r="1.92" fill="#F59E0B"/>
+  <circle cx="81.6" cy="81.6" r="1.92" fill="#F59E0B"/>
+</svg>

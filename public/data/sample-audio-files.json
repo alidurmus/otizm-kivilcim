@@ -1,0 +1,247 @@
+{
+  "timestamp": "2025-07-07T09:41:02.807Z",
+  "audioFiles": [
+    {
+      "id": "audio-1",
+      "title": "A Harfi",
+      "filename": "a.mp3",
+      "filePath": "/audio/letters/a.mp3",
+      "category": "letter",
+      "module": "alphabet-reading",
+      "language": "tr",
+      "voiceId": "pNInz6obpgDQGcFmaJgB",
+      "voiceName": "Adam",
+      "duration": 1.2,
+      "fileSize": 3456,
+      "description": "Türk alfabesinin ilk harfi A",
+      "tags": [
+        "alfabe",
+        "harf",
+        "sesli-harf"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-2",
+      "title": "B Harfi",
+      "filename": "b.mp3",
+      "filePath": "/audio/letters/b.mp3",
+      "category": "letter",
+      "module": "alphabet-reading",
+      "language": "tr",
+      "voiceId": "pNInz6obpgDQGcFmaJgB",
+      "voiceName": "Adam",
+      "duration": 1.1,
+      "fileSize": 3234,
+      "description": "Türk alfabesinin ikinci harfi B",
+      "tags": [
+        "alfabe",
+        "harf",
+        "sessiz-harf"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-3",
+      "title": "C Harfi",
+      "filename": "c.mp3",
+      "filePath": "/audio/letters/c.mp3",
+      "category": "letter",
+      "module": "alphabet-reading",
+      "language": "tr",
+      "voiceId": "pNInz6obpgDQGcFmaJgB",
+      "voiceName": "Adam",
+      "duration": 1,
+      "fileSize": 3102,
+      "description": "Türk alfabesinin üçüncü harfi C",
+      "tags": [
+        "alfabe",
+        "harf",
+        "sessiz-harf"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-4",
+      "title": "Elma Kelimesi",
+      "filename": "elma.mp3",
+      "filePath": "/audio/words/elma.mp3",
+      "category": "word",
+      "module": "vocabulary",
+      "language": "tr",
+      "voiceId": "21m00Tcm4TlvDq8ikWAM",
+      "voiceName": "Rachel",
+      "duration": 1.8,
+      "fileSize": 5234,
+      "description": "Kırmızı meyve - elma kelimesi",
+      "tags": [
+        "kelime",
+        "meyve",
+        "günlük-kelimeler"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-5",
+      "title": "Araba Kelimesi",
+      "filename": "araba.mp3",
+      "filePath": "/audio/words/araba.mp3",
+      "category": "word",
+      "module": "vocabulary",
+      "language": "tr",
+      "voiceId": "21m00Tcm4TlvDq8ikWAM",
+      "voiceName": "Rachel",
+      "duration": 2.1,
+      "fileSize": 5867,
+      "description": "Ulaşım aracı - araba kelimesi",
+      "tags": [
+        "kelime",
+        "araç",
+        "ulaşım"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-6",
+      "title": "Alfabe Hoş Geldin Mesajı",
+      "filename": "alfabe-hosgeldin.mp3",
+      "filePath": "/audio/sentences/alfabe-hosgeldin.mp3",
+      "category": "sentence",
+      "module": "alphabet-reading",
+      "language": "tr",
+      "voiceId": "ErXwobaYiN019PkySvjV",
+      "voiceName": "Antoni",
+      "duration": 5.2,
+      "fileSize": 15234,
+      "description": "Alfabe okuma modülü hoş geldin mesajı",
+      "tags": [
+        "hoş-geldin",
+        "alfabe",
+        "yönlendirme"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-7",
+      "title": "Matematik Hoş Geldin Mesajı",
+      "filename": "matematik-hosgeldin.mp3",
+      "filePath": "/audio/sentences/matematik-hosgeldin.mp3",
+      "category": "sentence",
+      "module": "mathematics",
+      "language": "tr",
+      "voiceId": "ErXwobaYiN019PkySvjV",
+      "voiceName": "Antoni",
+      "duration": 4.8,
+      "fileSize": 14123,
+      "description": "Matematik dünyası modülü hoş geldin mesajı",
+      "tags": [
+        "hoş-geldin",
+        "matematik",
+        "yönlendirme"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-8",
+      "title": "Aferin Sana",
+      "filename": "aferin-sana.mp3",
+      "filePath": "/audio/celebrations/aferin-sana.mp3",
+      "category": "celebration",
+      "module": "general",
+      "language": "tr",
+      "voiceId": "VR6AewLTigWG4xSOukaG",
+      "voiceName": "Josh",
+      "duration": 2.5,
+      "fileSize": 7234,
+      "description": "Genel başarı kutlama mesajı",
+      "tags": [
+        "kutlama",
+        "başarı",
+        "övgü"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-9",
+      "title": "Bravo Mükemmel",
+      "filename": "bravo-mukemmel.mp3",
+      "filePath": "/audio/celebrations/bravo-mukemmel.mp3",
+      "category": "celebration",
+      "module": "general",
+      "language": "tr",
+      "voiceId": "VR6AewLTigWG4xSOukaG",
+      "voiceName": "Josh",
+      "duration": 2.8,
+      "fileSize": 8123,
+      "description": "Yüksek başarı kutlama mesajı",
+      "tags": [
+        "kutlama",
+        "mükemmel",
+        "başarı"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-10",
+      "title": "Bir Sayısı",
+      "filename": "bir.mp3",
+      "filePath": "/audio/words/bir.mp3",
+      "category": "word",
+      "module": "mathematics",
+      "language": "tr",
+      "voiceId": "21m00Tcm4TlvDq8ikWAM",
+      "voiceName": "Rachel",
+      "duration": 1.3,
+      "fileSize": 3789,
+      "description": "1 sayısının Türkçe telaffuzu",
+      "tags": [
+        "sayı",
+        "matematik",
+        "rakam"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    },
+    {
+      "id": "audio-11",
+      "title": "İki Sayısı",
+      "filename": "iki.mp3",
+      "filePath": "/audio/words/iki.mp3",
+      "category": "word",
+      "module": "mathematics",
+      "language": "tr",
+      "voiceId": "21m00Tcm4TlvDq8ikWAM",
+      "voiceName": "Rachel",
+      "duration": 1.1,
+      "fileSize": 3456,
+      "description": "2 sayısının Türkçe telaffuzu",
+      "tags": [
+        "sayı",
+        "matematik",
+        "rakam"
+      ],
+      "createdAt": "2025-07-07T09:41:02.810Z",
+      "updatedAt": "2025-07-07T09:41:02.810Z",
+      "isActive": true
+    }
+  ]
+}
