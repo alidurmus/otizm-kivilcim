@@ -57,7 +57,14 @@ const AUDIO_CACHE_FILES = [
   '/audio/letters/ü.mp3',
   '/audio/letters/v.mp3',
   '/audio/letters/y.mp3',
-  '/audio/letters/z.mp3'
+  '/audio/letters/z.mp3',
+  // Mathematics Audio Files
+  '/audio/words/sayi-tanima-hosgeldin.mp3',
+  '/audio/words/bir.mp3',
+  '/audio/words/iki.mp3',
+  '/audio/words/uc.mp3',
+  '/audio/words/dort.mp3',
+  '/audio/words/bes.mp3'
 ];
 
 // Install event - cache core files

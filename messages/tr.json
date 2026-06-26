@@ -1,0 +1,26 @@
+{
+  "Navigation": {
+    "home": "Ana Sayfa",
+    "modules": "Modüller",
+    "parent": "Ebeveyn",
+    "settings": "Ayarlar"
+  },
+  "Index": {
+    "title": "Kıvılcım'a Hoş Geldiniz",
+    "description": "Eğlenerek öğrenmeye hazır mısın?"
+  },
+  "Common": {
+    "back": "Geri Dön",
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "retry": "Tekrar Dene",
+    "help": "Yardım"
+  },
+  "Modules": {
+    "title": "Modüller",
+    "mathematics": "Matematik",
+    "literacy": "Okuma Yazma",
+    "science": "Fen Bilimleri",
+    "sensory": "Duyusal Oyunlar"
+  }
+}

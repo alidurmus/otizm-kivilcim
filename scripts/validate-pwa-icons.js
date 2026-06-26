@@ -61,7 +61,7 @@ function validateAllIcons() {
   console.log('='.repeat(50));
   
   let validIcons = 0;
-  let totalIcons = REQUIRED_ICONS.length;
+  const totalIcons = REQUIRED_ICONS.length;
   
   REQUIRED_ICONS.forEach(iconConfig => {
     if (validateIcon(iconConfig)) {

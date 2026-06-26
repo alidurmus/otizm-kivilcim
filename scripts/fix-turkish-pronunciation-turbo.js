@@ -181,7 +181,7 @@ async function fixTurkishPronunciation() {
   console.log('');
 
   let successCount = 0;
-  let totalWords = Object.keys(TURKISH_PRONUNCIATION_FIXES).length;
+  const totalWords = Object.keys(TURKISH_PRONUNCIATION_FIXES).length;
   
   for (const [word, config] of Object.entries(TURKISH_PRONUNCIATION_FIXES)) {
     console.log(`🔧 Düzeltiliyor: "${word}" - ${config.description}`);

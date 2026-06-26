@@ -79,7 +79,7 @@ async function testTurkishVoice() {
   }
 
   let successCount = 0;
-  let totalTests = TEST_TEXTS.length;
+  const totalTests = TEST_TEXTS.length;
 
   for (const test of TEST_TEXTS) {
     console.log(`🧪 Test: ${test.description}`);

@@ -191,7 +191,7 @@ async function main() {
 
   // İstatistikler
   let generated = 0;
-  let skipped = 0;
+  const skipped = 0;
   let failed = 0;
 
   for (const [index, item] of ALL_STATIC_CONTENT.entries()) {

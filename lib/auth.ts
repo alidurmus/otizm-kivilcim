@@ -178,7 +178,7 @@ class MockAuth {
   // Update user preferences
   async updateUserPreferences(userId: string, preferences: Partial<UserPreferences>): Promise<UserPreferences> {
     try {
-      const updatedPreferences = await prisma.userPreferences.upsert({
+      const updatedPreferences = await db.userPreferences.upsert({
         where: { userId },
         update: preferences,
         create: {

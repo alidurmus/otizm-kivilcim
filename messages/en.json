@@ -1,0 +1,26 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "modules": "Modules",
+    "parent": "Parent Area",
+    "settings": "Settings"
+  },
+  "Index": {
+    "title": "Welcome to Kivilcim",
+    "description": "Are you ready to learn while having fun?"
+  },
+  "Common": {
+    "back": "Go Back",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try Again",
+    "help": "Help"
+  },
+  "Modules": {
+    "title": "Modules",
+    "mathematics": "Mathematics",
+    "literacy": "Literacy",
+    "science": "Science",
+    "sensory": "Sensory Games"
+  }
+}

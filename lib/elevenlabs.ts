@@ -550,7 +550,29 @@ class ElevenLabsClient {
       // Browser'ın audio state'ini stabilize etmesi için daha uzun delay
       await new Promise(resolve => setTimeout(resolve, 150));
       
-      // ⚡ SADECE STATİK MP3 DOSYALARI - TTS hiç kullanılmayacak
+      // 🔴 EBEVEYN ÖZEL SESİ (VOICE CLONING) KONTROLÜ
+      let customVoiceId = voiceId || null;
+      if (!customVoiceId && typeof window !== 'undefined') {
+        customVoiceId = localStorage.getItem('kivilcim_custom_voice_id');
+      }
+
+      // Eğer klonlanmış ses varsa, statik dosyaları iptal et ve TTS ile anlık ses üret
+      if (customVoiceId) {
+        console.log(`🎙️ Custom Voice tespit edildi (${customVoiceId}). TTS tetikleniyor...`);
+        const audioUrl = await this.textToSpeech(text, type, customVoiceId);
+        if (audioUrl) {
+          const audio = new Audio(audioUrl);
+          audio.volume = 0.8;
+          this.currentAudio = audio;
+          return new Promise((resolve) => {
+            audio.onended = () => resolve();
+            audio.onerror = () => resolve();
+            audio.play().catch(() => resolve());
+          });
+        }
+      }
+      
+      // ⚡ SADECE STATİK MP3 DOSYALARI - TTS hiç kullanılmayacak (Custom voice yoksa)
       const staticPath = getStaticAudioPath(text, type);
       
       // 🔍 DEBUG: Cache temizle button debug

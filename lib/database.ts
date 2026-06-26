@@ -14,118 +14,7 @@ export const prisma =
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 // Database utility functions
-export const db = {
-  // User operations
-  user: {
-    findUnique: (where: { id?: string; email?: string }) =>
-      prisma.user.findUnique({ where }),
-    
-    findMany: (options?: { include?: any; where?: any }) =>
-      prisma.user.findMany(options),
-    
-    create: (data: any) =>
-      prisma.user.create({ data }),
-    
-    update: (where: { id: string }, data: any) =>
-      prisma.user.update({ where, data }),
-    
-    delete: (where: { id: string }) =>
-      prisma.user.delete({ where }),
-  },
-
-  // Progress tracking
-  progress: {
-    findUnique: (where: { userId: string }) =>
-      prisma.progress.findUnique({
-        where,
-        include: {
-          moduleProgress: {
-            include: {
-              module: true
-            }
-          }
-        }
-      }),
-    
-    upsert: (where: { userId: string }, create: any, update: any) =>
-      prisma.progress.upsert({ where, create, update }),
-  },
-
-  // Module operations
-  module: {
-    findMany: (options?: { where?: any; orderBy?: any }) =>
-      prisma.module.findMany(options),
-    
-    findUnique: (where: { id?: string; slug?: string }) =>
-      prisma.module.findUnique({ where }),
-    
-    create: (data: any) =>
-      prisma.module.create({ data }),
-    
-    update: (where: { id: string }, data: any) =>
-      prisma.module.update({ where, data }),
-  },
-
-  // Voice usage tracking
-  voiceUsage: {
-    create: (data: any) =>
-      prisma.voiceUsage.create({ data }),
-    
-    findMany: (options?: { where?: any; orderBy?: any; take?: number }) =>
-      prisma.voiceUsage.findMany(options),
-  },
-
-  // Static audio files
-  staticAudioFile: {
-    findMany: (options?: { where?: any }) =>
-      prisma.staticAudioFile.findMany(options),
-    
-    findUnique: (where: { fileName: string }) =>
-      prisma.staticAudioFile.findUnique({ where }),
-    
-    create: (data: any) =>
-      prisma.staticAudioFile.create({ data }),
-    
-    update: (where: { fileName: string }, data: any) =>
-      prisma.staticAudioFile.update({ where, data }),
-  },
-
-  // Session tracking
-  session: {
-    create: (data: any) =>
-      prisma.session.create({ data }),
-    
-    update: (where: { id: string }, data: any) =>
-      prisma.session.update({ where, data }),
-    
-    findMany: (options?: { where?: any; orderBy?: any }) =>
-      prisma.session.findMany(options),
-  },
-
-  // Analytics
-  analytics: {
-    create: (data: any) =>
-      prisma.analytics.create({ data }),
-    
-    findMany: (options?: { where?: any; orderBy?: any; take?: number }) =>
-      prisma.analytics.findMany(options),
-    
-    upsert: (where: { date_period: any }, create: any, update: any) =>
-      prisma.analytics.upsert({ where, create, update }),
-  },
-
-  // System settings
-  systemSettings: {
-    findMany: (options?: { where?: any }) =>
-      prisma.systemSettings.findMany(options),
-    
-    findUnique: (where: { key: string }) =>
-      prisma.systemSettings.findUnique({ where }),
-    
-    upsert: (where: { key: string }, create: any, update: any) =>
-      prisma.systemSettings.upsert({ where, create, update }),
-  },
-}
+export const db = prisma
 
 // Export types from Prisma
 export type {
@@ -146,7 +35,7 @@ export type {
   ContentType,
   AudioSource,
   ModuleStatus,
-} from '@prisma/client'
+} from '../src/generated/prisma'
 
 // Helper types for common operations
 export type UserWithPreferences = User & {

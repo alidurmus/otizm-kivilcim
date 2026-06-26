@@ -12,12 +12,12 @@ interface ButtonProps {
 }
 
 // Memoized static objects - computed once outside component
-const BASE_CLASSES = "font-bold rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none";
+const BASE_CLASSES = "font-bold rounded-2xl transition-all duration-500 ease-out focus:outline-none focus:ring-4 focus:ring-opacity-50 transform hover:-translate-y-1 active:scale-95 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden";
 
 const VARIANT_CLASSES = {
-  primary: "bg-focus-blue hover:bg-blue-600 text-white focus:ring-focus-blue shadow-lg hover:shadow-xl",
-  secondary: "bg-neutral-gray hover:bg-gray-300 text-text-color focus:ring-neutral-gray shadow-md hover:shadow-lg",
-  success: "bg-success-green hover:bg-green-400 text-text-color focus:ring-success-green shadow-lg hover:shadow-xl"
+  primary: "bg-gradient-to-br from-focus-blue to-blue-500 hover:from-blue-600 hover:to-focus-blue text-white focus:ring-focus-blue premium-shadow",
+  secondary: "glass-panel text-text-color hover:bg-white/90 dark:hover:bg-slate-800/90 focus:ring-neutral-gray shadow-md",
+  success: "bg-gradient-to-br from-success-green to-green-400 hover:from-green-400 hover:to-green-300 text-text-color focus:ring-success-green premium-shadow"
 } as const;
 
 const SIZE_CLASSES = {

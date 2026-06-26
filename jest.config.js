@@ -14,7 +14,7 @@ const customJestConfig = {
   },
   testMatch: [
     '**/__tests__/**/*.(js|jsx|ts|tsx)',
-    '**/*.(test|spec).(js|jsx|ts|tsx)',
+    '**/*.test.(js|jsx|ts|tsx)',
   ],
   testPathIgnorePatterns: [
     '<rootDir>/.next/',

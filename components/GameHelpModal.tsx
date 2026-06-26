@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Button } from './Button';
 
 interface GameRule {
@@ -526,21 +526,27 @@ const gameNames: Record<string, string> = {
   'alphabet-reading': 'Alfabe Okuma'
 };
 
-export function GameHelpModal({ isOpen, onClose, gameType, gameName }: GameHelpModalProps) {
+export const GameHelpModal = memo(function GameHelpModal({ isOpen, onClose, gameType, gameName }: GameHelpModalProps) {
   const rules = gameRules[gameType] || [];
   const displayName = gameNames[gameType] || gameName;
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
       <div className="bg-white rounded-3xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <h2 id="modal-title" className="text-2xl font-bold text-gray-800 flex items-center gap-2">
             ❓ Oyun Kuralları
           </h2>
           <button
             onClick={onClose}
+            aria-label="Yardım menüsünü kapat"
             className="text-gray-500 hover:text-gray-700 text-2xl"
           >
             ×
@@ -586,6 +592,7 @@ export function GameHelpModal({ isOpen, onClose, gameType, gameName }: GameHelpM
         <div className="mt-6 flex gap-3">
           <Button
             onClick={onClose}
+            ariaLabel="Anladım ve kapat"
             className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
           >
             Anladım! 🎮
@@ -594,6 +601,6 @@ export function GameHelpModal({ isOpen, onClose, gameType, gameName }: GameHelpM
       </div>
     </div>
   );
-}
+});
 
 export default GameHelpModal; 

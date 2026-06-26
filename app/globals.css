@@ -27,6 +27,38 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Kıvılcım Custom Colors */
+  --color-calm-blue: #A5D8FF;
+  --color-focus-blue: #3B82F6;
+  --color-success-green: #86EFAC;
+  --color-encourage-orange: #FDBA74;
+  --color-neutral-gray: #E5E7EB;
+  --color-text-color: #1F2937;
+  
+  --color-dark-bg: #0F172A;
+  --color-dark-surface: #1E293B;
+  --color-dark-border: #475569;
+  --color-dark-text: #F8FAFC;
+  --color-dark-text-secondary: #CBD5E1;
+
+  /* Custom Animations */
+  --animate-gentle-bounce: gentle-bounce 2s ease-in-out infinite;
+  --animate-calm-pulse: calm-pulse 3s ease-in-out infinite;
+  --animate-slow-slide-up: slow-slide-up 1s ease-out;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes calm-pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+@keyframes slow-slide-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
 /* Test ortamında Next.js development overlay'lerini gizle */
@@ -112,4 +144,43 @@ body {
 .text-on-colored {
   color: #FFFFFF !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Premium Glassmorphism & Soft UI */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+.dark .glass-panel {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.premium-shadow {
+  box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.15);
+}
+
+.dark .premium-shadow {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+.soft-gradient-bg {
+  background: 
+    radial-gradient(circle at 15% 50%, rgba(165, 216, 255, 0.4), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(134, 239, 172, 0.3), transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(253, 186, 116, 0.2), transparent 50%);
+  background-color: var(--background);
+}
+
+.dark .soft-gradient-bg {
+  background: 
+    radial-gradient(circle at 15% 50%, rgba(30, 58, 138, 0.3), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(20, 83, 45, 0.2), transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(124, 45, 18, 0.2), transparent 50%);
+  background-color: var(--background);
 }

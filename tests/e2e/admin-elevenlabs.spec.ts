@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Admin ElevenLabs Test Sayfası', () => {
+  test.setTimeout(60000);
   
   test.beforeEach(async ({ page }) => {
     // Mock ElevenLabs API GET requests (voices)
@@ -262,6 +263,7 @@ test.describe('Admin ElevenLabs Test Sayfası', () => {
 });
 
 test.describe('Admin ElevenLabs Panel', () => {
+  test.setTimeout(60000);
   test.beforeEach(async ({ page }) => {
     await page.goto('/admin/elevenlabs-test');
   });

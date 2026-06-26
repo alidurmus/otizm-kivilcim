@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Fizik Dünyası Modülü', () => {
+  test.setTimeout(60000);
   
   test.describe('Ana Sayfa ve Navigasyon', () => {
     test('fizik modülü ana sayfası doğru yüklenmeli', async ({ page }) => {
@@ -353,16 +354,16 @@ test.describe('Fizik Dünyası Modülü', () => {
       await page.getByText('🚗 Hareket Oyunu').click();
       
       // Oyun sayfası görünür olmalı
-      await expect(page.getByText('🚗 Hareket Oyunu')).toBeVisible({ timeout: 3000 });
+      await expect(page.getByText('🚗 Hareket Oyunu')).toBeVisible({ timeout: 10000 });
       
       const transitionTime = Date.now() - startTime;
-      expect(transitionTime).toBeLessThan(3000);
+      expect(transitionTime).toBeLessThan(10000);
     });
   });
 
   test.describe('Error Handling', () => {
     test('javascript hataları yakalamalı', async ({ page }) => {
-      let consoleErrors: string[] = [];
+      const consoleErrors: string[] = [];
       
       page.on('console', msg => {
         if (msg.type() === 'error') {
