@@ -16,7 +16,7 @@ const BASE_CLASSES = "font-bold rounded-2xl transition-all duration-500 ease-out
 
 const VARIANT_CLASSES = {
   primary: "bg-gradient-to-br from-focus-blue to-blue-500 hover:from-blue-600 hover:to-focus-blue text-white focus:ring-focus-blue premium-shadow",
-  secondary: "glass-panel text-text-color hover:bg-white/90 dark:hover:bg-slate-800/90 focus:ring-neutral-gray shadow-md",
+  secondary: "glass-panel text-adaptive hover:bg-white/90 dark:hover:bg-slate-800/90 focus:ring-neutral-gray shadow-md",
   success: "bg-gradient-to-br from-success-green to-green-400 hover:from-green-400 hover:to-green-300 text-text-color focus:ring-success-green premium-shadow"
 } as const;
 

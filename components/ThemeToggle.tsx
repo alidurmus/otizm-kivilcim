@@ -15,7 +15,7 @@ export default function ThemeToggle({
   className = '' 
 }: ThemeToggleProps) {
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
@@ -40,8 +40,10 @@ export default function ThemeToggle({
     );
   }
 
+  const currentTheme = resolvedTheme || theme;
+
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(currentTheme === 'light' ? 'dark' : 'light');
   };
 
   const sizeClasses = {
@@ -60,34 +62,34 @@ export default function ThemeToggle({
     <div className={`flex items-center space-x-3 ${className}`}>
       {showLabel && (
         <span className="text-sm font-medium text-adaptive">
-          {theme === 'light' ? '☀️ Açık' : '🌙 Koyu'}
+          {currentTheme === 'light' ? '☀️ Açık' : '🌙 Koyu'}
         </span>
       )}
       
       <button
         onClick={toggleTheme}
         className={`relative ${sizeClasses[size]} bg-gray-200 dark:bg-dark-surface rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-focus-blue focus:ring-opacity-50 hover:shadow-md`}
-        aria-label={`${theme === 'light' ? 'Koyu' : 'Açık'} temaya geç`}
-        title={`${theme === 'light' ? 'Koyu' : 'Açık'} temaya geç`}
+        aria-label={`${currentTheme === 'light' ? 'Koyu' : 'Açık'} temaya geç`}
+        title={`${currentTheme === 'light' ? 'Koyu' : 'Açık'} temaya geç`}
       >
         {/* Toggle Circle */}
         <div
           className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transform transition-all duration-300 flex items-center justify-center ${
-            theme === 'dark' ? 'translate-x-6' : 'translate-x-0.5'
+            currentTheme === 'dark' ? 'translate-x-6' : 'translate-x-0.5'
           }`}
         >
           {/* Icon inside circle */}
           <span className={`${iconSizes[size]} transition-all duration-300`}>
-            {theme === 'light' ? '☀️' : '🌙'}
+            {currentTheme === 'light' ? '☀️' : '🌙'}
           </span>
         </div>
         
         {/* Background Icons */}
         <div className="absolute inset-0 flex items-center justify-between px-1">
-          <span className={`${iconSizes[size]} transition-opacity duration-300 ${theme === 'light' ? 'opacity-60' : 'opacity-30'}`}>
+          <span className={`${iconSizes[size]} transition-opacity duration-300 ${currentTheme === 'light' ? 'opacity-60' : 'opacity-30'}`}>
             ☀️
           </span>
-          <span className={`${iconSizes[size]} transition-opacity duration-300 ${theme === 'dark' ? 'opacity-60' : 'opacity-30'}`}>
+          <span className={`${iconSizes[size]} transition-opacity duration-300 ${currentTheme === 'dark' ? 'opacity-60' : 'opacity-30'}`}>
             🌙
           </span>
         </div>

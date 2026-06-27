@@ -183,31 +183,31 @@ export default function WritingExpressionModulePage() {
       id: 'letter-tracing' as ActivityType,
       title: '✏️ Harf Yazma',
       description: 'Harfleri takip ederek yazma öğren',
-      color: 'bg-blue-500 hover:bg-blue-600',
+      color: 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-2000 hover:bg-blue-600',
     },
     {
       id: 'word-building' as ActivityType,
       title: '🔤 Kelime Oluşturma',
       description: 'Harfleri birleştirip kelime yap',
-      color: 'bg-green-500 hover:bg-green-600',
+      color: 'bg-green-50 dark:bg-green-900/30 dark:text-green-2000 hover:bg-green-600',
     },
     {
       id: 'sentence-making' as ActivityType,
       title: '📝 Cümle Kurma',
       description: 'Kelimelerden anlamlı cümleler oluştur',
-      color: 'bg-purple-500 hover:bg-purple-600',
+      color: 'bg-purple-50 dark:bg-purple-900/30 dark:text-purple-2000 hover:bg-purple-600',
     },
     {
       id: 'story-writing' as ActivityType,
       title: '📚 Hikaye Yazma',
       description: 'Kendi hikayeni yaz ve paylaş',
-      color: 'bg-orange-500 hover:bg-orange-600',
+      color: 'bg-orange-50 dark:bg-orange-900/30 dark:text-orange-2000 hover:bg-orange-600',
     },
     {
       id: 'expression' as ActivityType,
       title: '💭 İfade Etme',
       description: 'Duygu ve düşüncelerini ifade et',
-      color: 'bg-pink-500 hover:bg-pink-600',
+      color: 'bg-pink-50 dark:bg-pink-900/30 dark:text-pink-2000 hover:bg-pink-600',
     },
   ];
 
@@ -319,17 +319,17 @@ export default function WritingExpressionModulePage() {
   // Letter Tracing Activity
   if (currentActivity === 'letter-tracing') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
+      <div className="min-h-screen soft-gradient-bg transition-colors duration-1000 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <button
               onClick={handleBackToMenu}
-              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-adaptive-secondary glass-panel rounded-xl shadow-md hover:bg-gray-50 dark:bg-slate-800 transition-colors"
             >
               ← Geri Dön
             </button>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">✏️ Harf Yazma</h1>
-            <p className="text-lg text-gray-600">Harfleri takip ederek yazmayı öğren</p>
+            <h1 className="text-4xl font-bold text-adaptive mb-2">✏️ Harf Yazma</h1>
+            <p className="text-lg text-adaptive-secondary">Harfleri takip ederek yazmayı öğren</p>
           </div>
 
           {!selectedLetter ? (
@@ -338,22 +338,22 @@ export default function WritingExpressionModulePage() {
                 <button
                   key={letter.letter}
                   onClick={() => handleLetterSelect(letter)}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 text-center"
+                  className="glass-panel rounded-[2rem] premium-shadow hover:shadow-xl transition-all duration-300 p-8 text-center"
                 >
                   <div className="text-6xl font-bold text-blue-600 mb-2">{letter.letter}</div>
                 </button>
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-xl shadow-lg p-8">
+            <div className="glass-panel rounded-[2rem] premium-shadow p-8">
               <div className="text-center mb-6">
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">{selectedLetter.letter} Harfi</h2>
-                <p className="text-gray-600">{selectedLetter.instructions}</p>
+                <h2 className="text-3xl font-bold text-adaptive mb-2">{selectedLetter.letter} Harfi</h2>
+                <p className="text-adaptive-secondary">{selectedLetter.instructions}</p>
               </div>
               
               <div className="flex justify-center mb-6">
                 <div className="relative">
-                  <svg width="200" height="120" className="border-2 border-gray-200 rounded-lg bg-gray-50">
+                  <svg width="200" height="120" className="border-2 border-gray-200 dark:border-slate-700 rounded-lg bg-gray-50 dark:bg-slate-800">
                     {selectedLetter.paths.map((path, index) => (
                       <path
                         key={index}
@@ -396,24 +396,24 @@ export default function WritingExpressionModulePage() {
     const currentWord = wordTemplates[currentWordIndex];
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-4">
+      <div className="min-h-screen soft-gradient-bg transition-colors duration-1000 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <button
               onClick={handleBackToMenu}
-              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-adaptive-secondary glass-panel rounded-xl shadow-md hover:bg-gray-50 dark:bg-slate-800 transition-colors"
             >
               ← Geri Dön
             </button>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">🔤 Kelime Oluşturma</h1>
-            <p className="text-lg text-gray-600">Kelime {currentWordIndex + 1} / {wordTemplates.length}</p>
+            <h1 className="text-4xl font-bold text-adaptive mb-2">🔤 Kelime Oluşturma</h1>
+            <p className="text-lg text-adaptive-secondary">Kelime {currentWordIndex + 1} / {wordTemplates.length}</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="glass-panel rounded-[2rem] premium-shadow p-8">
             <div className="text-center mb-8">
               <div className="text-8xl mb-4">{currentWord.image}</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">{currentWord.hint}</h2>
-              <p className="text-gray-600">Harfleri sırayla tıklayarak kelimeyi oluştur</p>
+              <h2 className="text-2xl font-bold text-adaptive mb-2">{currentWord.hint}</h2>
+              <p className="text-adaptive-secondary">Harfleri sırayla tıklayarak kelimeyi oluştur</p>
             </div>
 
             <div className="flex justify-center mb-8">
@@ -421,7 +421,7 @@ export default function WritingExpressionModulePage() {
                 {currentWord.letters.map((_, index) => (
                   <div
                     key={index}
-                    className="w-16 h-16 border-2 border-gray-300 rounded-lg flex items-center justify-center text-2xl font-bold"
+                    className="w-16 h-16 border-2 border-gray-300 dark:border-slate-600 rounded-lg flex items-center justify-center text-2xl font-bold"
                   >
                     {builtWord[index] || ''}
                   </div>
@@ -462,28 +462,28 @@ export default function WritingExpressionModulePage() {
     const currentSentence = sentenceTemplates[currentSentenceIndex];
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-violet-100 p-4">
+      <div className="min-h-screen soft-gradient-bg transition-colors duration-1000 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <button
               onClick={handleBackToMenu}
-              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-adaptive-secondary glass-panel rounded-xl shadow-md hover:bg-gray-50 dark:bg-slate-800 transition-colors"
             >
               ← Geri Dön
             </button>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">📝 Cümle Kurma</h1>
-            <p className="text-lg text-gray-600">Cümle {currentSentenceIndex + 1} / {sentenceTemplates.length}</p>
+            <h1 className="text-4xl font-bold text-adaptive mb-2">📝 Cümle Kurma</h1>
+            <p className="text-lg text-adaptive-secondary">Cümle {currentSentenceIndex + 1} / {sentenceTemplates.length}</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="glass-panel rounded-[2rem] premium-shadow p-8">
             <div className="text-center mb-8">
               <div className="text-6xl mb-4">{currentSentence.image}</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">{currentSentence.meaning}</h2>
-              <p className="text-gray-600">Kelimeleri sırayla tıklayarak cümle oluştur</p>
+              <h2 className="text-2xl font-bold text-adaptive mb-2">{currentSentence.meaning}</h2>
+              <p className="text-adaptive-secondary">Kelimeleri sırayla tıklayarak cümle oluştur</p>
             </div>
 
             <div className="flex justify-center mb-8">
-              <div className="bg-gray-50 p-4 rounded-lg min-h-16 min-w-64 border-2 border-dashed border-gray-300">
+              <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg min-h-16 min-w-64 border-2 border-dashed border-gray-300 dark:border-slate-600">
                 <p className="text-lg text-center">
                   {sentenceWords.join(' ') || 'Cümleniz burada görünecek...'}
                 </p>
@@ -498,7 +498,7 @@ export default function WritingExpressionModulePage() {
                   disabled={sentenceWords.includes(word)}
                   className={`p-4 rounded-lg text-lg font-semibold transition-colors ${
                     sentenceWords.includes(word)
-                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      ? 'bg-gray-200 dark:bg-slate-700 text-adaptive-secondary opacity-80 cursor-not-allowed'
                       : 'bg-purple-100 hover:bg-purple-200 text-purple-800'
                   }`}
                 >
@@ -534,27 +534,27 @@ export default function WritingExpressionModulePage() {
     const currentStory = storyPrompts[currentStoryIndex];
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 p-4">
+      <div className="min-h-screen soft-gradient-bg transition-colors duration-1000 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <button
               onClick={handleBackToMenu}
-              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-adaptive-secondary glass-panel rounded-xl shadow-md hover:bg-gray-50 dark:bg-slate-800 transition-colors"
             >
               ← Geri Dön
             </button>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">📚 Hikaye Yazma</h1>
-            <p className="text-lg text-gray-600">Hikaye {currentStoryIndex + 1} / {storyPrompts.length}</p>
+            <h1 className="text-4xl font-bold text-adaptive mb-2">📚 Hikaye Yazma</h1>
+            <p className="text-lg text-adaptive-secondary">Hikaye {currentStoryIndex + 1} / {storyPrompts.length}</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="glass-panel rounded-[2rem] premium-shadow p-8">
             <div className="text-center mb-8">
               <div className="text-6xl mb-4">{currentStory.emoji}</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">{currentStory.title}</h2>
-              <p className="text-lg text-gray-600 mb-6">{currentStory.prompt}</p>
+              <h2 className="text-2xl font-bold text-adaptive mb-4">{currentStory.title}</h2>
+              <p className="text-lg text-adaptive-secondary mb-6">{currentStory.prompt}</p>
               
               <div className="flex justify-center space-x-2 mb-6">
-                <span className="text-sm text-gray-500">Anahtar kelimeler:</span>
+                <span className="text-sm text-adaptive-secondary opacity-80">Anahtar kelimeler:</span>
                 {currentStory.keywords.map((keyword, index) => (
                   <span
                     key={index}
@@ -571,7 +571,7 @@ export default function WritingExpressionModulePage() {
                 value={userStory}
                 onChange={(e) => setUserStory(e.target.value)}
                 placeholder="Hikayeni buraya yaz..."
-                className="w-full h-64 p-4 border-2 border-gray-200 rounded-lg text-lg resize-none focus:border-orange-500 focus:outline-none"
+                className="w-full h-64 p-4 border-2 border-gray-200 dark:border-slate-700 rounded-lg text-lg resize-none focus:border-orange-500 focus:outline-none"
               />
             </div>
 
@@ -582,7 +582,7 @@ export default function WritingExpressionModulePage() {
                 className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
                   userStory.trim()
                     ? 'bg-orange-600 text-white hover:bg-orange-700'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-300 dark:bg-slate-600 text-adaptive-secondary opacity-80 cursor-not-allowed'
                 }`}
               >
                 Hikayemi Tamamla
@@ -605,32 +605,32 @@ export default function WritingExpressionModulePage() {
     const currentExpression = expressionPrompts[currentExpressionIndex];
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-rose-100 p-4">
+      <div className="min-h-screen soft-gradient-bg transition-colors duration-1000 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <button
               onClick={handleBackToMenu}
-              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center mb-4 px-4 py-2 text-sm font-medium text-adaptive-secondary glass-panel rounded-xl shadow-md hover:bg-gray-50 dark:bg-slate-800 transition-colors"
             >
               ← Geri Dön
             </button>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">💭 İfade Etme</h1>
-            <p className="text-lg text-gray-600">Duygu {currentExpressionIndex + 1} / {expressionPrompts.length}</p>
+            <h1 className="text-4xl font-bold text-adaptive mb-2">💭 İfade Etme</h1>
+            <p className="text-lg text-adaptive-secondary">Duygu {currentExpressionIndex + 1} / {expressionPrompts.length}</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="glass-panel rounded-[2rem] premium-shadow p-8">
             <div className="text-center mb-8">
               <div className="text-6xl mb-4">{currentExpression.emoji}</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">{currentExpression.emotion}</h2>
-              <p className="text-lg text-gray-600 mb-6">{currentExpression.scenario}</p>
+              <h2 className="text-2xl font-bold text-adaptive mb-4">{currentExpression.emotion}</h2>
+              <p className="text-lg text-adaptive-secondary mb-6">{currentExpression.scenario}</p>
               
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-700 mb-3">Örnek başlangıçlar:</h3>
+                <h3 className="text-lg font-semibold text-adaptive-secondary mb-3">Örnek başlangıçlar:</h3>
                 <div className="space-y-2">
                   {currentExpression.examples.map((example, index) => (
                     <div
                       key={index}
-                      className="p-3 bg-pink-50 text-pink-800 rounded-lg text-left"
+                      className="p-3 bg-pink-50 dark:bg-pink-900/30 dark:text-pink-200 text-pink-800 rounded-lg text-left"
                     >
                       "{example}"
                     </div>
@@ -644,7 +644,7 @@ export default function WritingExpressionModulePage() {
                 value={userExpression}
                 onChange={(e) => setUserExpression(e.target.value)}
                 placeholder="Duygularını ve düşüncelerini buraya yaz..."
-                className="w-full h-48 p-4 border-2 border-gray-200 rounded-lg text-lg resize-none focus:border-pink-500 focus:outline-none"
+                className="w-full h-48 p-4 border-2 border-gray-200 dark:border-slate-700 rounded-lg text-lg resize-none focus:border-pink-500 focus:outline-none"
               />
             </div>
 
@@ -655,7 +655,7 @@ export default function WritingExpressionModulePage() {
                 className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
                   userExpression.trim()
                     ? 'bg-pink-600 text-white hover:bg-pink-700'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-300 dark:bg-slate-600 text-adaptive-secondary opacity-80 cursor-not-allowed'
                 }`}
               >
                 İfademi Paylaş
@@ -675,28 +675,28 @@ export default function WritingExpressionModulePage() {
 
   // Main Menu
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 p-4">
+    <div className="min-h-screen soft-gradient-bg transition-colors duration-1000 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <div className="flex justify-between items-center mb-4">
             <button
               onClick={handleBackToModules}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-adaptive-secondary glass-panel rounded-xl shadow-md hover:bg-gray-50 dark:bg-slate-800 transition-colors"
             >
               ← Modüllere Dön
             </button>
             <button
               onClick={() => handleShowHelp('letter-tracing')}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg shadow hover:bg-blue-100 transition-colors"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-200 rounded-lg shadow hover:bg-blue-100 transition-colors"
             >
               ❓ Yardım
             </button>
           </div>
           
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          <h1 className="text-4xl font-bold text-adaptive mb-2">
             ✍️ Yazma ve İfade Etme
       </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-adaptive-secondary">
             Yazma becerilerini geliştir ve kendini ifade et!
           </p>
         </div>
@@ -705,13 +705,13 @@ export default function WritingExpressionModulePage() {
           {activities.map((activity) => (
             <div
               key={activity.id}
-              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+              className="glass-panel rounded-[2rem] premium-shadow hover:shadow-xl transition-all duration-300 overflow-hidden"
             >
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                <h3 className="text-xl font-bold text-adaptive mb-3">
                   {activity.title}
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-adaptive-secondary mb-4">
                   {activity.description}
                 </p>
                 <div className="flex gap-2">
@@ -723,7 +723,7 @@ export default function WritingExpressionModulePage() {
                   </button>
                   <button
                     onClick={() => handleShowHelp(activity.id)}
-                    className="px-3 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="px-3 py-3 bg-gray-100 dark:bg-slate-700/50 text-adaptive-secondary rounded-lg hover:bg-gray-200 dark:bg-slate-700 transition-colors"
                     title="Aktivite kurallarını görüntüle"
                   >
                     ❓
@@ -734,33 +734,33 @@ export default function WritingExpressionModulePage() {
           ))}
         </div>
 
-        <div className="mt-12 bg-white rounded-xl shadow-lg p-6">
+        <div className="mt-12 glass-panel rounded-[2rem] premium-shadow p-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <h2 className="text-2xl font-bold text-adaptive mb-4">
               🌟 Yazma Becerilerini Geliştir
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 text-sm text-gray-600">
-              <div className="p-4 bg-blue-50 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 text-sm text-adaptive-secondary">
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-200 rounded-lg">
                 <div className="text-2xl mb-2">✏️</div>
                 <h3 className="font-semibold mb-1">Harf Yazma</h3>
                 <p>Motor becerileri geliştir</p>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg">
+              <div className="p-4 bg-green-50 dark:bg-green-900/30 dark:text-green-200 rounded-lg">
                 <div className="text-2xl mb-2">🔤</div>
                 <h3 className="font-semibold mb-1">Kelime Yapma</h3>
                 <p>Harfleri birleştir</p>
               </div>
-              <div className="p-4 bg-purple-50 rounded-lg">
+              <div className="p-4 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-200 rounded-lg">
                 <div className="text-2xl mb-2">📝</div>
                 <h3 className="font-semibold mb-1">Cümle Kurma</h3>
                 <p>Anlamlı cümleler oluştur</p>
               </div>
-              <div className="p-4 bg-orange-50 rounded-lg">
+              <div className="p-4 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-200 rounded-lg">
                 <div className="text-2xl mb-2">📚</div>
                 <h3 className="font-semibold mb-1">Hikaye</h3>
                 <p>Yaratıcılığını geliştir</p>
               </div>
-              <div className="p-4 bg-pink-50 rounded-lg">
+              <div className="p-4 bg-pink-50 dark:bg-pink-900/30 dark:text-pink-200 rounded-lg">
                 <div className="text-2xl mb-2">💭</div>
                 <h3 className="font-semibold mb-1">İfade</h3>
                 <p>Duygularını paylaş</p>

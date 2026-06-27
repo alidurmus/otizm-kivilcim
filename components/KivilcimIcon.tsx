@@ -69,13 +69,6 @@ export const KivilcimIcon: React.FC<KivilcimIconProps> = ({
           fill="none"
         />
         
-        {/* Small sparkles around */}
-        <g className={animate ? 'animate-calm-pulse' : ''}>
-          <circle cx="25" cy="25" r="2" fill="#86EFAC"/>
-          <circle cx="95" cy="25" r="2" fill="#3B82F6"/>
-          <circle cx="25" cy="95" r="2" fill="#A5D8FF"/>
-          <circle cx="95" cy="95" r="2" fill="#86EFAC"/>
-        </g>
       </svg>
     </div>
   );

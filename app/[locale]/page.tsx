@@ -46,13 +46,13 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white flex items-center justify-center">
+      <div className="min-h-screen soft-gradient-bg flex items-center justify-center">
         <div className="text-center animate-slow-slide-up">
           <KivilcimIcon size={150} animate={true} />
-          <h1 className="text-4xl font-extrabold text-text-color mt-6 mb-2">
+          <h1 className="text-4xl font-extrabold text-adaptive mt-6 mb-2">
             Kıvılcım
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-adaptive-secondary">
             Yükleniyor...
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white dark:from-dark-bg dark:via-dark-surface dark:to-dark-border transition-colors duration-500">
+    <div className="min-h-screen soft-gradient-bg transition-colors duration-1000">
       {/* Theme and Language Toggle - Top Right */}
       <div className="absolute top-4 right-4 z-10 flex gap-4 items-center">
         <LanguageSwitcher />
@@ -75,7 +75,7 @@ export default function HomePage() {
           {/* Logo and Title */}
           <div className={`transform transition-all duration-1000 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <KivilcimIcon size={200} animate={false} className="mx-auto mb-6" />
-            <h1 className="text-5xl md:text-6xl font-extrabold text-adaptive mb-4">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-adaptive mb-4">
               {t('title')}
             </h1>
             <p className="text-xl md:text-2xl font-semibold text-adaptive-secondary mb-2">
@@ -85,7 +85,7 @@ export default function HomePage() {
 
           {/* Description */}
           <div className={`max-w-2xl transform transition-all duration-1000 delay-300 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <p className="text-lg text-gray-600 leading-relaxed mb-8">
+            <p className="text-lg text-adaptive-secondary leading-relaxed mb-8">
               {t('description')}
             </p>
           </div>
@@ -134,10 +134,10 @@ export default function HomePage() {
 
           {/* Voice Features Info */}
           <div className={`transform transition-all duration-1000 delay-700 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <div className="bg-white bg-opacity-60 p-4 rounded-lg shadow-sm max-w-md mx-auto">
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-                <span>🔊</span>
-                <span>{hasPlayedWelcome ? 'Hoş geldin mesajını tekrar dinle:' : 'Hoş geldin mesajını dinle:'}</span>
+            <div className="glass-panel p-6 rounded-[2rem] premium-shadow max-w-md mx-auto">
+              <div className="flex items-center justify-center gap-3 text-sm text-gray-700 dark:text-gray-200">
+                <span className="text-xl">🔊</span>
+                <span className="font-medium">{hasPlayedWelcome ? 'Hoş geldin mesajını tekrar dinle:' : 'Hoş geldin mesajını dinle:'}</span>
                 <Button 
                   variant="secondary" 
                   size="small"
@@ -147,11 +147,11 @@ export default function HomePage() {
                   🎵 {hasPlayedWelcome ? 'Tekrar Dinle' : 'Dinle'}
                 </Button>
               </div>
-              <p className="text-xs text-center text-gray-500 mt-2">
+              <p className="text-xs text-center text-adaptive-secondary mt-2 opacity-80">
                 Powered by ElevenLabs AI - Türkçe doğal ses teknolojisi
               </p>
               {!hasPlayedWelcome && (
-                <p className="text-xs text-center text-blue-600 mt-1">
+                <p className="text-xs text-center text-blue-600 dark:text-blue-400 mt-1">
                   💡 Ses sistemini test etmek için butona tıkla!
                 </p>
               )}
@@ -159,27 +159,27 @@ export default function HomePage() {
           </div>
 
           {/* Features Grid */}
-          <div className={`grid md:grid-cols-3 gap-6 mt-16 max-w-4xl transform transition-all duration-1000 delay-700 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <div className="bg-white bg-opacity-80 p-6 rounded-xl shadow-md text-center">
-              <div className="text-3xl mb-3">📚</div>
-              <h3 className="font-bold text-text-color mb-2">Modüler Öğrenme</h3>
-              <p className="text-sm text-gray-600">
+          <div className={`grid md:grid-cols-3 gap-8 mt-20 max-w-5xl transform transition-all duration-1000 delay-700 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <div className="glass-panel p-8 rounded-[2rem] premium-shadow text-center transition-transform duration-500 hover:-translate-y-2">
+              <div className="text-4xl mb-4 drop-shadow-md">📚</div>
+              <h3 className="text-lg font-bold text-adaptive mb-2">Modüler Öğrenme</h3>
+              <p className="text-sm text-adaptive-secondary">
                 Okuryazarlık, sosyal iletişim ve daha fazlası
               </p>
             </div>
             
-            <div className="bg-white bg-opacity-80 p-6 rounded-xl shadow-md text-center">
-              <div className="text-3xl mb-3">🎯</div>
-              <h3 className="font-bold text-text-color mb-2">Kişisel Gelişim</h3>
-              <p className="text-sm text-gray-600">
+            <div className="glass-panel p-8 rounded-[2rem] premium-shadow text-center transition-transform duration-500 hover:-translate-y-2">
+              <div className="text-4xl mb-4 drop-shadow-md">🎯</div>
+              <h3 className="text-lg font-bold text-adaptive mb-2">Kişisel Gelişim</h3>
+              <p className="text-sm text-adaptive-secondary">
                 Her çocuğun ihtiyacına özel tasarım
               </p>
             </div>
             
-            <div className="bg-white bg-opacity-80 p-6 rounded-xl shadow-md text-center">
-              <div className="text-3xl mb-3">🔧</div>
-              <h3 className="font-bold text-text-color mb-2">Duyusal Kontrol</h3>
-              <p className="text-sm text-gray-600">
+            <div className="glass-panel p-8 rounded-[2rem] premium-shadow text-center transition-transform duration-500 hover:-translate-y-2">
+              <div className="text-4xl mb-4 drop-shadow-md">🔧</div>
+              <h3 className="text-lg font-bold text-adaptive mb-2">Duyusal Kontrol</h3>
+              <p className="text-sm text-adaptive-secondary">
                 Kişiselleştirilebilir deneyim ayarları
               </p>
             </div>

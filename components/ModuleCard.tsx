@@ -27,10 +27,10 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   return (
     <div
       className={`
-        relative p-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105
+        relative p-6 rounded-[2rem] transition-all duration-500 ease-out transform hover:-translate-y-2 w-full
         ${isActive 
-          ? 'bg-white dark:bg-gray-800 border-2 border-blue-400 dark:border-blue-500' 
-          : 'bg-gray-100 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 opacity-70'
+          ? 'glass-panel premium-shadow' 
+          : 'bg-gray-100/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 opacity-70 shadow-sm'
         }
         ${className}
       `}
@@ -79,8 +79,8 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
       
       {/* Lock overlay for inactive modules */}
       {!isActive && (
-        <div className="absolute inset-0 bg-gray-100 dark:bg-gray-700 bg-opacity-50 rounded-2xl flex items-center justify-center">
-          <div className="text-6xl text-gray-400 dark:text-gray-500">
+        <div className="absolute inset-0 bg-gray-100/40 dark:bg-gray-800/40 backdrop-blur-sm rounded-[2rem] flex items-center justify-center transition-opacity duration-300">
+          <div className="text-6xl text-gray-400 dark:text-gray-500 drop-shadow-md">
             🔒
           </div>
         </div>

@@ -8,24 +8,40 @@ import GameHelpModal from '@/components/GameHelpModal';
 
 type GameType = 'menu' | 'word-matching' | 'memory';
 
+interface GameInfo {
+  id: GameType;
+  title: string;
+  emoji: string;
+  description: string;
+  gradientFrom: string;
+  gradientTo: string;
+  iconBg: string;
+}
+
 export default function VocabularyPage() {
   const [currentGame, setCurrentGame] = useState<GameType>('menu');
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [helpGameType, setHelpGameType] = useState<string>('word-matching');
   const router = useRouter();
 
-  const games = [
+  const games: GameInfo[] = [
     {
-      id: 'word-matching' as GameType,
-      title: '🎯 Kelime Eşleştirme',
-      description: 'Kelimeleri doğru resimlerle eşleştir',
-      color: 'bg-blue-500 hover:bg-blue-600',
+      id: 'word-matching',
+      title: 'Kelime Eşleştirme',
+      emoji: '🎯',
+      description: 'Kelimeleri doğru resimlerle eşleştir ve kelime hazineni geliştir!',
+      gradientFrom: 'from-blue-400/80',
+      gradientTo: 'to-cyan-400/80',
+      iconBg: 'bg-blue-500/20',
     },
     {
-      id: 'memory' as GameType,
-      title: '🧠 Hafıza Oyunu',
-      description: 'Eşleşen kartları bul ve hatırla',
-      color: 'bg-green-500 hover:bg-green-600',
+      id: 'memory',
+      title: 'Hafıza Oyunu',
+      emoji: '🧠',
+      description: 'Eşleşen kartları bul, hafızanı güçlendir!',
+      gradientFrom: 'from-emerald-400/80',
+      gradientTo: 'to-teal-400/80',
+      iconBg: 'bg-emerald-500/20',
     },
   ];
 
@@ -51,58 +67,81 @@ export default function VocabularyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen soft-gradient-bg p-4 md:p-8 transition-colors duration-500">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-between items-center mb-4">
+        <div className="mb-10 animate-slow-slide-up">
+          <div className="flex justify-between items-center mb-6">
             <button
               onClick={handleBackToModules}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
+              className="glass-panel inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-adaptive rounded-xl hover:scale-[1.03] transition-all duration-500"
+              aria-label="Modüllere geri dön"
             >
-              ← Modüllere Dön
+              <span className="text-lg">←</span>
+              Modüllere Dön
             </button>
             <button
               onClick={() => handleShowHelp('word-matching')}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg shadow hover:bg-blue-100 transition-colors"
+              className="glass-panel inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-focus-blue rounded-xl hover:scale-[1.03] transition-all duration-500"
+              aria-label="Yardım menüsünü aç"
             >
-              ❓ Yardım
+              <span className="text-lg">❓</span>
+              Yardım
             </button>
           </div>
-          
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            📚 Anlam ve Kelime Dağarcığı
-          </h1>
-          <p className="text-lg text-gray-600">
-            Kelimeler ve anlamlarıyla oyna, öğren!
-          </p>
+
+          <div className="text-center">
+            <div className="inline-block mb-4">
+              <span className="text-5xl md:text-6xl" role="img" aria-label="Kitap ikonu">📚</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-adaptive mb-3 tracking-tight">
+              Anlam ve Kelime Dağarcığı
+            </h1>
+            <p className="text-lg text-adaptive-secondary max-w-md mx-auto">
+              Kelimeler ve anlamlarıyla oyna, öğren ve eğlen!
+            </p>
+          </div>
         </div>
 
         {/* Game Selection Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {games.map((game) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          {games.map((game, index) => (
             <div
               key={game.id}
-              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+              className="glass-panel premium-shadow rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-500 group"
+              style={{ animationDelay: `${index * 150}ms` }}
             >
+              {/* Gradient Banner */}
+              <div className={`bg-gradient-to-r ${game.gradientFrom} ${game.gradientTo} p-6 relative overflow-hidden`}>
+                <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10 blur-xl" />
+                <div className="absolute -left-4 -bottom-4 w-16 h-16 rounded-full bg-white/10 blur-lg" />
+                <div className="relative z-10 flex items-center gap-4">
+                  <div className={`w-14 h-14 ${game.iconBg} backdrop-blur-sm rounded-2xl flex items-center justify-center text-3xl border border-white/20`}>
+                    {game.emoji}
+                  </div>
+                  <h3 className="text-xl font-extrabold text-white drop-shadow-sm">
+                    {game.title}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Card Body */}
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-3">
-                  {game.title}
-                </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-adaptive-secondary text-sm mb-5 leading-relaxed">
                   {game.description}
                 </p>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <button
                     onClick={() => setCurrentGame(game.id)}
-                    className={`flex-1 py-3 px-4 rounded-lg text-white font-semibold transition-colors ${game.color}`}
+                    className={`flex-1 py-3.5 px-5 rounded-xl text-white font-bold bg-gradient-to-r ${game.gradientFrom} ${game.gradientTo} hover:shadow-lg hover:scale-[1.02] transition-all duration-500`}
+                    aria-label={`${game.title} oyununu başlat`}
                   >
-                    Oyunu Başlat
+                    ▶ Oyunu Başlat
                   </button>
                   <button
                     onClick={() => handleShowHelp(game.id)}
-                    className="px-3 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
-                    title="Oyun kurallarını görüntüle"
+                    className="px-4 py-3.5 glass-panel text-adaptive-secondary rounded-xl hover:scale-[1.05] transition-all duration-500"
+                    aria-label={`${game.title} oyun kurallarını görüntüle`}
                   >
                     ❓
                   </button>
@@ -113,21 +152,25 @@ export default function VocabularyPage() {
         </div>
 
         {/* Info Section */}
-        <div className="mt-12 bg-white rounded-xl shadow-lg p-6">
+        <div className="glass-panel premium-shadow rounded-2xl p-8 animate-slow-slide-up">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <h2 className="text-2xl font-extrabold text-adaptive mb-6">
               🌟 Kelime Dağarcığını Geliştir
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl mb-2">🎯</div>
-                <h3 className="font-semibold mb-1">Eşleştirme</h3>
-                <p>Kelimeler ve resimleri doğru şekilde eşleştir</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="glass-panel rounded-xl p-5 hover:scale-[1.02] transition-all duration-500">
+                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-2xl mx-auto mb-3">
+                  🎯
+                </div>
+                <h3 className="font-bold text-adaptive mb-1">Eşleştirme</h3>
+                <p className="text-sm text-adaptive-secondary">Kelimeler ve resimleri doğru şekilde eşleştir</p>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl mb-2">🧠</div>
-                <h3 className="font-semibold mb-1">Hafıza</h3>
-                <p>Kartları çevir ve eşleşenleri bul</p>
+              <div className="glass-panel rounded-xl p-5 hover:scale-[1.02] transition-all duration-500">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-2xl mx-auto mb-3">
+                  🧠
+                </div>
+                <h3 className="font-bold text-adaptive mb-1">Hafıza</h3>
+                <p className="text-sm text-adaptive-secondary">Kartları çevir ve eşleşenleri bul</p>
               </div>
             </div>
           </div>

@@ -59,34 +59,27 @@ Gemini'den en doğru ve kullanışlı sonuçları almak için komutlarımızı (
 
 ### **5. Docs Klasöründeki Markdown Dosyaları**
 *   C:\cursor\otizm-kivilcim\docs\todo.md
-*   C:\cursor\otizm-kivilcim\docs\Anlam ve Kelime Dağarcığı modül.md
-*   C:\cursor\otizm-kivilcim\docs\next.js ile olacak ona göre güncelle.md
-*   C:\cursor\otizm-kivilcim\docs\prd-coding-standards.md
-*   C:\cursor\otizm-kivilcim\docs\elevenlabs-setup.md
-*   C:\cursor\otizm-kivilcim\docs\pages.md
-*   C:\cursor\otizm-kivilcim\docs\veritabani.md
-*   C:\cursor\otizm-kivilcim\docs\naming-conventions.md
-*   C:\cursor\otizm-kivilcim\docs\prd.md
-*   C:\cursor\otizm-kivilcim\docs\reference\referanslar-ve-kaynaklar.md
-*   C:\cursor\otizm-kivilcim\docs\docs\tutorial-extras\translate-your-site.md
 *   C:\cursor\otizm-kivilcim\docs\README.md
-*   C:\cursor\otizm-kivilcim\docs\src\pages\markdown-page.md
-*   C:\cursor\otizm-kivilcim\docs\docs\tutorial-extras\manage-docs-versions.md
-*   C:\cursor\otizm-kivilcim\docs\docs\intro.md
-*   C:\cursor\otizm-kivilcim\docs\docs\tutorial-basics\deploy-your-site.md
-*   C:\cursor\otizm-kivilcim\docs\blog\2021-08-26-welcome\index.md
-*   C:\cursor\otizm-kivilcim\docs\docs\tutorial-basics\create-a-page.md
-*   C:\cursor\otizm-kivilcim\docs\docs\tutorial-basics\create-a-document.md
-*   C:\cursor\otizm-kivilcim\docs\docs\tutorial-basics\create-a-blog-post.md
-*   C:\cursor\otizm-kivilcim\docs\docs\tutorial-basics\congratulations.md
-*   C:\cursor\otizm-kivilcim\docs\blog\2019-05-29-long-blog-post.md
-*   C:\cursor\otizm-kivilcim\docs\blog\2019-05-28-first-blog-post.md
-*   C:\cursor\otizm-kivilcim\docs\design\tasarim-kilavuzu.md
-*   C:\cursor\otizm-kivilcim\docs\design\ekran-akisi-ve-ui.md
+*   C:\cursor\otizm-kivilcim\docs\architecture\naming-conventions.md
+*   C:\cursor\otizm-kivilcim\docs\architecture\nextjs-migration.md
+*   C:\cursor\otizm-kivilcim\docs\architecture\elevenlabs-setup.md
+*   C:\cursor\otizm-kivilcim\docs\architecture\pages.md
+*   C:\cursor\otizm-kivilcim\docs\architecture\database.md
+*   C:\cursor\otizm-kivilcim\docs\architecture\audio-system.md
+*   C:\cursor\otizm-kivilcim\docs\architecture\environment-setup.md
+*   C:\cursor\otizm-kivilcim\docs\architecture\project-walkthrough.md
+*   C:\cursor\otizm-kivilcim\docs\modules\vocabulary.md
+*   C:\cursor\otizm-kivilcim\docs\modules\teacher-dashboard.md
+*   C:\cursor\otizm-kivilcim\docs\prd\prd.md
+*   C:\cursor\otizm-kivilcim\docs\prd\coding-standards.md
 *   C:\cursor\otizm-kivilcim\docs\prd\yol-haritasi.md
 *   C:\cursor\otizm-kivilcim\docs\prd\gorev-listesi.md
 *   C:\cursor\otizm-kivilcim\docs\prd\urun-gereksinimleri.md
-*   C:\cursor\otizm-kivilcim\docs\design\logo-tasarim-promptu.md
 *   C:\cursor\otizm-kivilcim\docs\prd\kullanici-hikayeleri.md
+*   C:\cursor\otizm-kivilcim\docs\arastirma\turkish-voice.md
+*   C:\cursor\otizm-kivilcim\docs\reference\referanslar-ve-kaynaklar.md
+*   C:\cursor\otizm-kivilcim\docs\design\tasarim-kilavuzu.md
+*   C:\cursor\otizm-kivilcim\docs\design\ekran-akisi-ve-ui.md
+*   C:\cursor\otizm-kivilcim\docs\design\logo-tasarim-promptu.md
 *   C:\cursor\otizm-kivilcim\docs\design\yapay-zeka-icerik-kurallari.md
 *   C:\cursor\otizm-kivilcim\docs\design\marka-kimligi-ve-logo.md

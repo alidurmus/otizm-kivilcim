@@ -94,7 +94,7 @@ export default function AdminPage() {
       {/* System Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {systemStats.map((stat, index) => (
-          <div key={index} className="bg-adaptive rounded-xl shadow-lg p-6 text-center transform hover:scale-105 transition-all duration-300 dark:shadow-xl">
+          <div key={index} className="glass-panel rounded-2xl premium-shadow border-none p-6 text-center transform hover:scale-105 transition-all duration-300 dark:shadow-xl">
             <div className={`text-4xl mb-3 ${stat.color}`}>{stat.icon}</div>
             <div className="text-2xl font-bold text-adaptive mb-2">{stat.value}</div>
             <div className="text-sm text-adaptive-secondary">{stat.label}</div>
@@ -103,8 +103,8 @@ export default function AdminPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-text-color mb-4">🚀 Hızlı İşlemler</h3>
+      <div className="glass-panel rounded-2xl premium-shadow p-6">
+        <h3 className="text-xl font-bold text-adaptive mb-4">🚀 Hızlı İşlemler</h3>
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Button variant="primary" size="medium" onClick={() => setActiveTab('users')}>
             👥 Kullanıcıları Görüntüle
@@ -117,25 +117,25 @@ export default function AdminPage() {
           </Button>
           <a 
             href="/admin/elevenlabs-test"
-            className="bg-encourage-orange text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors text-center flex items-center justify-center"
+            className="bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 border border-orange-200 dark:border-orange-800/50 py-2 px-4 rounded-xl hover:bg-orange-200 dark:hover:bg-orange-900/60 transition-colors text-center flex items-center justify-center"
           >
             🔊 ElevenLabs Test
           </a>
           <a 
             href="/demo/elevenlabs-v3-test"
-            className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors text-center flex items-center justify-center"
+            className="bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 border border-purple-200 dark:border-purple-800/50 py-2 px-4 rounded-xl hover:bg-purple-200 dark:hover:bg-purple-900/60 transition-colors text-center flex items-center justify-center"
           >
             🧪 v3 Test (Gülsu)
           </a>
           <a 
             href="/demo/single-letter"
-            className="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors text-center flex items-center justify-center"
+            className="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-800/50 py-2 px-4 rounded-xl hover:bg-indigo-200 dark:hover:bg-indigo-900/60 transition-colors text-center flex items-center justify-center"
           >
             🔤 Tek Harf Test
           </a>
           <a 
             href="/admin/audio-management"
-            className="bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors text-center flex items-center justify-center"
+            className="bg-pink-100 dark:bg-pink-900/40 text-pink-800 dark:text-pink-200 border border-pink-200 dark:border-pink-800/50 py-2 px-4 rounded-xl hover:bg-pink-200 dark:hover:bg-pink-900/60 transition-colors text-center flex items-center justify-center"
           >
             🎵 Ses Dosyaları
           </a>
@@ -143,28 +143,28 @@ export default function AdminPage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-text-color mb-4">📈 Son Aktiviteler</h3>
+      <div className="glass-panel rounded-2xl premium-shadow p-6">
+        <h3 className="text-xl font-bold text-adaptive mb-4">📈 Son Aktiviteler</h3>
         <div className="space-y-3">
-          <div className="flex items-center space-x-3 p-3 bg-calm-blue bg-opacity-20 rounded-lg">
-            <span className="text-2xl">🎉</span>
+          <div className="flex items-center space-x-3 p-3 bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800/50 rounded-lg">
+            <span className="text-2xl drop-shadow-sm">🎉</span>
             <div>
-              <div className="font-medium text-text-color">Ali Veli okuryazarlık modülünü tamamladı</div>
-              <div className="text-sm text-gray-600">5 dakika önce</div>
+              <div className="font-medium text-blue-900 dark:text-blue-100">Ali Veli okuryazarlık modülünü tamamladı</div>
+              <div className="text-sm text-blue-700 dark:text-blue-300">5 dakika önce</div>
             </div>
           </div>
-          <div className="flex items-center space-x-3 p-3 bg-success-green bg-opacity-20 rounded-lg">
-            <span className="text-2xl">📚</span>
+          <div className="flex items-center space-x-3 p-3 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50 rounded-lg">
+            <span className="text-2xl drop-shadow-sm">📚</span>
             <div>
-              <div className="font-medium text-text-color">Ayşe Demir yeni egzersiz başlattı</div>
-              <div className="text-sm text-gray-600">12 dakika önce</div>
+              <div className="font-medium text-green-900 dark:text-green-100">Ayşe Demir yeni egzersiz başlattı</div>
+              <div className="text-sm text-green-700 dark:text-green-300">12 dakika önce</div>
             </div>
           </div>
-          <div className="flex items-center space-x-3 p-3 bg-encourage-orange bg-opacity-20 rounded-lg">
-            <span className="text-2xl">👤</span>
+          <div className="flex items-center space-x-3 p-3 bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800/50 rounded-lg">
+            <span className="text-2xl drop-shadow-sm">👤</span>
             <div>
-              <div className="font-medium text-text-color">Yeni kullanıcı kaydı: Mehmet Yılmaz</div>
-              <div className="text-sm text-gray-600">1 saat önce</div>
+              <div className="font-medium text-orange-900 dark:text-orange-100">Yeni kullanıcı kaydı: Mehmet Yılmaz</div>
+              <div className="text-sm text-orange-700 dark:text-orange-300">1 saat önce</div>
             </div>
           </div>
         </div>
@@ -173,8 +173,8 @@ export default function AdminPage() {
   );
 
   const renderUsers = () => (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <h3 className="text-xl font-bold text-text-color mb-6">👥 Kullanıcı Yönetimi</h3>
+    <div className="glass-panel rounded-2xl premium-shadow p-6">
+      <h3 className="text-xl font-bold text-adaptive mb-6">👥 Kullanıcı Yönetimi</h3>
       
       <div className="flex items-center mb-4">
         <input
@@ -191,28 +191,28 @@ export default function AdminPage() {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-calm-blue bg-opacity-20">
-              <th className="px-4 py-3 text-left text-text-color font-semibold">Ad</th>
-              <th className="px-4 py-3 text-left text-text-color font-semibold">E-posta</th>
-              <th className="px-4 py-3 text-left text-text-color font-semibold">Kayıt Tarihi</th>
-              <th className="px-4 py-3 text-left text-text-color font-semibold">Son Aktivite</th>
-              <th className="px-4 py-3 text-left text-text-color font-semibold">Egzersizler</th>
-              <th className="px-4 py-3 text-left text-text-color font-semibold">Durum</th>
-              <th className="px-4 py-3 text-left text-text-color font-semibold">İşlemler</th>
+              <th className="px-4 py-3 text-left text-adaptive font-semibold">Ad</th>
+              <th className="px-4 py-3 text-left text-adaptive font-semibold">E-posta</th>
+              <th className="px-4 py-3 text-left text-adaptive font-semibold">Kayıt Tarihi</th>
+              <th className="px-4 py-3 text-left text-adaptive font-semibold">Son Aktivite</th>
+              <th className="px-4 py-3 text-left text-adaptive font-semibold">Egzersizler</th>
+              <th className="px-4 py-3 text-left text-adaptive font-semibold">Durum</th>
+              <th className="px-4 py-3 text-left text-adaptive font-semibold">İşlemler</th>
             </tr>
           </thead>
           <tbody>
             {mockUsers.filter(user => user.name.toLowerCase().includes(userSearch.toLowerCase()) || user.email.toLowerCase().includes(userSearch.toLowerCase())).map((user) => (
-              <tr key={user.id} className="border-b hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3 text-text-color font-medium">{user.name}</td>
-                <td className="px-4 py-3 text-gray-600">{user.email}</td>
-                <td className="px-4 py-3 text-gray-600">{user.createdAt}</td>
-                <td className="px-4 py-3 text-gray-600">{user.lastActivity}</td>
-                <td className="px-4 py-3 text-text-color font-medium">{user.exercisesCompleted}</td>
+              <tr key={user.id} className="border-b hover:bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 transition-colors">
+                <td className="px-4 py-3 text-adaptive font-medium">{user.name}</td>
+                <td className="px-4 py-3 text-adaptive-secondary">{user.email}</td>
+                <td className="px-4 py-3 text-adaptive-secondary">{user.createdAt}</td>
+                <td className="px-4 py-3 text-adaptive-secondary">{user.lastActivity}</td>
+                <td className="px-4 py-3 text-adaptive font-medium">{user.exercisesCompleted}</td>
                 <td className="px-4 py-3">
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                     user.status === 'active' 
                       ? 'bg-success-green bg-opacity-30 text-green-800'
-                      : 'bg-gray-200 text-gray-800'
+                      : 'bg-gray-200 text-adaptive'
                   }`}>
                     {user.status === 'active' ? 'Aktif' : 'Pasif'}
                   </span>
@@ -233,18 +233,18 @@ export default function AdminPage() {
 
       {selectedUser && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
           onClick={e => { if (e.target === e.currentTarget) setSelectedUser(null); }}
           tabIndex={-1}
           aria-modal="true"
           role="dialog"
         >
           <div
-            className="bg-white rounded-xl p-6 max-w-md w-full mx-4"
+            className="glass-panel rounded-2xl p-6 max-w-md w-full mx-4"
             onKeyDown={e => { if (e.key === 'Escape') setSelectedUser(null); }}
             tabIndex={0}
           >
-            <h4 className="text-lg font-bold text-text-color mb-4">👤 Kullanıcı Detayları</h4>
+            <h4 className="text-lg font-bold text-adaptive mb-4">👤 Kullanıcı Detayları</h4>
             <div className="space-y-3">
               <div><strong>Ad:</strong> {selectedUser.name}</div>
               <div><strong>E-posta:</strong> {selectedUser.email}</div>
@@ -269,24 +269,24 @@ export default function AdminPage() {
 
   const renderSettings = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-text-color mb-6">⚙️ Sistem Ayarları</h3>
+      <div className="glass-panel rounded-2xl premium-shadow p-6">
+        <h3 className="text-xl font-bold text-adaptive mb-6">⚙️ Sistem Ayarları</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Genel Ayarlar */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-text-color">🔧 Genel Ayarlar</h4>
+            <h4 className="font-semibold text-adaptive">🔧 Genel Ayarlar</h4>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-text-color">Yeni kayıtları kabul et</span>
+              <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
+                <span className="text-adaptive">Yeni kayıtları kabul et</span>
                 <Switch checked={acceptNewUsers} onChange={() => setAcceptNewUsers(v => !v)} label="Yeni kayıtları kabul et" id="acceptNewUsers" />
               </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-text-color">Email bildirimleri</span>
+              <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
+                <span className="text-adaptive">Email bildirimleri</span>
                 <Switch checked={emailNotifications} onChange={() => setEmailNotifications(v => !v)} label="Email bildirimleri" id="emailNotifications" />
               </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-text-color">Otomatik yedekleme</span>
+              <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
+                <span className="text-adaptive">Otomatik yedekleme</span>
                 <Switch checked={autoBackup} onChange={() => setAutoBackup(v => !v)} label="Otomatik yedekleme" id="autoBackup" />
               </div>
             </div>
@@ -294,27 +294,27 @@ export default function AdminPage() {
 
           {/* API Ayarları */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-text-color">🔌 API Ayarları</h4>
+            <h4 className="font-semibold text-adaptive">🔌 API Ayarları</h4>
             <div className="space-y-3">
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <label className="block text-sm font-medium text-text-color mb-1">ElevenLabs API</label>
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
+                <label className="block text-sm font-medium text-adaptive mb-1">ElevenLabs API</label>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-success-green rounded-full"></div>
-                  <span className="text-sm text-gray-600">Bağlantı Aktif</span>
+                  <span className="text-sm text-adaptive-secondary">Bağlantı Aktif</span>
                 </div>
               </div>
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <label className="block text-sm font-medium text-text-color mb-1">Firebase</label>
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
+                <label className="block text-sm font-medium text-adaptive mb-1">Firebase</label>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-success-green rounded-full"></div>
-                  <span className="text-sm text-gray-600">Bağlantı Aktif</span>
+                  <span className="text-sm text-adaptive-secondary">Bağlantı Aktif</span>
                 </div>
               </div>
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <label className="block text-sm font-medium text-text-color mb-1">Azure Speech</label>
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
+                <label className="block text-sm font-medium text-adaptive mb-1">Azure Speech</label>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-encourage-orange rounded-full"></div>
-                  <span className="text-sm text-gray-600">Konfigürasyon Gerekli</span>
+                  <span className="text-sm text-adaptive-secondary">Konfigürasyon Gerekli</span>
                 </div>
               </div>
             </div>
@@ -334,47 +334,47 @@ export default function AdminPage() {
   );
 
   const renderLogs = () => (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <h3 className="text-xl font-bold text-text-color mb-6">📋 Sistem Logları</h3>
+    <div className="glass-panel rounded-2xl premium-shadow p-6">
+      <h3 className="text-xl font-bold text-adaptive mb-6">📋 Sistem Logları</h3>
       
       <div className="space-y-3 max-h-96 overflow-y-auto">
-        <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-start space-x-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
           <span className="text-green-500 font-mono text-sm mt-0.5">[INFO]</span>
           <div className="flex-1">
-            <div className="text-sm text-text-color">Kullanıcı başarıyla giriş yaptı: ali@example.com</div>
-            <div className="text-xs text-gray-500 mt-1">2024-01-20 14:30:25</div>
+            <div className="text-sm text-adaptive">Kullanıcı başarıyla giriş yaptı: ali@example.com</div>
+            <div className="text-xs text-adaptive-secondary opacity-80 mt-1">2024-01-20 14:30:25</div>
           </div>
         </div>
         
-        <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-start space-x-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
           <span className="text-blue-500 font-mono text-sm mt-0.5">[DEBUG]</span>
           <div className="flex-1">
-            <div className="text-sm text-text-color">ElevenLabs API isteği başarılı: /v1/text-to-speech</div>
-            <div className="text-xs text-gray-500 mt-1">2024-01-20 14:28:15</div>
+            <div className="text-sm text-adaptive">ElevenLabs API isteği başarılı: /v1/text-to-speech</div>
+            <div className="text-xs text-adaptive-secondary opacity-80 mt-1">2024-01-20 14:28:15</div>
           </div>
         </div>
         
-        <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-start space-x-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
           <span className="text-yellow-500 font-mono text-sm mt-0.5">[WARN]</span>
           <div className="flex-1">
-            <div className="text-sm text-text-color">Yüksek API kullanımı tespit edildi</div>
-            <div className="text-xs text-gray-500 mt-1">2024-01-20 14:25:10</div>
+            <div className="text-sm text-adaptive">Yüksek API kullanımı tespit edildi</div>
+            <div className="text-xs text-adaptive-secondary opacity-80 mt-1">2024-01-20 14:25:10</div>
           </div>
         </div>
         
-        <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-start space-x-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
           <span className="text-green-500 font-mono text-sm mt-0.5">[INFO]</span>
           <div className="flex-1">
-            <div className="text-sm text-text-color">Egzersiz tamamlandı: literacy-exercise-1</div>
-            <div className="text-xs text-gray-500 mt-1">2024-01-20 14:20:05</div>
+            <div className="text-sm text-adaptive">Egzersiz tamamlandı: literacy-exercise-1</div>
+            <div className="text-xs text-adaptive-secondary opacity-80 mt-1">2024-01-20 14:20:05</div>
           </div>
         </div>
         
-        <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-start space-x-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg">
           <span className="text-red-500 font-mono text-sm mt-0.5">[ERROR]</span>
           <div className="flex-1">
-            <div className="text-sm text-text-color">Firebase bağlantı hatası: PERMISSION_DENIED</div>
-            <div className="text-xs text-gray-500 mt-1">2024-01-20 14:15:30</div>
+            <div className="text-sm text-adaptive">Firebase bağlantı hatası: PERMISSION_DENIED</div>
+            <div className="text-xs text-adaptive-secondary opacity-80 mt-1">2024-01-20 14:15:30</div>
           </div>
         </div>
       </div>
@@ -416,7 +416,7 @@ export default function AdminPage() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex space-x-2 mb-8 bg-white rounded-xl p-2 shadow-lg">
+        <div className="flex space-x-2 mb-8 glass-panel rounded-2xl p-2 premium-shadow border-none">
           {([
             { id: 'dashboard', label: '📊 Panel', icon: '📊' },
             { id: 'users', label: '👥 Kullanıcılar', icon: '👥' },
@@ -429,7 +429,7 @@ export default function AdminPage() {
               className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                 activeTab === tab.id
                   ? 'bg-focus-blue text-white shadow-lg'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-adaptive-secondary hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               {tab.label}

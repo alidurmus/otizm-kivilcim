@@ -905,11 +905,11 @@ export default function BasicConceptsModulePage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-stretch">
           {concepts.map((concept) => (
             <div
               key={concept.id}
-              className="bg-white dark:bg-dark-surface rounded-2xl border-4 border-gray-200 dark:border-dark-border hover:border-focus-blue transition-all duration-300 transform hover:scale-[1.02]"
+              className="bg-white dark:bg-dark-surface rounded-2xl border-4 border-gray-200 dark:border-dark-border hover:border-focus-blue transition-all duration-300 transform hover:scale-[1.02] w-full"
             >
               <div className="p-6">
                 <h3 className="text-2xl font-extrabold text-text-color dark:text-dark-text mb-2">

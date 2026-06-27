@@ -227,10 +227,10 @@ export default function ParentPanelPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background-color flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white dark:from-dark-bg dark:via-dark-surface dark:to-dark-bg transition-colors duration-500 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-focus-blue mx-auto mb-4"></div>
-          <p className="text-text-color">Veriler yükleniyor...</p>
+          <p className="text-adaptive">Veriler yükleniyor...</p>
         </div>
       </div>
     );
@@ -239,16 +239,16 @@ export default function ParentPanelPage() {
   const renderOverview = () => (
     <div className="space-y-6">
       {/* User Info */}
-      <div className="bg-white rounded-xl p-4 md:p-6 shadow-lg border border-gray-100">
-        <h3 className="text-lg md:text-xl font-bold text-text-color mb-2">👋 Hoş Geldiniz!</h3>
-        <p className="text-text-color">
+      <div className="glass-panel rounded-xl p-4 md:p-6 premium-shadow border-none">
+        <h3 className="text-lg md:text-xl font-bold text-adaptive mb-2">👋 Hoş Geldiniz!</h3>
+        <p className="text-adaptive">
           <strong>{userData?.profile?.name || 'Kullanıcı'}</strong> - Son giriş: {
             userData?.profile?.createdAt && typeof userData.profile.createdAt.toDate === 'function' ? 
             new Intl.DateTimeFormat('tr-TR').format(userData.profile.createdAt.toDate()) : 
             'Bilinmiyor'
           }
         </p>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-adaptive-secondary mt-1">
           Toplam {Object.keys(modulesProgress).length} modül kullanılıyor
         </p>
       </div>
@@ -257,53 +257,53 @@ export default function ParentPanelPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         <div 
           data-testid="stat-exercises"
-          className="bg-white rounded-xl p-4 md:p-6 text-center shadow-lg border border-gray-100"
+          className="glass-panel rounded-xl p-4 md:p-6 text-center premium-shadow border-none"
         >
           <div className="text-2xl md:text-3xl font-bold text-focus-blue mb-2">
             {stats.completedExercises}/{stats.totalExercises}
           </div>
-          <div className="text-xs md:text-sm text-gray-600">Tamamlanan Egzersizler</div>
+          <div className="text-xs md:text-sm text-adaptive-secondary">Tamamlanan Egzersizler</div>
         </div>
         
         <div 
           data-testid="stat-success"
-          className="bg-white rounded-xl p-4 md:p-6 text-center shadow-lg border border-gray-100"
+          className="glass-panel rounded-xl p-4 md:p-6 text-center premium-shadow border-none"
         >
           <div className="text-2xl md:text-3xl font-bold text-success-green mb-2">
             {stats.averageAccuracy}%
           </div>
-          <div className="text-xs md:text-sm text-gray-600">Ortalama Başarı</div>
+          <div className="text-xs md:text-sm text-adaptive-secondary">Ortalama Başarı</div>
         </div>
         
         <div 
           data-testid="stat-activity"
-          className="bg-white rounded-xl p-4 md:p-6 text-center shadow-lg border border-gray-100"
+          className="glass-panel rounded-xl p-4 md:p-6 text-center premium-shadow border-none"
         >
           <div className="text-2xl md:text-3xl font-bold text-encourage-orange mb-2">
             {stats.activeDays} gün
           </div>
-          <div className="text-xs md:text-sm text-gray-600">Haftalık Aktivite</div>
+          <div className="text-xs md:text-sm text-adaptive-secondary">Haftalık Aktivite</div>
         </div>
       </div>
 
       {/* Recent Achievements */}
-      <div className="bg-white rounded-xl p-4 md:p-6 shadow-lg">
-        <h3 className="text-lg md:text-xl font-bold text-text-color mb-4">🏆 Son Başarılar</h3>
+      <div className="glass-panel rounded-xl p-4 md:p-6 premium-shadow">
+        <h3 className="text-lg md:text-xl font-bold text-adaptive mb-4">🏆 Son Başarılar</h3>
         {achievements.length > 0 ? (
           <div className="space-y-3">
             {achievements.map((achievement, index) => (
               <div key={index} className="flex items-center space-x-4 p-3 bg-success-green bg-opacity-10 rounded-lg">
                 <div className="text-xl md:text-2xl">{achievement.icon}</div>
                 <div className="flex-1">
-                  <div className="text-sm md:text-base font-semibold text-text-color">{achievement.title}</div>
-                  <div className="text-xs md:text-sm text-gray-600">{achievement.description}</div>
+                  <div className="text-sm md:text-base font-semibold text-adaptive">{achievement.title}</div>
+                  <div className="text-xs md:text-sm text-adaptive-secondary">{achievement.description}</div>
                 </div>
-                <div className="text-xs text-gray-500">{achievement.date}</div>
+                <div className="text-xs text-adaptive-secondary opacity-70">{achievement.date}</div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-6 text-adaptive-secondary opacity-70">
             <p>Henüz başarı kazanılmadı</p>
             <p className="text-sm">Egzersizleri tamamlayarak başarı kazanın!</p>
           </div>
@@ -311,26 +311,26 @@ export default function ParentPanelPage() {
       </div>
 
       {/* New Adventures */}
-      <div className="bg-gradient-to-r from-encourage-orange to-yellow-300 bg-opacity-30 rounded-xl p-4 md:p-6">
-        <h3 className="text-lg md:text-xl font-bold text-text-color mb-4">🚀 Yeni Maceralar</h3>
-        <p className="text-sm md:text-base text-gray-700 mb-4">
+      <div className="bg-gradient-to-r from-orange-100 to-yellow-100 dark:from-orange-900/40 dark:to-yellow-900/40 rounded-xl p-4 md:p-6">
+        <h3 className="text-lg md:text-xl font-bold text-adaptive mb-4">🚀 Yeni Maceralar</h3>
+        <p className="text-sm md:text-base text-adaptive-secondary mb-4">
           {Object.keys(modulesProgress).length > 0 
             ? 'Harika ilerliyor! Yakında yeni modüller açılacak.'
             : 'Modülleri kullanmaya başlayın!'
           }
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="bg-white bg-opacity-50 rounded-lg p-3 text-center flex-1">
+          <div className="glass-panel bg-opacity-50 rounded-lg p-3 text-center flex-1">
             <div className="text-lg font-bold">📚</div>
             <div className="text-xs">Kelime Dağarcığı</div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-adaptive-secondary">
               {modulesProgress.vocabulary ? `%${Math.round(modulesProgress.vocabulary.progress)} tamamlandı` : 'Başlanmadı'}
             </div>
           </div>
-          <div className="bg-white bg-opacity-50 rounded-lg p-3 text-center flex-1">
+          <div className="glass-panel bg-opacity-50 rounded-lg p-3 text-center flex-1">
             <div className="text-lg font-bold">💬</div>
             <div className="text-xs">Sosyal İletişim</div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-adaptive-secondary">
               {modulesProgress.social_communication ? `%${Math.round(modulesProgress.social_communication.progress)} tamamlandı` : 'Başlanmadı'}
             </div>
           </div>
@@ -342,9 +342,9 @@ export default function ParentPanelPage() {
   const renderProgress = () => (
     <div className="space-y-6">
       {/* Weekly Activity Chart */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-6">📊 Haftalık Aktivite</h3>
-        <p className="text-gray-600 mb-4">Son 7 günün aktivite grafiği</p>
+      <div className="glass-panel rounded-xl p-6 premium-shadow">
+        <h3 className="text-xl font-bold text-adaptive mb-6">📊 Haftalık Aktivite</h3>
+        <p className="text-adaptive-secondary mb-4">Son 7 günün aktivite grafiği</p>
         <div className="flex justify-between items-end h-32 space-x-2">
           {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((day, index) => {
             // Generate realistic heights based on available data
@@ -363,7 +363,7 @@ export default function ParentPanelPage() {
                   className="bg-focus-blue rounded-t w-full transition-all duration-1000 ease-out"
                   style={{ height: `${heights[index]}%` }}
                 ></div>
-                <div className="text-xs mt-2 text-gray-600">{day}</div>
+                <div className="text-xs mt-2 text-adaptive-secondary">{day}</div>
               </div>
             );
           })}
@@ -371,14 +371,14 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Module Progress */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-4">📚 Modül İlerlemesi</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow">
+        <h3 className="text-xl font-bold text-adaptive mb-4">📚 Modül İlerlemesi</h3>
         {progressData.length > 0 ? (
           progressData.map((data, index) => (
             <div key={index} className="mb-4">
               <div className="flex justify-between mb-2">
                 <span className="font-semibold">{data.module}</span>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-adaptive-secondary">
                   Tamamlandı: {data.completed}/{data.total} (Başarı: %{data.accuracy})
                 </span>
               </div>
@@ -388,11 +388,11 @@ export default function ParentPanelPage() {
                   style={{ width: `${(data.completed / data.total) * 100}%` }}
                 ></div>
               </div>
-              <div className="text-xs text-gray-500 mt-1">Son erişim: {data.lastAccess}</div>
+              <div className="text-xs text-adaptive-secondary opacity-70 mt-1">Son erişim: {data.lastAccess}</div>
             </div>
           ))
         ) : (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-6 text-adaptive-secondary opacity-70">
             <p>Henüz modül kullanımı başlanmamış</p>
             <p className="text-sm">Ana menüden modüllere başlayın!</p>
           </div>
@@ -405,33 +405,33 @@ export default function ParentPanelPage() {
     <div className="space-y-6">
       {/* Current Settings Display */}
       {userData?.sensory_settings && (
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-xl font-bold text-text-color mb-4">⚙️ Mevcut Ayarlar</h3>
+        <div className="glass-panel rounded-xl p-6 premium-shadow">
+          <h3 className="text-xl font-bold text-adaptive mb-4">⚙️ Mevcut Ayarlar</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-text-color mb-1">Görsel Tema</label>
-              <span className="text-sm text-gray-600 capitalize">{userData.sensory_settings.visualTheme}</span>
+            <div className="p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
+              <label className="block text-sm font-medium text-adaptive mb-1">Görsel Tema</label>
+              <span className="text-sm text-adaptive-secondary capitalize">{userData.sensory_settings.visualTheme}</span>
             </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-text-color mb-1">Ses Seviyesi</label>
-              <span className="text-sm text-gray-600">{userData.sensory_settings.soundVolume}%</span>
+            <div className="p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
+              <label className="block text-sm font-medium text-adaptive mb-1">Ses Seviyesi</label>
+              <span className="text-sm text-adaptive-secondary">{userData.sensory_settings.soundVolume}%</span>
             </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-text-color mb-1">Hareket Azaltma</label>
-              <span className="text-sm text-gray-600">{userData.sensory_settings.reduceMotion ? 'Aktif' : 'Pasif'}</span>
+            <div className="p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
+              <label className="block text-sm font-medium text-adaptive mb-1">Hareket Azaltma</label>
+              <span className="text-sm text-adaptive-secondary">{userData.sensory_settings.reduceMotion ? 'Aktif' : 'Pasif'}</span>
             </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-text-color mb-1">Dokunsal Geri Bildirim</label>
-              <span className="text-sm text-gray-600">{userData.sensory_settings.hapticFeedback ? 'Aktif' : 'Pasif'}</span>
+            <div className="p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
+              <label className="block text-sm font-medium text-adaptive mb-1">Dokunsal Geri Bildirim</label>
+              <span className="text-sm text-adaptive-secondary">{userData.sensory_settings.hapticFeedback ? 'Aktif' : 'Pasif'}</span>
             </div>
           </div>
         </div>
       )}
 
       {/* Sensory Control */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-4">🎛️ Duyusal Kontroller</h3>
-        <p className="text-gray-600 mb-4">
+      <div className="glass-panel rounded-xl p-6 premium-shadow">
+        <h3 className="text-xl font-bold text-adaptive mb-4">🎛️ Duyusal Kontroller</h3>
+        <p className="text-adaptive-secondary mb-4">
           Çocuğunuzun duyusal ihtiyaçlarına göre uygulamayı kişiselleştirin.
         </p>
         <Button
@@ -444,9 +444,9 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Demo Data */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-4">🎭 Demo Veriler</h3>
-        <p className="text-gray-600 mb-4">
+      <div className="glass-panel rounded-xl p-6 premium-shadow">
+        <h3 className="text-xl font-bold text-adaptive mb-4">🎭 Demo Veriler</h3>
+        <p className="text-adaptive-secondary mb-4">
           Test etmek için örnek veriler oluşturun. Bu işlem mevcut verilerin üzerine yazacaktır.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
@@ -469,16 +469,16 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Account Info */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-4">👤 Hesap Bilgileri</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow">
+        <h3 className="text-xl font-bold text-adaptive mb-4">👤 Hesap Bilgileri</h3>
         <div className="space-y-3">
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-text-color mb-1">Kullanıcı ID</label>
-            <code className="text-xs text-gray-600 break-all">{user?.id}</code>
+          <div className="p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
+            <label className="block text-sm font-medium text-adaptive mb-1">Kullanıcı ID</label>
+            <code className="text-xs text-adaptive-secondary break-all">{user?.id}</code>
           </div>
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-text-color mb-1">Kayıt Tarihi</label>
-            <span className="text-sm text-gray-600">
+          <div className="p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
+            <label className="block text-sm font-medium text-adaptive mb-1">Kayıt Tarihi</label>
+            <span className="text-sm text-adaptive-secondary">
               {userData?.profile?.createdAt ? 
                 new Intl.DateTimeFormat('tr-TR', { 
                   year: 'numeric', 
@@ -495,9 +495,9 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Voice Cloning */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-bold text-text-color mb-4">🎙️ Eğitim Sesi Ayarları</h3>
-        <p className="text-gray-600 mb-6">
+      <div className="glass-panel rounded-xl p-6 premium-shadow">
+        <h3 className="text-xl font-bold text-adaptive mb-4">🎙️ Eğitim Sesi Ayarları</h3>
+        <p className="text-adaptive-secondary mb-6">
           Kıvılcım platformunda çocuğunuza yönergeleri ve geri bildirimleri kendi sesinizle vermek için sesinizi klonlayabilirsiniz.
         </p>
         <VoiceCloner onVoiceCreated={(id) => alert(`Ses başarıyla klonlandı ve eklendi! (Voice ID: ${id})`)} />
@@ -508,9 +508,9 @@ export default function ParentPanelPage() {
   const renderGuide = () => (
     <div className="space-y-6">
       {/* Introduction */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">📚 Dijital Oyunlar ve Otizmli Çocuklar</h3>
-        <p className="text-gray-700 leading-relaxed">
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">📚 Dijital Oyunlar ve Otizmli Çocuklar</h3>
+        <p className="text-adaptive-secondary leading-relaxed">
           Teknolojinin gelişmesiyle birlikte, otizm spektrum bozukluğu (OSB) olan çocukların eğitiminde ve gelişiminde 
           kullanılabilecek dijital araçlar da çeşitlenmiştir. Bilgisayar oyunları ve tablet uygulamaları, doğru seçildiğinde 
           ve dengeli kullanıldığında, çocukların çeşitli becerilerini geliştirmek için ilgi çekici ve etkili bir yöntem olabilir.
@@ -518,8 +518,8 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Benefits Section */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">🌟 Gelişimsel Faydalar</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">🌟 Gelişimsel Faydalar</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 bg-green-50 rounded-lg border border-green-200">
             <h4 className="font-semibold text-green-800 mb-2">🧠 Bilişsel Beceriler</h4>
@@ -553,12 +553,12 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Recommended Apps Section */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">📱 Önerilen Uygulamalar</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">📱 Önerilen Uygulamalar</h3>
         <div className="space-y-4">
-          <div className="border border-gray-200 rounded-lg p-4">
-            <h4 className="font-semibold text-gray-800 mb-2">🎯 Otsimo</h4>
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <h4 className="font-semibold text-adaptive mb-2">🎯 Otsimo</h4>
+            <p className="text-sm text-adaptive-secondary mb-2">
               Ödüllü ve uzmanlar tarafından geliştirilen bu uygulama, otizm, DEHB ve Down sendromu 
               gibi öğrenme güçlüğü yaşayan çocukları hedefler.
             </p>
@@ -569,29 +569,29 @@ export default function ParentPanelPage() {
             </div>
           </div>
           
-          <div className="border border-gray-200 rounded-lg p-4">
-            <h4 className="font-semibold text-gray-800 mb-2">⚡ AutiSpark</h4>
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <h4 className="font-semibold text-adaptive mb-2">⚡ AutiSpark</h4>
+            <p className="text-sm text-adaptive-secondary mb-2">
               Özellikle OSB'li çocuklar için tasarlanmış ve uzmanlar tarafından onaylanmış uygulama.
             </p>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-adaptive-secondary opacity-70 mt-2">
               ✓ Resim ilişkilendirme ✓ Duygu tanıma ✓ Matematik ✓ Hafıza oyunları
             </div>
           </div>
           
-          <div className="border border-gray-200 rounded-lg p-4">
-            <h4 className="font-semibold text-gray-800 mb-2">🌱 Tohum Otizm Vakfı</h4>
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <h4 className="font-semibold text-adaptive mb-2">🌱 Tohum Otizm Vakfı</h4>
+            <p className="text-sm text-adaptive-secondary mb-2">
               "Tohum Eğitim" ve "Dinle-Konuş" gibi çeşitli becerileri destekleyen mobil uygulamalar.
             </p>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-adaptive-secondary opacity-70 mt-2">
               ✓ Dinlediğini anlama ✓ Eşleme ✓ Nesne ayırt etme ✓ Telaffuz
             </div>
           </div>
           
-          <div className="border border-gray-200 rounded-lg p-4">
-            <h4 className="font-semibold text-gray-800 mb-2">🧱 Minecraft</h4>
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <h4 className="font-semibold text-adaptive mb-2">🧱 Minecraft</h4>
+            <p className="text-sm text-adaptive-secondary mb-2">
               Yaratıcılığı, problem çözmeyi ve takım çalışmasını destekler. Tohum Otizm Vakfı'nın 
               "Mineclass" sunucusu güvenli ortam sunar.
             </p>
@@ -604,7 +604,7 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Risks Section */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-red-100">
+      <div className="glass-panel rounded-xl p-6 premium-shadow border border-red-100">
         <h3 className="text-xl font-bold text-red-700 mb-4">⚠️ Riskler ve Dikkat Edilmesi Gerekenler</h3>
         <div className="space-y-4">
           <div className="p-4 bg-red-50 rounded-lg border border-red-200">
@@ -632,58 +632,58 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Healthy Usage Tips */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">💡 Sağlıklı Kullanım İpuçları</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">💡 Sağlıklı Kullanım İpuçları</h3>
         <div className="space-y-3">
-          <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
             <span className="text-blue-600 text-lg">⏰</span>
             <div>
-              <h4 className="font-semibold text-gray-800">Ekran Süresini Sınırlayın</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="font-semibold text-adaptive">Ekran Süresini Sınırlayın</h4>
+              <p className="text-sm text-adaptive-secondary">
                 0-2 yaş: Ekran maruziyetinden kaçının<br/>
                 3-5 yaş: Günde 30 dakikayı aşmayın
               </p>
             </div>
           </div>
           
-          <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
             <span className="text-green-600 text-lg">👨‍👩‍👧‍👦</span>
             <div>
-              <h4 className="font-semibold text-gray-800">Birlikte Oynayın</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="font-semibold text-adaptive">Birlikte Oynayın</h4>
+              <p className="text-sm text-adaptive-secondary">
                 Çocuğunuza tableti verip yalnız bırakmak yerine, oyuna siz de katılın. 
                 Bu hem bağı güçlendirir hem de öğrenmeyi destekler.
               </p>
             </div>
           </div>
           
-          <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
             <span className="text-purple-600 text-lg">🔍</span>
             <div>
-              <h4 className="font-semibold text-gray-800">İçeriği Denetleyin</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="font-semibold text-adaptive">İçeriği Denetleyin</h4>
+              <p className="text-sm text-adaptive-secondary">
                 Oyunların eğitici, yaşa uygun ve şiddet içermeyen içeriklere 
                 sahip olduğundan emin olun.
               </p>
             </div>
           </div>
           
-          <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
             <span className="text-orange-600 text-lg">🕐</span>
             <div>
-              <h4 className="font-semibold text-gray-800">Ekran Rutinleri</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="font-semibold text-adaptive">Ekran Rutinleri</h4>
+              <p className="text-sm text-adaptive-secondary">
                 Yemek sırasında ve uykudan en az bir saat önce ekran kullanımına 
                 izin vermeyin.
               </p>
             </div>
           </div>
           
-          <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-dark-border rounded-lg">
             <span className="text-teal-600 text-lg">👤</span>
             <div>
-              <h4 className="font-semibold text-gray-800">Model Olun</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="font-semibold text-adaptive">Model Olun</h4>
+              <p className="text-sm text-adaptive-secondary">
                 Ebeveyn olarak kendi ekran kullanım alışkanlıklarınızla 
                 çocuğunuza iyi bir örnek olun.
               </p>
@@ -693,8 +693,8 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Digital Security Section */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">🔐 Dijital Güvenlik</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">🔐 Dijital Güvenlik</h3>
         <div className="space-y-4">
           <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
             <h4 className="font-semibold text-indigo-800 mb-2">🛡️ Çocuk Koruma Ayarları</h4>
@@ -719,8 +719,8 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Age-Based Recommendations */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">👶 Yaş Gruplarına Göre Öneriler</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">👶 Yaş Gruplarına Göre Öneriler</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 bg-pink-50 rounded-lg border border-pink-200">
             <h4 className="font-semibold text-pink-800 mb-2">2-4 Yaş</h4>
@@ -755,28 +755,28 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Expert Tips */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">👨‍⚕️ Uzman Tavsiyeleri</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">👨‍⚕️ Uzman Tavsiyeleri</h3>
         <div className="space-y-4">
           <div className="border-l-4 border-blue-500 pl-4 py-2">
-            <h4 className="font-semibold text-gray-800 mb-1">Dr. Psikolog Önerisi</h4>
-            <p className="text-sm text-gray-600">
+            <h4 className="font-semibold text-adaptive mb-1">Dr. Psikolog Önerisi</h4>
+            <p className="text-sm text-adaptive-secondary">
               "Dijital araçları kullanırken çocuğunuzun duygusal tepkilerini gözlemleyin. 
               Aşırı heyecanlanma, öfkelenme veya oyundan ayrılmakta zorlanma durumunda ara verin."
             </p>
           </div>
           
           <div className="border-l-4 border-green-500 pl-4 py-2">
-            <h4 className="font-semibold text-gray-800 mb-1">Eğitim Uzmanı Önerisi</h4>
-            <p className="text-sm text-gray-600">
+            <h4 className="font-semibold text-adaptive mb-1">Eğitim Uzmanı Önerisi</h4>
+            <p className="text-sm text-adaptive-secondary">
               "Çocuğunuz oyun oynadıktan sonra öğrendiklerini günlük yaşamda pratik yapmasını teşvik edin. 
               Bu, dijital öğrenmeyi gerçek yaşam becerilerine dönüştürür."
             </p>
           </div>
           
           <div className="border-l-4 border-purple-500 pl-4 py-2">
-            <h4 className="font-semibold text-gray-800 mb-1">Otizm Uzmanı Önerisi</h4>
-            <p className="text-sm text-gray-600">
+            <h4 className="font-semibold text-adaptive mb-1">Otizm Uzmanı Önerisi</h4>
+            <p className="text-sm text-adaptive-secondary">
               "Her çocuğun duyusal profili farklıdır. Çocuğunuzun ses, ışık ve dokunma hassasiyetlerini 
               dikkate alarak oyun ayarlarını kişiselleştirin."
             </p>
@@ -785,41 +785,41 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Resources Section */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">📖 Kaynaklar ve İletişim</h3>
+      <div className="glass-panel rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">📖 Kaynaklar ve İletişim</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <h4 className="font-semibold text-gray-800">🏥 Faydalı Kurumlar</h4>
+            <h4 className="font-semibold text-adaptive">🏥 Faydalı Kurumlar</h4>
             <div className="text-sm space-y-2">
-              <div className="p-2 bg-gray-50 rounded">
+              <div className="p-2 bg-gray-50 dark:bg-dark-border rounded">
                 <strong>Tohum Otizm Vakfı</strong><br/>
-                <span className="text-gray-600">www.tohumotizm.org.tr</span>
+                <span className="text-adaptive-secondary">www.tohumotizm.org.tr</span>
               </div>
-              <div className="p-2 bg-gray-50 rounded">
+              <div className="p-2 bg-gray-50 dark:bg-dark-border rounded">
                 <strong>Otizm Derneği</strong><br/>
-                <span className="text-gray-600">www.otizmdernegiistanbul.org</span>
+                <span className="text-adaptive-secondary">www.otizmdernegiistanbul.org</span>
               </div>
-              <div className="p-2 bg-gray-50 rounded">
+              <div className="p-2 bg-gray-50 dark:bg-dark-border rounded">
                 <strong>Özel Çocuklar Vakfı</strong><br/>
-                <span className="text-gray-600">www.ozelcocuklar.org.tr</span>
+                <span className="text-adaptive-secondary">www.ozelcocuklar.org.tr</span>
               </div>
             </div>
           </div>
           
           <div className="space-y-3">
-            <h4 className="font-semibold text-gray-800">📚 Önerilen Kitaplar</h4>
+            <h4 className="font-semibold text-adaptive">📚 Önerilen Kitaplar</h4>
             <div className="text-sm space-y-2">
-              <div className="p-2 bg-gray-50 rounded">
+              <div className="p-2 bg-gray-50 dark:bg-dark-border rounded">
                 <strong>"Otizmli Çocuğum ve Ben"</strong><br/>
-                <span className="text-gray-600">Yazar: Dr. Serap Soysal</span>
+                <span className="text-adaptive-secondary">Yazar: Dr. Serap Soysal</span>
               </div>
-              <div className="p-2 bg-gray-50 rounded">
+              <div className="p-2 bg-gray-50 dark:bg-dark-border rounded">
                 <strong>"Dijital Çocukluk"</strong><br/>
-                <span className="text-gray-600">Yazar: Dr. Özlem Altıntaş</span>
+                <span className="text-adaptive-secondary">Yazar: Dr. Özlem Altıntaş</span>
               </div>
-              <div className="p-2 bg-gray-50 rounded">
+              <div className="p-2 bg-gray-50 dark:bg-dark-border rounded">
                 <strong>"Erken Müdahale Rehberi"</strong><br/>
-                <span className="text-gray-600">Yazar: Prof. Dr. Gökhan Töret</span>
+                <span className="text-adaptive-secondary">Yazar: Prof. Dr. Gökhan Töret</span>
               </div>
             </div>
           </div>
@@ -827,10 +827,10 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Emergency Contact */}
-      <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-6 shadow-lg border border-red-100">
+      <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-6 premium-shadow border border-red-100">
         <h3 className="text-xl font-bold text-red-700 mb-4">🚨 Acil Durum Rehberi</h3>
         <div className="space-y-3">
-          <div className="p-3 bg-white rounded-lg border border-red-200">
+          <div className="p-3 glass-panel rounded-lg border border-red-200">
             <h4 className="font-semibold text-red-800 mb-1">Dijital Bağımlılık Belirtileri</h4>
             <ul className="text-sm text-red-700 space-y-1">
               <li>• Oyundan ayrılmaya aşırı direnç gösterme</li>
@@ -839,7 +839,7 @@ export default function ParentPanelPage() {
               <li>• Uyku ve yemek düzeninin bozulması</li>
             </ul>
           </div>
-          <div className="p-3 bg-white rounded-lg border border-orange-200">
+          <div className="p-3 glass-panel rounded-lg border border-orange-200">
             <h4 className="font-semibold text-orange-800 mb-1">Ne Yapmalısınız?</h4>
             <p className="text-sm text-orange-700">
               Bu belirtileri fark ederseniz hemen bir uzmanla görüşün. Kademeli olarak ekran süresini azaltın 
@@ -850,21 +850,21 @@ export default function ParentPanelPage() {
       </div>
 
       {/* Conclusion */}
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-text-color mb-4">🎯 Sonuç</h3>
-        <p className="text-gray-700 leading-relaxed">
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 premium-shadow border-none">
+        <h3 className="text-xl font-bold text-adaptive mb-4">🎯 Sonuç</h3>
+        <p className="text-adaptive-secondary leading-relaxed">
           Bilgisayar oyunları ve dijital uygulamalar, otizmli bir çocuğun eğitiminde değerli bir tamamlayıcı olabilir. 
           Ancak bu araçların bir "dijital bakıcı" olarak değil, bilinçli, kontrollü ve dengeli bir şekilde, 
           gerçek yaşam deneyimlerini zenginleştiren bir destek olarak kullanılması esastır.
         </p>
-        <div className="mt-4 p-4 bg-white rounded-lg border border-gray-200">
-          <p className="text-sm text-gray-600 italic">
+        <div className="mt-4 p-4 glass-panel rounded-lg border border-gray-200 dark:border-gray-600">
+          <p className="text-sm text-adaptive-secondary italic">
             💡 <strong>Hatırlatma:</strong> Kıvılcım platformu, bu ilkeler doğrultusunda tasarlanmış olup, 
             çocuğunuzun gelişimini desteklemek için uzmanlar tarafından onaylanmış aktiviteler sunar.
           </p>
         </div>
         <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-adaptive-secondary opacity-70">
             Bu bilgiler eğitim amaçlıdır. Özel durumlar için mutlaka uzman görüşü alın.
           </p>
         </div>
@@ -873,13 +873,13 @@ export default function ParentPanelPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background-color">
+    <div className="min-h-screen bg-gradient-to-br from-calm-blue via-blue-100 to-white dark:from-dark-bg dark:via-dark-surface dark:to-dark-bg transition-colors duration-500">
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-text-color">📊 Ebeveyn Paneli</h1>
-            <p className="text-gray-600 mt-1">Çocuğunuzun gelişimini takip edin</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-adaptive">📊 Ebeveyn Paneli</h1>
+            <p className="text-adaptive-secondary mt-1">Çocuğunuzun gelişimini takip edin</p>
           </div>
           <Button
             variant="secondary"
@@ -891,7 +891,7 @@ export default function ParentPanelPage() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex space-x-1 bg-gray-100 rounded-lg p-1 mb-6 overflow-x-auto">
+        <div className="flex space-x-1 bg-gray-100 dark:bg-dark-border rounded-lg p-1 mb-6 overflow-x-auto">
           {[
             { key: 'overview', label: '📊 Genel Bakış' },
             { key: 'progress', label: '📈 İlerleme' },
@@ -903,8 +903,8 @@ export default function ParentPanelPage() {
               onClick={() => setActiveTab(tab.key as typeof activeTab)}
               className={`flex-shrink-0 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'bg-white text-focus-blue shadow-sm'
-                  : 'text-gray-600 hover:text-text-color'
+                  ? 'glass-panel text-focus-blue shadow-sm'
+                  : 'text-adaptive-secondary hover:text-adaptive'
               }`}
             >
               {tab.label}
